@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoonomaly: Night Shift Escape</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js (3D Engine) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #030303;
+            font-family: 'Share Tech Mono', monospace;
+            user-select: none;
+        }
+
+        .font-horror {
+            font-family: 'Creepster', cursive;
+        }
+
+        #game-canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* Scanlines & VCR Overlay Effect */
+        .vcr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            z-index: 10;
+        }
+
+        /* Jumpscare Screen Canvas */
+        #jumpscare-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 50;
+            display: none;
+            pointer-events: none;
+        }
+
+        /* Flash Screen */
+        .red-flash {
+            animation: flashRed 0.15s infinite alternate;
+        }
+
+        @keyframes flashRed {
+            0% { background-color: rgba(150, 0, 0, 0.8); }
+            100% { background-color: rgba(0, 0, 0, 0.95); }
+        }
+
+        /* Crosshair */
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 20;
+            transition: all 0.2s ease;
+        }
+        .crosshair.active {
+            background-color: #ef4444;
+            transform: translate(-50%, -50%) scale(1.8);
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        /* Custom Scrollbar for HUD logs */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-black text-white select-none">
+
+    <!-- Game Viewport Canvas -->
+    <div id="canvas-container" class="relative w-full h-full">
+        <canvas id="game-canvas"></canvas>
+        <div class="vcr-overlay"></div>
+        <div id="crosshair" class="crosshair"></div>
+
+        <!-- Jumpscare Canvas overlay -->
+        <canvas id="jumpscare-canvas"></canvas>
+        <div id="jumpscare-flash" class="absolute inset-0 pointer-events-none hidden z-40"></div>
+
+        <!-- HUD Overlay -->
+        <div id="hud" class="absolute inset-0 pointer-events-none z-20 flex flex-col justify-between p-6 hidden">
+            <!-- Top Bar: Status & Objectives -->
+            <div class="flex justify-between items-start">
+                <div class="bg-black/80 border border-gray-800 p-4 rounded-lg shadow-lg backdrop-blur-md max-w-md">
+                    <h2 class="text-xs uppercase tracking-widest text-red-500 font-bold mb-1">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Objetivo Actual
+                    </h2>
+                    <p id="objective-text" class="text-sm text-gray-200">
+                        Encuentra las <span class="text-yellow-400 font-bold">3 Llaves del Zoológico</span> para abrir la Puerta Principal.
+                    </p>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="text-xs text-gray-400">Llaves:</span>
+                        <div id="keys-tracker" class="flex gap-2">
+                            <i class="fa-solid fa-key text-gray-600 text-lg" id="key-1"></i>
+                            <i class="fa-solid fa-key text-gray-600 text-lg" id="key-2"></i>
+                            <i class="fa-solid fa-key text-gray-600 text-lg" id="key-3"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stamina & Flashlight HUD -->
+                <div class="bg-black/80 border border-gray-800 p-4 rounded-lg shadow-lg backdrop-blur-md w-64">
+                    <!-- Stamina -->
+                    <div class="mb-3">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-gray-400"><i class="fa-solid fa-person-running mr-1"></i> Resistencia</span>
+                            <span id="stamina-val" class="text-green-400">100%</span>
+                        </div>
+                        <div class="w-full bg-gray-900 rounded-full h-2 overflow-hidden border border-gray-700">
+                            <div id="stamina-bar" class="bg-green-500 h-full w-full transition-all duration-75"></div>
+                        </div>
+                    </div>
+
+                    <!-- Flashlight Battery -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-gray-400"><i class="fa-solid fa-flashlight mr-1"></i> Batería Linterna (F)</span>
+                            <span id="battery-val" class="text-yellow-400">100%</span>
+                        </div>
+                        <div class="w-full bg-gray-900 rounded-full h-2 overflow-hidden border border-gray-700">
+                            <div id="battery-bar" class="bg-yellow-500 h-full w-full transition-all duration-100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Prompt Text Center -->
+            <div class="self-center mb-20 text-center">
+                <div id="interaction-prompt" class="hidden bg-red-950/90 border border-red-600 text-red-200 px-6 py-2 rounded-full font-mono text-sm shadow-xl tracking-wider animate-pulse">
+                    Presiona <span class="bg-red-800 px-2 py-0.5 rounded text-white font-bold">[E]</span> para interactuar
+                </div>
+            </div>
+
+            <!-- Bottom Left: Controls Reminder & Noise Meter -->
+            <div class="flex justify-between items-end">
+                <div class="bg-black/80 border border-gray-800 p-3 rounded-lg text-xs text-gray-400 space-y-1">
+                    <div><span class="text-yellow-500 font-bold">WASD</span>: Moverse</div>
+                    <div><span class="text-yellow-500 font-bold">SHIFT</span>: Correr | <span class="text-yellow-500 font-bold">CTRL</span>: Agacharse</div>
+                    <div><span class="text-yellow-500 font-bold">F</span>: Linterna ON/OFF | <span class="text-yellow-500 font-bold">E</span>: Interactuar</div>
+                </div>
+
+                <!-- Danger / Stealth Status -->
+                <div id="stealth-indicator" class="bg-black/80 border border-gray-800 px-4 py-2 rounded-lg flex items-center gap-3">
+                    <i id="stealth-icon" class="fa-solid fa-eye text-green-500 text-xl"></i>
+                    <div>
+                        <div class="text-[10px] text-gray-500 uppercase tracking-widest">Detección</div>
+                        <div id="stealth-status" class="text-xs font-bold text-green-400">OCULTO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start / Menu Overlay -->
+        <div id="menu-overlay" class="absolute inset-0 bg-neutral-950/95 z-30 flex flex-col items-center justify-center p-6 text-center">
+            <div class="max-w-xl">
+                <i class="fa-solid fa-biohazard text-6xl text-red-600 mb-4 animate-pulse"></i>
+                <h1 class="text-5xl font-horror text-red-600 tracking-wider mb-2 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
+                    ZOONOMALY NIGHTMARE
+                </h1>
+                <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest">
+                    Zoológico de Criaturas Mutantes Abandonado
+                </p>
+
+                <div class="bg-neutral-900/90 border border-neutral-800 p-5 rounded-xl text-left text-xs text-gray-300 space-y-3 mb-8 shadow-inner">
+                    <p class="text-red-400 font-bold border-b border-neutral-800 pb-2">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i> INSTRUCCIONES DE SUPERVIVENCIA:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1 text-gray-400">
+                        <li>Explora los sectores oscuros y encuentra las <strong class="text-yellow-400">3 llaves</strong> oxidadas.</li>
+                        <li>Las <strong class="text-red-400">criaturas soníferas</strong> patrullan las jaulas. Si te escuchan o ven, te perseguirán.</li>
+                        <li>Agáchate (<strong class="text-white">CTRL</strong>) para no hacer ruido. Corre (<strong class="text-white">SHIFT</strong>) solo si es necesario.</li>
+                        <li>Cuidado: Algunas jaulas contienen <strong>trampas violentas</strong>.</li>
+                        <li>Usa tu linterna (<strong class="text-white">F</strong>) con prudencia; la batería no dura para siempre.</li>
+                    </ul>
+                </div>
+
+                <button id="start-btn" class="w-full py-4 bg-red-700 hover:bg-red-600 active:scale-95 text-white font-bold text-lg rounded-xl tracking-widest transition duration-200 shadow-[0_0_20px_rgba(185,28,28,0.5)]">
+                    <i class="fa-solid fa-play mr-2"></i> ENTRAR AL ZOOLÓGICO
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-overlay" class="absolute inset-0 bg-black z-40 hidden flex flex-col items-center justify-center p-6 text-center">
+            <h1 class="text-6xl font-horror text-red-700 mb-4 animate-pulse">HAS MUERTO</h1>
+            <p id="death-reason" class="text-gray-400 mb-8 max-w-md">Una aberración del zoológico te devoró en la oscuridad...</p>
+            <button id="restart-btn" class="px-8 py-3 bg-red-800 hover:bg-red-700 text-white font-bold rounded-lg tracking-wider transition">
+                <i class="fa-solid fa-rotate-right mr-2"></i> REINTENTAR
+            </button>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="win-overlay" class="absolute inset-0 bg-neutral-950/95 z-40 hidden flex flex-col items-center justify-center p-6 text-center">
+            <i class="fa-solid fa-door-open text-6xl text-green-500 mb-4"></i>
+            <h1 class="text-5xl font-horror text-green-500 mb-2">¡HAS ESCAPADO!</h1>
+            <p class="text-gray-300 max-w-md mb-8">Lograste recolectar todas las llaves y abrir el portón principal antes de ser atrapado por las criaturas.</p>
+            <button id="win-restart-btn" class="px-8 py-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg tracking-wider transition">
+                JUGAR DE NUEVO
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN GAME LOGIC SCRIPT -->
+    <script>
+        /**
+         * ZOONOMALY NIGHTMARE - Game Engine & Audio Synthesizer
+         */
+
+        // --- Audio Synthesizer using Web Audio API (No External Audio Files Needed) ---
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.initialized = false;
+            }
+
+            init() {
+                if(this.initialized) return;
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                this.ctx = new AudioCtx();
+                this.initialized = true;
+            }
+
+            playFootstep(isSprinting) {
+                if(!this.initialized) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(isSprinting ? 120 : 80, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.08);
+
+                gain.gain.setValueAtTime(isSprinting ? 0.3 : 0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.08);
+            }
+
+            playKeyPickup() {
+                if(!this.initialized) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, now); // D5
+                osc.frequency.setValueAtTime(880, now + 0.1); // A5
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(now + 0.4);
+            }
+
+            playDoorClick() {
+                if(!this.initialized) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.15);
+            }
+
+            playJumpscareSound() {
+                if(!this.initialized) return;
+                const now = this.ctx.currentTime;
+
+                // Screech Synthesizer (Harsh Sawtooth Cluster)
+                const freqs = [150, 220, 311, 440, 622, 880, 1200];
+                freqs.forEach(f => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(f, now);
+                    // Pitch bend upwards violently
+                    osc.frequency.linearRampToValueAtTime(f * 2.5, now + 0.8);
+
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+                });
+
+                // Bass Impact Boom
+                const sub = this.ctx.createOscillator();
+                const subGain = this.ctx.createGain();
+                sub.type = 'sine';
+                sub.frequency.setValueAtTime(130, now);
+                sub.frequency.exponentialRampToValueAtTime(20, now + 0.9);
+                subGain.gain.setValueAtTime(0.9, now);
+                subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
+                sub.connect(subGain);
+                subGain.connect(this.ctx.destination);
+                sub.start(now);
+                sub.stop(now + 0.9);
+            }
+
+            playHeartbeat(rateMs = 800) {
+                if(!this.initialized) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(60, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.12);
+
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            }
+        }
+
+        const audio = new SoundEngine();
+
+        // --- GAME VARIABLES & STATE ---
+        let scene, camera, renderer;
+        let flashlight, flashlightTarget;
+        let playerObj;
+
+        // Player Controls & Physics
+        const player = {
+            pos: new THREE.Vector3(0, 1.6, 22),
+            vel: new THREE.Vector3(),
+            rotY: 0,
+            rotX: 0,
+            height: 1.6,
+            crouchHeight: 0.9,
+            isCrouching: false,
+            isSprinting: false,
+            stamina: 100,
+            battery: 100,
+            flashlightOn: true,
+            keysFound: 0,
+            hasEscaped: false,
+            isDead: false
+        };
+
+        const keysPressed = {};
+        const wallColliders = [];
+        const interactables = [];
+        const monsters = [];
+
+        let isPointerLocked = false;
+        let lastFootstepTime = 0;
+        let lastHeartbeatTime = 0;
+        let isJumpscaring = false;
+
+        // DOM Elements
+        const canvas = document.getElementById('game-canvas');
+        const jumpscareCanvas = document.getElementById('jumpscare-canvas');
+        const jumpscareCtx = jumpscareCanvas.getContext('2d');
+        const crosshair = document.getElementById('crosshair');
+        const promptEl = document.getElementById('interaction-prompt');
+
+        // --- INIT THREE.JS SCENE ---
+        function initEngine() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x020204);
+            scene.fog = new THREE.FogExp2(0x020204, 0.08);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.copy(player.pos);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Ambient Darkness
+            const ambientLight = new THREE.AmbientLight(0x080a10, 0.2);
+            scene.add(ambientLight);
+
+            // Flashlight (SpotLight attached to camera)
+            flashlight = new THREE.SpotLight(0xfff5ea, 4, 25, Math.PI / 6, 0.4, 1.5);
+            flashlight.castShadow = true;
+            flashlight.shadow.mapSize.width = 1024;
+            flashlight.shadow.mapSize.height = 1024;
+
+            flashlightTarget = new THREE.Object3D();
+            scene.add(flashlightTarget);
+            flashlight.target = flashlightTarget;
+            scene.add(flashlight);
+
+            // Create Map & Environment
+            buildZooMap();
+
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            setupInput();
+        }
+
+        // --- ZOO MAP BUILDER ---
+        function buildZooMap() {
+            // Materials
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0x1f2421, roughness: 0.9, metalness: 0.1 });
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x111312, roughness: 0.8 });
+            const cageBarMat = new THREE.MeshStandardMaterial({ color: 0x4a4d4b, metalness: 0.8, roughness: 0.3 });
+            const doorMat = new THREE.MeshStandardMaterial({ color: 0x3d2817, roughness: 0.7 });
+
+            // Floor
+            const floorGeo = new THREE.PlaneGeometry(60, 60);
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // Outer Perimeter Walls
+            createWall(0, 3, -30, 60, 6, 1, wallMat); // North
+            createWall(0, 3, 30, 60, 6, 1, wallMat);  // South
+            createWall(-30, 3, 0, 1, 6, 60, wallMat); // West
+            createWall(30, 3, 0, 1, 6, 60, wallMat);  // East
+
+            // Internal Corridors & Cage Enclosures
+            // Sector A Cages
+            createCage(-15, -15, 12, 10, cageBarMat, 1); // Contains Key 1
+            createCage(15, -15, 12, 10, cageBarMat, 2);  // Trap Cage
+            createCage(-15, 10, 10, 10, cageBarMat, 3);  // Contains Key 2
+            createCage(15, 10, 10, 10, cageBarMat, 4);   // Patrol Monster Spawn
+
+            // Central Entrance Gate (Exit)
+            createExitGate(0, 25);
+
+            // Key 3 Hidden Location
+            spawnKey(0, -22, 'key3');
+
+            // Vegetation & Props
+            spawnEnvironmentProps();
+
+            // Spawn Monsters (Zoonomaly Mutants)
+            spawnMonster(-15, 10, 'patrol'); // Monster in cage 3 area
+            spawnMonster(15, 10, 'stalker'); // Monster lurking right aisle
+        }
+
+        function createWall(x, y, z, w, h, d, mat) {
+            const geo = new THREE.BoxGeometry(w, h, d);
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, y, z);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            scene.add(mesh);
+
+            wallColliders.push(new THREE.Box3().setFromObject(mesh));
+            return mesh;
+        }
+
+        function createCage(x, z, sizeX, sizeZ, barMat, cageId) {
+            const height = 4;
+            const barRadius = 0.05;
+
+            // Cage Bars (Sides)
+            for (let i = -sizeX/2; i <= sizeX/2; i += 1.2) {
+                // Back wall
+                const barGeo = new THREE.CylinderGeometry(barRadius, barRadius, height, 8);
+                const bar1 = new THREE.Mesh(barGeo, barMat);
+                bar1.position.set(x + i, height / 2, z - sizeZ / 2);
+                scene.add(bar1);
+
+                // Front wall (leave gap for door)
+                if (Math.abs(i) > 1.5) {
+                    const bar2 = new THREE.Mesh(barGeo, barMat);
+                    bar2.position.set(x + i, height / 2, z + sizeZ / 2);
+                    scene.add(bar2);
+                }
+            }
+
+            // Cage Door (Interactive)
+            const doorGeo = new THREE.BoxGeometry(3, 3.8, 0.2);
+            const doorMesh = new THREE.Mesh(doorGeo, barMat);
+            doorMesh.position.set(x, 1.9, z + sizeZ / 2);
+            scene.add(doorMesh);
+
+            const isTrap = (cageId === 2);
+            const hasKey = (cageId === 1 || cageId === 3);
+
+            if (hasKey) {
+                spawnKey(x, z, `key_${cageId}`);
+            }
+
+            interactables.push({
+                mesh: doorMesh,
+                type: 'door',
+                isTrap: isTrap,
+                isOpen: false,
+                cageId: cageId,
+                pos: doorMesh.position,
+                prompt: isTrap ? "Abrir Celda #02" : "Abrir Jaula"
+            });
+
+            // Solid bounds for cage back/sides
+            wallColliders.push(new THREE.Box3().setFromCenterAndSize(
+                new THREE.Vector3(x, 2, z - sizeZ/2), new THREE.Vector3(sizeX, 4, 0.5)
+            ));
+            wallColliders.push(new THREE.Box3().setFromCenterAndSize(
+                new THREE.Vector3(x - sizeX/2, 2, z), new THREE.Vector3(0.5, 4, sizeZ)
+            ));
+            wallColliders.push(new THREE.Box3().setFromCenterAndSize(
+                new THREE.Vector3(x + sizeX/2, 2, z), new THREE.Vector3(0.5, 4, sizeZ)
+            ));
+        }
+
+        function createExitGate(x, z) {
+            const gateGeo = new THREE.BoxGeometry(6, 4, 0.5);
+            const gateMat = new THREE.MeshStandardMaterial({ color: 0x852d2d, metalness: 0.5 });
+            const gateMesh = new THREE.Mesh(gateGeo, gateMat);
+            gateMesh.position.set(x, 2, z);
+            scene.add(gateMesh);
+
+            interactables.push({
+                mesh: gateMesh,
+                type: 'exit_gate',
+                prompt: "Abrir Portón Principal (Requiere 3 Llaves)"
+            });
+
+            wallColliders.push(new THREE.Box3().setFromObject(gateMesh));
+        }
+
+        function spawnKey(x, z, id) {
+            const keyGroup = new THREE.Group();
+            const keyMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.9, roughness: 0.2, emissive: 0x332200 });
+
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), keyMat);
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.6), keyMat);
+            stem.position.y = -0.3;
+            stem.rotation.x = Math.PI / 2;
+
+            keyGroup.add(ring);
+            keyGroup.add(stem);
+            keyGroup.position.set(x, 0.8, z);
+            scene.add(keyGroup);
+
+            // Light indicator
+            const pointLight = new THREE.PointLight(0xeab308, 1, 3);
+            pointLight.position.set(x, 1, z);
+            scene.add(pointLight);
+
+            interactables.push({
+                mesh: keyGroup,
+                light: pointLight,
+                type: 'key',
+                id: id,
+                prompt: "Recoger Llave Oxidada del Zoológico"
+            });
+        }
+
+        function spawnEnvironmentProps() {
+            // Scattered overgrown trees/posts
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.9 });
+            for (let i = 0; i < 15; i++) {
+                const px = (Math.random() - 0.5) * 45;
+                const pz = (Math.random() - 0.5) * 45;
+                if (Math.abs(px) < 5 && pz > 15) continue; // Keep exit clear
+
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 5, 6), trunkMat);
+                trunk.position.set(px, 2.5, pz);
+                scene.add(trunk);
+            }
+        }
+
+        // --- ZOONOMALY CREATURE (MONSTER) GENERATOR ---
+        function spawnMonster(x, z, behavior) {
+            const monsterGroup = new THREE.Group();
+
+            // Distorted Body Material
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0c, roughness: 0.6 });
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+            // Tall Distorted Torso
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.2, 2.6, 8), bodyMat);
+            torso.position.y = 1.3;
+            monsterGroup.add(torso);
+
+            // Deformed Head with oversized grin
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 12), bodyMat);
+            head.scale.set(1, 1.3, 0.9);
+            head.position.y = 2.7;
+            monsterGroup.add(head);
+
+            // Glowing Red Eyes
+            const eye1 = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), eyeMat);
+            eye1.position.set(-0.18, 2.8, 0.4);
+            const eye2 = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), eyeMat);
+            eye2.position.set(0.18, 2.8, 0.4);
+            monsterGroup.add(eye1);
+            monsterGroup.add(eye2);
+
+            // Long Creepy Limbs
+            const armGeo = new THREE.CylinderGeometry(0.06, 0.05, 2.2);
+            const leftArm = new THREE.Mesh(armGeo, bodyMat);
+            leftArm.position.set(-0.6, 1.4, 0);
+            leftArm.rotation.z = 0.2;
+            const rightArm = new THREE.Mesh(armGeo, bodyMat);
+            rightArm.position.set(0.6, 1.4, 0);
+            rightArm.rotation.z = -0.2;
+            monsterGroup.add(leftArm);
+            monsterGroup.add(rightArm);
+
+            monsterGroup.position.set(x, 0, z);
+            scene.add(monsterGroup);
+
+            monsters.push({
+                mesh: monsterGroup,
+                behavior: behavior, // 'patrol' or 'stalker'
+                speed: behavior === 'stalker' ? 3.2 : 2.2,
+                patrolOrigin: new THREE.Vector3(x, 0, z),
+                targetPos: new THREE.Vector3(x, 0, z),
+                alertLevel: 0, // 0: Idle, 1: Chasing
+                changeDirTimer: 0
+            });
+        }
+
+        // --- CONTROLS & INPUT HANDLING ---
+        function setupInput() {
+            document.addEventListener('keydown', (e) => {
+                keysPressed[e.code] = true;
+
+                // Flashlight Toggle (F)
+                if (e.code === 'KeyF' && !player.isDead) {
+                    player.flashlightOn = !player.flashlightOn;
+                    flashlight.visible = player.flashlightOn;
+                    audio.playDoorClick();
+                }
+
+                // Interact Key (E)
+                if (e.code === 'KeyE' && !player.isDead) {
+                    handleInteraction();
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                keysPressed[e.code] = false;
+            });
+
+            // Pointer Lock Controls for First Person Look
+            canvas.addEventListener('click', () => {
+                if (!isPointerLocked && !player.isDead && !player.hasEscaped) {
+                    canvas.requestPointerLock();
+                }
+            });
+
+            document.addEventListener('pointerlockchange', () => {
+                isPointerLocked = (document.pointerLockElement === canvas);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isPointerLocked || player.isDead) return;
+
+                const sensitivity = 0.0022;
+                player.rotY -= e.movementX * sensitivity;
+                player.rotX -= e.movementY * sensitivity;
+
+                // Clamp pitch
+                player.rotX = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, player.rotX));
+            });
+
+            // UI Buttons
+            document.getElementById('start-btn').addEventListener('click', () => {
+                audio.init();
+                document.getElementById('menu-overlay').classList.add('hidden');
+                document.getElementById('hud').classList.remove('hidden');
+                canvas.requestPointerLock();
+            });
+
+            document.getElementById('restart-btn').addEventListener('click', resetGame);
+            document.getElementById('win-restart-btn').addEventListener('click', resetGame);
+        }
+
+        // --- PLAYER MOVEMENT & PHYSICS ---
+        function updatePlayer(delta) {
+            if (player.isDead || player.hasEscaped) return;
+
+            // Sprinting & Crouching States
+            player.isCrouching = keysPressed['ControlLeft'] || keysPressed['KeyC'];
+            const wantingToSprint = keysPressed['ShiftLeft'] && !player.isCrouching && player.stamina > 5;
+            player.isSprinting = wantingToSprint;
+
+            // Stamina drain/regen
+            if (player.isSprinting) {
+                player.stamina = Math.max(0, player.stamina - delta * 30);
+            } else {
+                player.stamina = Math.min(100, player.stamina + delta * 15);
+            }
+            document.getElementById('stamina-bar').style.width = `${player.stamina}%`;
+            document.getElementById('stamina-val').innerText = `${Math.round(player.stamina)}%`;
+
+            // Flashlight Battery Drain
+            if (player.flashlightOn) {
+                player.battery = Math.max(0, player.battery - delta * 1.5);
+                if (player.battery <= 0) {
+                    player.flashlightOn = false;
+                    flashlight.visible = false;
+                }
+                // Random flicker if low battery
+                if (player.battery < 20 && Math.random() < 0.1) {
+                    flashlight.intensity = Math.random() * 4;
+                } else {
+                    flashlight.intensity = 4;
+                }
+            }
+            document.getElementById('battery-bar').style.width = `${player.battery}%`;
+            document.getElementById('battery-val').innerText = `${Math.round(player.battery)}%`;
+
+            // Movement Speeds
+            let moveSpeed = 4.0;
+            if (player.isCrouching) moveSpeed = 1.8;
+            if (player.isSprinting) moveSpeed = 7.0;
+
+            // Direction Vectors
+            const moveVector = new THREE.Vector3();
+            if (keysPressed['KeyW']) moveVector.z -= 1;
+            if (keysPressed['KeyS']) moveVector.z += 1;
+            if (keysPressed['KeyA']) moveVector.x -= 1;
+            if (keysPressed['KeyD']) moveVector.x += 1;
+
+            moveVector.normalize();
+            moveVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), player.rotY);
+
+            // Proposed Position
+            const nextPos = player.pos.clone().addScaledVector(moveVector, moveSpeed * delta);
+
+            // Wall Collisions (Simple Box Check)
+            const playerRadius = 0.5;
+            let canMove = true;
+            for (let wallBox of wallColliders) {
+                const playerBox = new THREE.Box3().setFromCenterAndSize(
+                    new THREE.Vector3(nextPos.x, 1, nextPos.z),
+                    new THREE.Vector3(playerRadius * 2, 2, playerRadius * 2)
+                );
+                if (wallBox.intersectsBox(playerBox)) {
+                    canMove = false;
+                    break;
+                }
+            }
+
+            if (canMove) {
+                player.pos.copy(nextPos);
+            }
+
+            // Camera Y positioning (Crouching smooth lerp)
+            const targetCamY = player.isCrouching ? player.crouchHeight : player.height;
+            player.pos.y += (targetCamY - player.pos.y) * 0.15;
+
+            // Camera Rotation Sync
+            camera.position.copy(player.pos);
+            camera.rotation.set(0, 0, 0);
+            camera.rotation.y = player.rotY;
+            camera.rotation.x = player.rotX;
+
+            // Flashlight Sync with Smooth Follow
+            flashlight.position.copy(camera.position);
+            const dir = new THREE.Vector3(0, 0, -1).applyEuler(camera.rotation);
+            flashlightTarget.position.copy(camera.position).addScaledVector(dir, 10);
+
+            // Footsteps Audio & Stealth Indicator
+            if (moveVector.lengthSq() > 0) {
+                const stepInterval = player.isSprinting ? 280 : (player.isCrouching ? 600 : 420);
+                if (Date.now() - lastFootstepTime > stepInterval) {
+                    audio.playFootstep(player.isSprinting);
+                    lastFootstepTime = Date.now();
+                }
+
+                // Alert nearby monsters with sound noise
+                const noiseRadius = player.isSprinting ? 22 : (player.isCrouching ? 4 : 12);
+                alertNearbyMonsters(noiseRadius);
+            }
+
+            // Update UI Stealth status
+            updateStealthHUD();
+            
+            // Check Interactables raycast
+            checkInteractionRaycast();
+        }
+
+        // --- INTERACTION SYSTEM ---
+        let currentTargetInteractable = null;
+
+        function checkInteractionRaycast() {
+            if (player.isDead) return;
+
+            const raycaster = new THREE.Raycaster();
+            const center = new THREE.Vector2(0, 0);
+            raycaster.setFromCamera(center, camera);
+
+            const interactiveMeshes = interactables.map(i => i.mesh);
+            const intersects = raycaster.intersectObjects(interactiveMeshes, true);
+
+            if (intersects.length > 0 && intersects[0].distance < 3.5) {
+                const hitObj = intersects[0].object;
+                const found = interactables.find(i => i.mesh === hitObj || i.mesh.children.includes(hitObj));
+                
+                if (found) {
+                    currentTargetInteractable = found;
+                    crosshair.classList.add('active');
+                    promptEl.innerText = `[E] ${found.prompt}`;
+                    promptEl.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            currentTargetInteractable = null;
+            crosshair.classList.remove('active');
+            promptEl.classList.add('hidden');
+        }
+
+        function handleInteraction() {
+            if (!currentTargetInteractable) return;
+
+            const item = currentTargetInteractable;
+
+            if (item.type === 'key') {
+                audio.playKeyPickup();
+                player.keysFound++;
+                scene.remove(item.mesh);
+                if(item.light) scene.remove(item.light);
+                
+                // Remove from interactables list
+                const idx = interactables.indexOf(item);
+                if (idx > -1) interactables.splice(idx, 1);
+
+                // Update HUD Key icon
+                document.getElementById(`key-${player.keysFound}`).classList.remove('text-gray-600');
+                document.getElementById(`key-${player.keysFound}`).classList.add('text-yellow-400', 'animate-bounce');
+
+                if (player.keysFound >= 3) {
+                    document.getElementById('objective-text').innerText = "¡Todas las llaves obtenidas! Corre a la Puerta Principal para ESCAPAR.";
+                }
+            } 
+            else if (item.type === 'door') {
+                audio.playDoorClick();
+                
+                if (item.isTrap) {
+                    // Trigger Immediate Cage Jumpscare!
+                    triggerJumpscare("¡Era una celda trampa! Una aberración te sorprendió desde la penumbra.");
+                } else {
+                    // Swing open cage door
+                    item.mesh.rotation.y += Math.PI / 2;
+                    const idx = interactables.indexOf(item);
+                    if (idx > -1) interactables.splice(idx, 1);
+                }
+            } 
+            else if (item.type === 'exit_gate') {
+                if (player.keysFound >= 3) {
+                    // VICTORY!
+                    player.hasEscaped = true;
+                    document.exitPointerLock();
+                    document.getElementById('hud').classList.add('hidden');
+                    document.getElementById('win-overlay').classList.remove('hidden');
+                } else {
+                    promptEl.innerText = "¡Está cerrado! Necesitas las 3 Llaves.";
+                }
+            }
+        }
+
+        // --- MONSTER AI & BEHAVIOR ---
+        function alertNearbyMonsters(radius) {
+            monsters.forEach(m => {
+                const dist = m.mesh.position.distanceTo(player.pos);
+                if (dist < radius) {
+                    m.alertLevel = 1;
+                    m.targetPos.copy(player.pos);
+                }
+            });
+        }
+
+        function updateMonsters(delta) {
+            if (player.isDead || player.hasEscaped) return;
+
+            monsters.forEach(m => {
+                const distToPlayer = m.mesh.position.distanceTo(player.pos);
+
+                // Heartbeat audio intensity based on monster proximity
+                if (distToPlayer < 12) {
+                    const heartRate = Math.max(250, distToPlayer * 70);
+                    if (Date.now() - lastHeartbeatTime > heartRate) {
+                        audio.playHeartbeat();
+                        lastHeartbeatTime = Date.now();
+                    }
+                }
+
+                // Vision Detection (Line of sight & Flashlight detection)
+                if (distToPlayer < 16 && player.flashlightOn) {
+                    m.alertLevel = 1;
+                }
+
+                if (m.alertLevel === 1) {
+                    // Chase Player
+                    m.targetPos.copy(player.pos);
+                    const dir = new THREE.Vector3().subVectors(m.targetPos, m.mesh.position);
+                    dir.y = 0;
+                    dir.normalize();
+
+                    m.mesh.position.addScaledVector(dir, m.speed * delta);
+                    m.mesh.lookAt(player.pos.x, m.mesh.position.y, player.pos.z);
+
+                    // Caught Player Check
+                    if (distToPlayer < 1.6) {
+                        triggerJumpscare("Una de las criaturas mutantes te atrapó en la oscuridad.");
+                    }
+                } else {
+                    // Idle / Random Patrol
+                    m.changeDirTimer -= delta;
+                    if (m.changeDirTimer <= 0) {
+                        m.targetPos.set(
+                            m.patrolOrigin.x + (Math.random() - 0.5) * 12,
+                            0,
+                            m.patrolOrigin.z + (Math.random() - 0.5) * 12
+                        );
+                        m.changeDirTimer = 4 + Math.random() * 4;
+                    }
+
+                    const dir = new THREE.Vector3().subVectors(m.targetPos, m.mesh.position);
+                    dir.y = 0;
+                    if (dir.length() > 0.5) {
+                        dir.normalize();
+                        m.mesh.position.addScaledVector(dir, (m.speed * 0.4) * delta);
+                        m.mesh.lookAt(m.targetPos.x, m.mesh.position.y, m.targetPos.z);
+                    }
+                }
+            });
+        }
+
+        function updateStealthHUD() {
+            const nearest = monsters.reduce((min, m) => {
+                const d = m.mesh.position.distanceTo(player.pos);
+                return d < min ? d : min;
+            }, 999);
+
+            const icon = document.getElementById('stealth-icon');
+            const status = document.getElementById('stealth-status');
+
+            if (nearest < 8 || monsters.some(m => m.alertLevel === 1 && m.mesh.position.distanceTo(player.pos) < 15)) {
+                icon.className = "fa-solid fa-triangle-exclamation text-red-600 text-xl animate-ping";
+                status.innerText = "¡DETECTADO!";
+                status.className = "text-xs font-bold text-red-500";
+            } else if (nearest < 16) {
+                icon.className = "fa-solid fa-eye-low-vision text-yellow-500 text-xl";
+                status.innerText = "PRECAUCIÓN";
+                status.className = "text-xs font-bold text-yellow-400";
+            } else {
+                icon.className = "fa-solid fa-eye text-green-500 text-xl";
+                status.innerText = "OCULTO";
+                status.className = "text-xs font-bold text-green-400";
+            }
+        }
+
+        // --- PROCEDURAL JUMPSCARE ENGINE (Canvas 2D Monster Face Render) ---
+        function triggerJumpscare(deathMessage) {
+            if (player.isDead) return;
+            player.isDead = true;
+            isJumpscaring = true;
+
+            document.exitPointerLock();
+            audio.playJumpscareSound();
+
+            const flashEl = document.getElementById('jumpscare-flash');
+            flashEl.classList.remove('hidden');
+            flashEl.classList.add('red-flash');
+
+            jumpscareCanvas.style.display = 'block';
+            jumpscareCanvas.width = window.innerWidth;
+            jumpscareCanvas.height = window.innerHeight;
+
+            let startTime = performance.now();
+
+            function renderJumpscareFrame(now) {
+                const elapsed = now - startTime;
+                if (elapsed > 1800) {
+                    // End Jumpscare & Show Game Over
+                    jumpscareCanvas.style.display = 'none';
+                    flashEl.classList.add('hidden');
+                    document.getElementById('hud').classList.add('hidden');
+                    document.getElementById('death-reason').innerText = deathMessage;
+                    document.getElementById('gameover-overlay').classList.remove('hidden');
+                    return;
+                }
+
+                const w = jumpscareCanvas.width;
+                const h = jumpscareCanvas.height;
+
+                jumpscareCtx.fillStyle = '#000000';
+                jumpscareCtx.fillRect(0, 0, w, h);
+
+                // Violent screen shake
+                const shakeX = (Math.random() - 0.5) * 45;
+                const shakeY = (Math.random() - 0.5) * 45;
+
+                jumpscareCtx.save();
+                jumpscareCtx.translate(w / 2 + shakeX, h / 2 + shakeY);
+
+                // Zoom monster face closer over time
+                const scale = 1 + (elapsed / 1800) * 2.8;
+                jumpscareCtx.scale(scale, scale);
+
+                // Draw Monstrous Stylized Face (Zoonomaly style creature)
+                // Head outline
+                jumpscareCtx.fillStyle = '#0c0d0e';
+                jumpscareCtx.beginPath();
+                jumpscareCtx.ellipse(0, -20, 180, 240, 0, 0, Math.PI * 2);
+                jumpscareCtx.fill();
+
+                // Sunken glowing red eyes
+                const eyeOffset = 70 + (Math.random() * 6);
+                jumpscareCtx.fillStyle = '#ff0000';
+                jumpscareCtx.shadowColor = '#ff0000';
+                jumpscareCtx.shadowBlur = 30;
+
+                jumpscareCtx.beginPath();
+                jumpscareCtx.arc(-eyeOffset, -60, 28, 0, Math.PI * 2);
+                jumpscareCtx.arc(eyeOffset, -60, 28, 0, Math.PI * 2);
+                jumpscareCtx.fill();
+
+                // White sharp pupils
+                jumpscareCtx.fillStyle = '#ffffff';
+                jumpscareCtx.beginPath();
+                jumpscareCtx.arc(-eyeOffset, -60, 8, 0, Math.PI * 2);
+                jumpscareCtx.arc(eyeOffset, -60, 8, 0, Math.PI * 2);
+                jumpscareCtx.fill();
+
+                // Giant Grotesque Mouth with Needle Teeth
+                jumpscareCtx.shadowBlur = 0;
+                jumpscareCtx.fillStyle = '#4a0000';
+                jumpscareCtx.beginPath();
+                jumpscareCtx.ellipse(0, 80, 120, 90, 0, 0, Math.PI * 2);
+                jumpscareCtx.fill();
+
+                // Sharp Needle Teeth
+                jumpscareCtx.fillStyle = '#fef08a';
+                const teethCount = 14;
+                for (let i = 0; i < teethCount; i++) {
+                    const tx = -100 + (i * 15);
+                    // Upper teeth
+                    jumpscareCtx.beginPath();
+                    jumpscareCtx.moveTo(tx, 10);
+                    jumpscareCtx.lineTo(tx + 7, 50 + (Math.random() * 15));
+                    jumpscareCtx.lineTo(tx + 14, 10);
+                    jumpscareCtx.fill();
+
+                    // Lower teeth
+                    jumpscareCtx.beginPath();
+                    jumpscareCtx.moveTo(tx, 150);
+                    jumpscareCtx.lineTo(tx + 7, 110 - (Math.random() * 15));
+                    jumpscareCtx.lineTo(tx + 14, 150);
+                    jumpscareCtx.fill();
+                }
+
+                // Random glitch blood splatters
+                jumpscareCtx.fillStyle = '#dc2626';
+                for (let k = 0; k < 8; k++) {
+                    const bx = (Math.random() - 0.5) * 350;
+                    const by = (Math.random() - 0.5) * 350;
+                    const r = 5 + Math.random() * 20;
+                    jumpscareCtx.beginPath();
+                    jumpscareCtx.arc(bx, by, r, 0, Math.PI * 2);
+                    jumpscareCtx.fill();
+                }
+
+                jumpscareCtx.restore();
+
+                requestAnimationFrame(renderJumpscareFrame);
+            }
+
+            requestAnimationFrame(renderJumpscareFrame);
+        }
+
+        // --- RESET / RESTART GAME ---
+        function resetGame() {
+            player.isDead = false;
+            player.hasEscaped = false;
+            player.pos.set(0, 1.6, 22);
+            player.stamina = 100;
+            player.battery = 100;
+            player.flashlightOn = true;
+            player.keysFound = 0;
+            flashlight.visible = true;
+
+            // Reset HUD Key icons
+            for (let i = 1; i <= 3; i++) {
+                const el = document.getElementById(`key-${i}`);
+                el.className = "fa-solid fa-key text-gray-600 text-lg";
+            }
+            document.getElementById('objective-text').innerText = "Encuentra las 3 Llaves del Zoológico para abrir la Puerta Principal.";
+
+            // Clear Scene & Rebuild Map
+            while (scene.children.length > 0) {
+                scene.remove(scene.children[0]);
+            }
+
+            wallColliders.length = 0;
+            interactables.length = 0;
+            monsters.length = 0;
+
+            const ambientLight = new THREE.AmbientLight(0x080a10, 0.2);
+            scene.add(ambientLight);
+            scene.add(flashlightTarget);
+            scene.add(flashlight);
+
+            buildZooMap();
+
+            // Hide Overlays
+            document.getElementById('gameover-overlay').classList.add('hidden');
+            document.getElementById('win-overlay').classList.add('hidden');
+            document.getElementById('hud').classList.remove('hidden');
+
+            canvas.requestPointerLock();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- MAIN GAME LOOP ---
+        let lastTime = performance.now();
+
+        function animate(now) {
+            requestAnimationFrame(animate);
+
+            const delta = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
+
+            if (!player.isDead && !player.hasEscaped) {
+                updatePlayer(delta);
+                updateMonsters(delta);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize Engine on load
+        window.onload = () => {
+            initEngine();
+            requestAnimationFrame(animate);
+        };
+    </script>
+</body>
+</html>
