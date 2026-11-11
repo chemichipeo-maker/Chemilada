@@ -6,6 +6,7 @@
     <title>Terror en el Bosque: La Última Señal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
@@ -355,6 +356,170 @@
             font-size: 11px;
             text-align: center;
         }
+
+        /* ================= MULTIJUGADOR ================= */
+        #crosshair-p2, #prompt-p2, #danger-vignette-p2, #hidden-overlay-p2,
+        #hide-badge-p2, #stats-p2, #split-divider { display: none; }
+
+        #danger-vignette-p2 {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at center, rgba(120,0,0,0) 35%, rgba(120,0,0,0.5) 100%);
+            transition: opacity 0.4s ease;
+        }
+
+        #hidden-overlay-p2 {
+            position: absolute;
+            inset: 0;
+            z-index: 18;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.25) 20%, rgba(0,0,0,0.9) 100%);
+        }
+        #hidden-overlay-p2.show { opacity: 1; }
+
+        #hide-badge-p2 {
+            position: absolute;
+            bottom: 12%;
+            left: 75%;
+            transform: translateX(-50%);
+            z-index: 26;
+            padding: 7px 18px;
+            border-radius: 6px;
+            border: 1px solid #14532d;
+            background: rgba(4, 12, 7, 0.9);
+            color: #86efac;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            display: none;
+        }
+
+        #split-divider {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            margin-left: -1px;
+            z-index: 22;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(34,197,94,0.05), rgba(34,197,94,0.35), rgba(34,197,94,0.05));
+            box-shadow: 0 0 12px rgba(0,0,0,0.9);
+        }
+
+        body.split #crosshair { left: 25%; }
+        body.split #prompt { left: 25%; bottom: 17%; max-width: 46vw; white-space: normal; text-align: center; }
+        body.split #crosshair-p2 { display: block; left: 75%; }
+        body.split #prompt-p2 { display: block; left: 75%; bottom: 17%; max-width: 46vw; white-space: normal; text-align: center; }
+        body.split #danger-vignette { width: 50%; }
+        body.split #danger-vignette-p2 { display: block; left: 50%; width: 50%; }
+        body.split #hidden-overlay { width: 50%; }
+        body.split #hidden-overlay-p2 { display: block; left: 50%; width: 50%; }
+        body.split #hide-badge { left: 25%; }
+        body.split #hide-badge-p2 { display: block; }
+        body.split #split-divider { display: block; }
+
+        body.split #stats-p1 {
+            position: absolute;
+            left: 25%;
+            top: 14px;
+            transform: translateX(-50%);
+            width: 15rem;
+        }
+        body.split #stats-p2 {
+            display: block;
+            position: absolute;
+            left: 75%;
+            top: 14px;
+            transform: translateX(-50%);
+            width: 15rem;
+        }
+        body.split #objective-panel { max-width: 40vw; }
+        body.split #radio-panel { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: 21rem; }
+        body.split #controls-hint { max-width: 34vw; }
+        body.split #player-tag-1, body.split #player-tag-2 { display: block; }
+
+        #player-tag-1, #player-tag-2 {
+            display: none;
+            position: absolute;
+            top: 10px;
+            z-index: 24;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(4, 10, 6, 0.85);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            color: #86efac;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            pointer-events: none;
+        }
+        #player-tag-1 { left: calc(25% - 42px); }
+        #player-tag-2 { left: calc(75% - 42px); }
+
+        #prompt-p2 {
+            position: absolute;
+            left: 75%;
+            bottom: 22%;
+            transform: translateX(-50%);
+            z-index: 25;
+            padding: 8px 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(251,191,36,0.5);
+            background: rgba(12, 10, 4, 0.88);
+            color: #fde68a;
+            font-size: 13px;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+            box-shadow: 0 0 26px rgba(0,0,0,0.85);
+        }
+
+        .btn-menu {
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            transition: all 0.18s ease;
+            border: 1px solid rgba(34,197,94,0.35);
+            background: rgba(6, 20, 11, 0.85);
+            color: #bbf7d0;
+            cursor: pointer;
+        }
+        .btn-menu:hover { background: rgba(14, 45, 24, 0.95); border-color: rgba(74,222,128,0.65); }
+        .btn-menu:active { transform: scale(0.99); }
+        .btn-menu.secondary { border-color: rgba(148,163,184,0.25); color: #cbd5e1; background: rgba(12,16,14,0.85); }
+        .btn-menu.secondary:hover { background: rgba(30,41,36,0.95); }
+        .btn-menu:disabled { opacity: 0.45; cursor: wait; }
+
+        #online-panel {
+            background: rgba(3, 8, 5, 0.9);
+            border: 1px solid rgba(90, 130, 100, 0.28);
+            border-radius: 12px;
+        }
+        #join-code {
+            background: rgba(0,0,0,0.65);
+            border: 1px solid rgba(34,197,94,0.35);
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+            letter-spacing: 0.3em;
+            color: #bbf7d0;
+            width: 150px;
+            outline: none;
+            text-transform: uppercase;
+        }
+        #join-code:focus { border-color: rgba(74,222,128,0.75); box-shadow: 0 0 18px rgba(34,197,94,0.2); }
+        #room-code {
+            font-size: 30px;
+            letter-spacing: 0.32em;
+            color: #86efac;
+            text-shadow: 0 0 22px rgba(34,197,94,0.35);
+            margin: 6px 0 4px;
+        }
     </style>
 </head>
 <body class="bg-black text-white select-none">
@@ -365,20 +530,28 @@
     <div class="vignette"></div>
     <div class="grain"></div>
     <div id="danger-vignette"></div>
+    <div id="danger-vignette-p2"></div>
     <div id="hidden-overlay"></div>
+    <div id="hidden-overlay-p2"></div>
     <div id="blackout"></div>
+    <div id="split-divider"></div>
 
     <div id="crosshair" class="crosshair"></div>
+    <div id="crosshair-p2" class="crosshair"></div>
     <div id="prompt" class="hidden"></div>
+    <div id="prompt-p2" class="hidden"></div>
     <div id="toast"></div>
     <div id="subtitle"></div>
     <div id="hide-badge">ESCONDIDO &nbsp;·&nbsp; <span class="text-gray-400">[E] SALIR</span></div>
+    <div id="hide-badge-p2">ESCONDIDO &nbsp;·&nbsp; <span class="text-gray-400">[M] SALIR</span></div>
+    <div id="player-tag-1">JUGADOR 1</div>
+    <div id="player-tag-2">JUGADOR 2</div>
 
     <!-- HUD -->
     <div id="hud" class="absolute inset-0 z-20 pointer-events-none hidden flex flex-col justify-between p-5">
         <!-- TOP -->
         <div class="flex justify-between items-start gap-4">
-            <div class="flex flex-col gap-3 max-w-md">
+            <div class="flex flex-col gap-3 max-w-md" id="objective-panel">
                 <div class="panel px-4 py-3">
                     <div class="flex items-center justify-between mb-1">
                         <div class="hud-title"><i class="fa-solid fa-satellite-dish mr-1"></i> Objetivo</div>
@@ -399,7 +572,7 @@
                 </div>
             </div>
 
-            <div class="panel px-4 py-3 w-64 shrink-0">
+            <div id="stats-p1" class="panel px-4 py-3 w-64 shrink-0">
                 <div class="mb-3">
                     <div class="flex justify-between text-[11px] mb-1">
                         <span class="text-gray-400"><i class="fa-solid fa-person-running mr-1"></i> Resistencia</span>
@@ -409,7 +582,7 @@
                 </div>
                 <div>
                     <div class="flex justify-between text-[11px] mb-1">
-                        <span class="text-gray-400"><i class="fa-solid fa-flashlight mr-1"></i> Linterna <span class="text-gray-600">[F]</span></span>
+                        <span class="text-gray-400"><i class="fa-solid fa-flashlight mr-1"></i> Linterna <span class="text-gray-600" id="flash-key-p1">[F]</span></span>
                         <span id="battery-val" class="text-amber-400">100%</span>
                     </div>
                     <div class="bar-track"><div id="battery-bar" class="bar-fill bg-amber-500"></div></div>
@@ -419,11 +592,39 @@
                     </div>
                 </div>
             </div>
+
+            <div id="stats-p2" class="panel px-4 py-3 w-64 shrink-0">
+                <div class="mb-3">
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-gray-400"><i class="fa-solid fa-person-running mr-1"></i> Resistencia</span>
+                        <span id="stamina-val-p2" class="text-green-400">100%</span>
+                    </div>
+                    <div class="bar-track"><div id="stamina-bar-p2" class="bar-fill bg-green-600"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-gray-400"><i class="fa-solid fa-flashlight mr-1"></i> Linterna <span class="text-gray-600">[N]</span></span>
+                        <span id="battery-val-p2" class="text-amber-400">100%</span>
+                    </div>
+                    <div class="bar-track"><div id="battery-bar-p2" class="bar-fill bg-amber-500"></div></div>
+                    <div class="mt-1.5 flex items-center gap-2 text-[10px] text-gray-500">
+                        <i class="fa-solid fa-battery-half"></i>
+                        <span id="spare-batteries-p2">Pilas de repuesto: 0</span>
+                    </div>
+                </div>
+                <div class="mt-2 flex items-center gap-1.5">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-widest">Equipo</span>
+                    <div id="inv-key-p2" class="inv-slot" title="Llave"><i class="fa-solid fa-key text-sm"></i></div>
+                    <div id="inv-fuse-p2" class="inv-slot" title="Fusible"><i class="fa-solid fa-plug text-sm"></i></div>
+                    <div id="inv-battery-p2" class="inv-slot" title="Batería"><i class="fa-solid fa-car-battery text-sm"></i></div>
+                    <span id="inv-hint-p2" class="text-[9px] text-gray-500 ml-1"></span>
+                </div>
+            </div>
         </div>
 
         <!-- BOTTOM -->
         <div class="flex justify-between items-end gap-4">
-            <div class="panel px-3 py-2.5 text-[10px] text-gray-400 space-y-1 leading-relaxed">
+            <div id="controls-hint" class="panel px-3 py-2.5 text-[10px] text-gray-400 space-y-1 leading-relaxed">
                 <div><span class="key-hint">WASD</span> Moverse &nbsp; <span class="key-hint">SHIFT</span> Correr</div>
                 <div><span class="key-hint">CTRL</span> Agacharse / esconderse &nbsp; <span class="key-hint">F</span> Linterna</div>
                 <div><span class="key-hint">E</span> Interactuar &nbsp; <span class="key-hint">ESC</span> Liberar ratón</div>
@@ -482,9 +683,35 @@
                 </div>
             </div>
 
-            <button id="start-btn" class="w-full py-4 bg-green-800 hover:bg-green-700 active:scale-[0.99] text-green-50 font-bold text-sm rounded-lg tracking-[0.25em] transition duration-200 shadow-[0_0_30px_rgba(22,101,52,0.45)] border border-green-600/40">
-                <i class="fa-solid fa-satellite-dish mr-2"></i> INICIAR TURNO
-            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <button id="start-btn" class="btn-menu">
+                    <i class="fa-solid fa-satellite-dish mr-2"></i> JUGAR SOLO
+                </button>
+                <button id="local-btn" class="btn-menu">
+                    <i class="fa-solid fa-people-group mr-2"></i> CO-OP LOCAL · 2P
+                </button>
+                <button id="host-btn" class="btn-menu secondary">
+                    <i class="fa-solid fa-tower-broadcast mr-2"></i> CREAR SALA ONLINE
+                </button>
+                <button id="join-btn" class="btn-menu secondary">
+                    <i class="fa-solid fa-link mr-2"></i> UNIRSE A SALA
+                </button>
+            </div>
+
+            <div id="online-panel" class="hidden mt-4 p-4">
+                <div id="online-status" class="text-[11px] text-gray-400 text-center leading-relaxed">...</div>
+                <div id="host-info" class="hidden text-center mt-2">
+                    <div class="text-[9px] tracking-[0.3em] text-gray-500 uppercase">Código de sala</div>
+                    <div id="room-code">-----</div>
+                    <div class="text-[10px] text-gray-500">Comparte este código con tu compañero</div>
+                </div>
+                <div id="join-info" class="hidden flex gap-2 justify-center mt-2">
+                    <input id="join-code" maxlength="5" placeholder="CÓDIGO" autocomplete="off" spellcheck="false">
+                    <button id="join-connect-btn" class="px-4 py-2 rounded-lg bg-green-900 hover:bg-green-800 text-green-100 text-[11px] tracking-[0.2em] border border-green-700/60">CONECTAR</button>
+                </div>
+                <button id="online-cancel-btn" class="hidden mt-3 mx-auto block text-[10px] text-gray-500 underline">Cancelar</button>
+            </div>
+
             <p class="text-center text-[10px] text-gray-700 mt-3 tracking-widest">Se recomienda usar auriculares · Juega con la luz apagada</p>
         </div>
     </div>
@@ -512,6 +739,16 @@
                 <i class="fa-solid fa-rotate-right mr-2"></i> REINICIAR CAPÍTULO
             </button>
         </div>
+    </div>
+
+    <!-- DESCONEXIÓN ONLINE -->
+    <div id="disconnect-overlay" class="overlay-screen hidden" style="background: rgba(0,0,0,0.96);">
+        <i class="fa-solid fa-link-slash text-4xl text-red-700 mb-4"></i>
+        <h1 class="font-horror text-5xl text-red-600 mb-3">CONEXIÓN PERDIDA</h1>
+        <p class="text-gray-400 text-sm max-w-md mb-8">Tu compañero ha salido de la partida o la conexión se ha cortado.</p>
+        <button id="disconnect-menu-btn" class="px-8 py-3 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold rounded-lg tracking-widest text-xs border border-gray-700 transition">
+            <i class="fa-solid fa-rotate-right mr-2"></i> VOLVER AL MENÚ
+        </button>
     </div>
 
     <canvas id="jumpscare-canvas"></canvas>
@@ -1191,30 +1428,89 @@ const PLACES = {
 // ============================================================
 // ESTADO
 // ============================================================
-let scene, camera, renderer;
+let scene, camera, camera2, renderer;
 let flashlight, flashlightTarget, flashlightBeam;
+let flashlight2, flashlightTarget2, flashlightBeam2;
 let ambientLight, hemiLight, moonLight;
 let dustGroup;
 let creature = null;
 let clockTime = 0;
 
-const player = {
-    pos: new THREE.Vector3(0, PLAYER_HEIGHT, 76),
-    rotY: 0,
-    rotX: 0,
-    stamina: 100,
-    battery: 100,
-    flashlightOn: true,
-    isCrouching: false,
-    isSprinting: false,
-    isHidden: false,
-    hideSpot: null,
-    isDead: false,
-    hasEscaped: false,
-    bob: 0,
-    items: { key: false, fuse: false, genBattery: false },
-    spareBatteries: 0
-};
+// ============================================================
+// MULTIJUGADOR · ESTADO
+// ============================================================
+const MODE = { SOLO: 'solo', LOCAL: 'local', HOST: 'host', GUEST: 'guest' };
+let gameMode = MODE.SOLO;
+let netRole = null;              // 'host' | 'guest' | null
+let localPlayerIndex = 0;        // índice del jugador de esta pantalla
+let activePlayerCount = 1;
+let netPeer = null;
+let netConn = null;
+let netConnected = false;
+let netStateTimer = 0;
+let netWorldTimer = 0;
+let netFxQueue = [];
+let lastAppliedPhase = '';
+let netSendCount = 0;
+let netRecvCount = 0;
+
+function createPlayerState(index, x, z) {
+    return {
+        index,
+        name: index === 0 ? 'Jugador 1' : 'Jugador 2',
+        pos: new THREE.Vector3(x, PLAYER_HEIGHT, z),
+        rotY: 0,
+        rotX: 0,
+        stamina: 100,
+        battery: 100,
+        flashlightOn: true,
+        isCrouching: false,
+        isSprinting: false,
+        isHidden: false,
+        hideSpot: null,
+        isDead: false,
+        hasEscaped: false,
+        bob: 0,
+        items: { key: false, fuse: false, genBattery: false },
+        spareBatteries: 0,
+        camera: null,
+        flashlight: null,
+        flashlightTarget: null,
+        beam: null,
+        avatar: null,
+        currentTarget: null,
+        lastFootstep: 0,
+        isRemote: false,
+        remoteTarget: new THREE.Vector3(x, PLAYER_HEIGHT, z),
+        remoteRotY: 0,
+        remoteRotX: 0,
+        remoteFlashlight: true
+    };
+}
+
+const players = [createPlayerState(0, 0, 76), createPlayerState(1, 2.6, 76)];
+const player = players[0];   // alias histórico: jugador 1 / anfitrión
+
+function activePlayers() {
+    return activePlayerCount > 1 ? players : [players[0]];
+}
+function isWorldAuthority() {
+    return netRole !== 'guest';
+}
+function localPlayer() {
+    return players[localPlayerIndex] || players[0];
+}
+function anyPlayer(predicate) {
+    return activePlayers().some(predicate);
+}
+function nearestPlayerTo(x, z) {
+    let best = players[0], bestD = Infinity;
+    for (const p of activePlayers()) {
+        const d = dist2D(x, z, p.pos.x, p.pos.z);
+        if (d < bestD) { best = p; bestD = d; }
+    }
+    return best;
+}
 
 const story = {
     phase: 'intro',          // intro | blackout | search | generator | house | return | ending | done
@@ -1238,6 +1534,8 @@ const keysPressed = {};
 const circleColliders = [];      // { x, z, r }
 const boxColliders = [];         // { minX, maxX, minZ, maxZ }
 const interactables = [];
+const interactableById = {};
+let interactableSeq = 0;
 const hideSpots = [];
 const animated = [];
 const eventBushes = [];
@@ -1319,23 +1617,26 @@ function setObjective(text, target = null) {
     currentObjectiveTarget = target;
 }
 
-function updateInventoryHUD() {
+function updateInventoryHUD(p = player, suffix = '') {
     const map = [
         ['inv-key', 'key'],
         ['inv-fuse', 'fuse'],
         ['inv-battery', 'genBattery']
     ];
     map.forEach(([id, key]) => {
-        const el = document.getElementById(id);
-        if (player.items[key]) el.classList.add('found');
+        const el = document.getElementById(id + suffix);
+        if (!el) return;
+        if (p.items[key]) el.classList.add('found');
         else el.classList.remove('found');
     });
     const missing = [];
-    if (!player.items.key) missing.push('llave');
-    if (!player.items.fuse) missing.push('fusible');
-    if (!player.items.genBattery) missing.push('batería');
-    document.getElementById('inv-hint').innerText = missing.length ? `Falta: ${missing.join(', ')}` : 'Todo listo';
-    document.getElementById('spare-batteries').innerText = `Pilas de repuesto: ${player.spareBatteries}`;
+    if (!p.items.key) missing.push('llave');
+    if (!p.items.fuse) missing.push('fusible');
+    if (!p.items.genBattery) missing.push('batería');
+    const hint = document.getElementById('inv-hint' + suffix);
+    if (hint) hint.innerText = missing.length ? `Falta: ${missing.join(', ')}` : 'Todo listo';
+    const spare = document.getElementById('spare-batteries' + suffix);
+    if (spare) spare.innerText = `Pilas de repuesto: ${p.spareBatteries}`;
 }
 
 // ============================================================
@@ -1559,40 +1860,30 @@ function createMapTexture() {
 // ============================================================
 // INICIALIZACIÓN
 // ============================================================
-function initEngine() {
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x04060a);
-    scene.fog = new THREE.FogExp2(0x04060a, 0.042);
+function createPlayerView(p, primary) {
+    const cam = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.08, 340);
+    cam.position.copy(p.pos);
+    cam.rotation.order = 'YXZ';
+    scene.add(cam);
+    p.camera = cam;
 
-    camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.08, 340);
-    camera.position.copy(player.pos);
-    camera.rotation.order = 'YXZ';
-    scene.add(camera);
+    const light = new THREE.SpotLight(0xffe6b8, FLASHLIGHT_INTENSITY, FLASHLIGHT_DISTANCE, FLASHLIGHT_ANGLE, 0.45, 1.15);
+    light.castShadow = !!primary;
+    if (primary) {
+        light.shadow.mapSize.width = 1024;
+        light.shadow.mapSize.height = 1024;
+        light.shadow.camera.near = 0.4;
+        light.shadow.camera.far = 50;
+        light.shadow.bias = -0.0008;
+    }
 
-    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    const target = new THREE.Object3D();
+    scene.add(target);
+    light.target = target;
+    scene.add(light);
+    p.flashlight = light;
+    p.flashlightTarget = target;
 
-    // Linterna
-    flashlight = new THREE.SpotLight(0xffe6b8, FLASHLIGHT_INTENSITY, FLASHLIGHT_DISTANCE, FLASHLIGHT_ANGLE, 0.45, 1.15);
-    flashlight.castShadow = true;
-    flashlight.shadow.mapSize.width = 1024;
-    flashlight.shadow.mapSize.height = 1024;
-    flashlight.shadow.camera.near = 0.4;
-    flashlight.shadow.camera.far = 50;
-    flashlight.shadow.bias = -0.0008;
-
-    flashlightTarget = new THREE.Object3D();
-    scene.add(flashlightTarget);
-    flashlight.target = flashlightTarget;
-    scene.add(flashlight);
-
-    // Haz visible
     const beamGeo = new THREE.ConeGeometry(6.4, 30, 18, 1, true);
     const beamMat = new THREE.MeshBasicMaterial({
         color: 0xffeccb,
@@ -1603,10 +1894,82 @@ function initEngine() {
         blending: THREE.AdditiveBlending,
         fog: false
     });
-    flashlightBeam = new THREE.Mesh(beamGeo, beamMat);
-    flashlightBeam.rotation.x = Math.PI / 2;
-    flashlightBeam.position.set(0, 0, -15);
-    camera.add(flashlightBeam);
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.rotation.x = Math.PI / 2;
+    beam.position.set(0, 0, -15);
+    cam.add(beam);
+    p.beam = beam;
+
+    p.avatar = createPlayerAvatar(p);
+    scene.add(p.avatar);
+}
+
+function createPlayerAvatar(p) {
+    const group = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({ color: 0x141a16, roughness: 0.92, metalness: 0.04 });
+    const jacket = new THREE.MeshStandardMaterial({ color: 0x263128, roughness: 0.85, metalness: 0.05 });
+
+    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.2, 0.78, 8), jacket);
+    torso.position.y = 1.28;
+    group.add(torso);
+
+    const legs = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.16, 0.85, 7), mat);
+    legs.position.y = 0.45;
+    group.add(legs);
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 10), mat);
+    head.position.y = 1.82;
+    group.add(head);
+
+    const shoulders = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), jacket);
+    shoulders.scale.set(1.6, 0.5, 0.8);
+    shoulders.position.y = 1.62;
+    group.add(shoulders);
+
+    const lampMat = new THREE.MeshBasicMaterial({
+        color: 0xffe6b8, transparent: true, opacity: 0.07, depthWrite: false,
+        blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false
+    });
+    const lamp = new THREE.Mesh(new THREE.ConeGeometry(1.1, 6, 12, 1, true), lampMat);
+    lamp.rotation.x = Math.PI / 2;
+    lamp.position.set(0.18, 1.55, -3.2);
+    group.add(lamp);
+    group.userData.lamp = lamp;
+
+    const lampLight = new THREE.PointLight(0xffe6b8, 0, 9, 2);
+    lampLight.position.set(0.18, 1.55, -1.4);
+    group.add(lampLight);
+    group.userData.lampLight = lampLight;
+
+    group.visible = false;
+    return group;
+}
+
+function initEngine() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x04060a);
+    scene.fog = new THREE.FogExp2(0x04060a, 0.042);
+
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    createPlayerView(players[0], true);
+    createPlayerView(players[1], false);
+
+    camera = players[0].camera;
+    camera2 = players[1].camera;
+    flashlight = players[0].flashlight;
+    flashlightTarget = players[0].flashlightTarget;
+    flashlightBeam = players[0].beam;
+    flashlight2 = players[1].flashlight;
+    flashlightTarget2 = players[1].flashlightTarget;
+    flashlightBeam2 = players[1].beam;
 
     buildWorld();
 
@@ -2103,8 +2466,11 @@ function buildDustAndFireflies() {
 // ============================================================
 function registerInteractable(mesh, data) {
     data.mesh = mesh;
+    data.id = data.id || ('it' + (++interactableSeq));
+    data.collectedBy = data.collectedBy || [false, false];
     mesh.traverse(obj => { obj.userData.interactable = data; });
     interactables.push(data);
+    interactableById[data.id] = data;
     return data;
 }
 
@@ -3400,28 +3766,42 @@ function buildStructures() {
 // ============================================================
 // CONTROLES
 // ============================================================
+function interactLabel(p) {
+    return (gameMode === MODE.LOCAL && p.index === 1) ? 'M' : 'E';
+}
+
+function toggleFlashlight(p) {
+    if (!p || !gameStarted || p.isDead || p.hasEscaped) return;
+    if (p.isHidden) {
+        showToast('Estás escondido. Sal primero.', 'warn');
+        return;
+    }
+    if (!p.flashlightOn && p.battery <= 0) {
+        audio.playLocked();
+        showToast('La linterna no tiene batería. Busca pilas.', 'warn');
+        return;
+    }
+    p.flashlightOn = !p.flashlightOn;
+    p.flashlight.visible = p.flashlightOn;
+    p.beam.visible = p.flashlightOn;
+    audio.playRadioBeep(420);
+}
+
 function setupInput() {
     document.addEventListener('keydown', (e) => {
         keysPressed[e.code] = true;
 
-        if (e.code === 'KeyF' && gameStarted && !player.isDead && !player.hasEscaped) {
-            if (player.isHidden) {
-                showToast('Estás escondido. Sal primero con [E].', 'warn');
-                return;
-            }
-            if (!player.flashlightOn && player.battery <= 0) {
-                audio.playLocked();
-                showToast('La linterna no tiene batería. Busca pilas.', 'warn');
-                return;
-            }
-            player.flashlightOn = !player.flashlightOn;
-            flashlight.visible = player.flashlightOn;
-            flashlightBeam.visible = player.flashlightOn;
-            audio.playRadioBeep(420);
-        }
+        if (!gameStarted) return;
 
-        if (e.code === 'KeyE' && gameStarted && !player.isDead && !player.hasEscaped) {
-            handleInteraction();
+        if (gameMode === MODE.LOCAL) {
+            if (e.code === 'KeyF') toggleFlashlight(players[0]);
+            if (e.code === 'KeyN') toggleFlashlight(players[1]);
+            if (e.code === 'KeyE') handleInteractionFor(players[0]);
+            if (e.code === 'KeyM') handleInteractionFor(players[1]);
+        } else {
+            const lp = localPlayer();
+            if (e.code === 'KeyF') toggleFlashlight(lp);
+            if (e.code === 'KeyE') handleInteractionFor(lp);
         }
     });
 
@@ -3430,7 +3810,7 @@ function setupInput() {
     });
 
     canvas.addEventListener('click', () => {
-        if (!isPointerLocked && gameStarted && !player.isDead && !player.hasEscaped) {
+        if (!isPointerLocked && gameStarted && !localPlayer().isDead && !localPlayer().hasEscaped) {
             canvas.requestPointerLock();
         }
     });
@@ -3440,48 +3820,123 @@ function setupInput() {
     });
 
     document.addEventListener('mousemove', (e) => {
-        if (!isPointerLocked || player.isDead) return;
+        if (!isPointerLocked) return;
+        const mousePlayer = gameMode === MODE.LOCAL ? players[0] : localPlayer();
+        if (mousePlayer.isDead || mousePlayer.hasEscaped) return;
         const sens = 0.0021;
-        player.rotY -= e.movementX * sens;
-        player.rotX -= e.movementY * sens;
-        player.rotX = clamp(player.rotX, -1.35, 1.35);
+        mousePlayer.rotY -= e.movementX * sens;
+        mousePlayer.rotX -= e.movementY * sens;
+        mousePlayer.rotX = clamp(mousePlayer.rotX, -1.35, 1.35);
     });
 
-    document.getElementById('start-btn').addEventListener('click', startGame);
-    document.getElementById('retry-btn').addEventListener('click', retryFromCheckpoint);
+    document.getElementById('start-btn').addEventListener('click', () => startGame(MODE.SOLO));
+    document.getElementById('local-btn').addEventListener('click', () => startGame(MODE.LOCAL));
+    document.getElementById('host-btn').addEventListener('click', beginHost);
+    document.getElementById('join-btn').addEventListener('click', () => showOnlinePanel('join'));
+    document.getElementById('join-connect-btn').addEventListener('click', () => {
+        const code = (document.getElementById('join-code').value || '').trim().toUpperCase();
+        beginGuest(code);
+    });
+    document.getElementById('online-cancel-btn').addEventListener('click', closeOnlinePanel);
+    document.getElementById('retry-btn').addEventListener('click', requestRetry);
     document.getElementById('chapter-restart-btn').addEventListener('click', () => location.reload());
+    document.getElementById('disconnect-menu-btn').addEventListener('click', () => location.reload());
 }
 
-function startGame() {
+function startGame(mode) {
+    gameMode = mode || MODE.SOLO;
+    netRole = gameMode === MODE.HOST ? 'host' : (gameMode === MODE.GUEST ? 'guest' : null);
+    localPlayerIndex = gameMode === MODE.GUEST ? 1 : 0;
+    activePlayerCount = gameMode === MODE.SOLO ? 1 : 2;
+
+    players[0].isRemote = gameMode === MODE.GUEST;
+    players[1].isRemote = gameMode === MODE.HOST;
+
+    players.forEach((p, i) => {
+        p.pos.set(i === 0 ? 0 : 2.6, PLAYER_HEIGHT, 76);
+        p.rotY = 0;
+        p.rotX = 0;
+        p.stamina = 100;
+        p.battery = 100;
+        p.flashlightOn = true;
+        p.isDead = false;
+        p.hasEscaped = false;
+        p.isHidden = false;
+        p.hideSpot = null;
+        p.isCrouching = false;
+        p.isSprinting = false;
+        p.bob = 0;
+        p.items = { key: false, fuse: false, genBattery: false };
+        p.spareBatteries = 0;
+        p.currentTarget = null;
+        p.remoteTarget.copy(p.pos);
+        p.remoteRotY = 0;
+        p.remoteRotX = 0;
+        p.flashlight.visible = true;
+        p.beam.visible = true;
+        p.flashlight.intensity = FLASHLIGHT_INTENSITY;
+        p.beam.material.opacity = 0.035;
+        p.avatar.visible = false;
+        p.camera.position.copy(p.pos);
+        p.camera.rotation.set(0, 0, 0);
+    });
+
     audio.init();
     audio.startAmbient();
 
     gameStarted = true;
     story.phase = 'intro';
     story.time = 0;
+    story.phaseTime = 0;
 
+    document.body.classList.toggle('split', gameMode === MODE.LOCAL);
+    updateCameraAspects();
     document.getElementById('menu-overlay').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
+    document.getElementById('online-panel').classList.add('hidden');
+
+    const hint = document.getElementById('controls-hint');
+    if (gameMode === MODE.LOCAL) {
+        hint.innerHTML =
+            '<div><span class="key-hint">J1</span> WASD + ratón · <span class="key-hint">SHIFT</span> correr · <span class="key-hint">F</span> linterna · <span class="key-hint">E</span> interactuar</div>' +
+            '<div><span class="key-hint">J2</span> Flechas · <span class="key-hint">IJKL</span> mirar · <span class="key-hint">N</span> linterna · <span class="key-hint">M</span> interactuar</div>' +
+            '<div><span class="key-hint">J2</span> <span class="key-hint">SHIFT DER</span> correr · <span class="key-hint">.</span> agacharse</div>';
+    } else if (gameMode === MODE.HOST || gameMode === MODE.GUEST) {
+        hint.innerHTML =
+            '<div><span class="key-hint">WASD</span> Moverse · <span class="key-hint">SHIFT</span> Correr</div>' +
+            '<div><span class="key-hint">CTRL</span> Agacharse · <span class="key-hint">F</span> Linterna · <span class="key-hint">E</span> Interactuar</div>' +
+            '<div class="text-green-500/80">ONLINE · ' + (gameMode === MODE.HOST ? 'ANFITRIÓN' : 'INVITADO') + '</div>';
+    }
 
     setObjective('Revisa las instalaciones eléctricas del bosque. No te alejes demasiado de la torre.', PLACES.tower);
-    updateInventoryHUD();
+    updateInventoryHUD(players[0], '');
+    updateInventoryHUD(players[1], '-p2');
+    updateHUD();
 
     // Tarjeta de título
     const card = document.getElementById('title-card');
     card.classList.add('show');
     setTimeout(() => card.classList.remove('show'), 5200);
 
-    canvas.requestPointerLock();
+    if (gameMode !== MODE.GUEST) canvas.requestPointerLock();
 
-    setTimeout(() => {
-        radioSay('Central a Unidad 7. Revisa las instalaciones del bosque. Sin novedad, ¿cambio?', 'voice');
-    }, 2500);
-    setTimeout(() => {
-        radioSay('...Unidad 7, hay algo extraño en la línea. Mucha estática...', 'voice');
-    }, 11500);
-    setTimeout(() => {
-        showToast('Revisa la torre y la caseta de mantenimiento', '');
-    }, 6500);
+    if (isWorldAuthority()) {
+        setTimeout(() => {
+            radioSay('Central a Unidad 7. Revisa las instalaciones del bosque. Sin novedad, ¿cambio?', 'voice');
+        }, 2500);
+        setTimeout(() => {
+            radioSay('...Unidad 7, hay algo extraño en la línea. Mucha estática...', 'voice');
+        }, 11500);
+        setTimeout(() => {
+            showToast('Revisa la torre y la caseta de mantenimiento', '');
+        }, 6500);
+    }
+
+    if (netRole === 'guest') {
+        showToast('Conectado a la partida del anfitrión', 'good');
+    } else if (netRole === 'host') {
+        showToast('Jugador 2 conectado', 'good');
+    }
 }
 
 // ============================================================
@@ -3491,158 +3946,267 @@ function isOnBridge(x, z) {
     return x > -38 && x < -30 && z > -44 && z < -24;
 }
 
-function updatePlayer(delta) {
-    if (!gameStarted || player.isDead || player.hasEscaped) return;
+function shortestAngle(from, to) {
+    let d = (to - from) % (Math.PI * 2);
+    if (d > Math.PI) d -= Math.PI * 2;
+    if (d < -Math.PI) d += Math.PI * 2;
+    return d;
+}
 
-    const targetCamY = player.isHidden
+function getMoveInput(p) {
+    if (gameMode === MODE.LOCAL && p.index === 1) {
+        return {
+            forward: (keysPressed['ArrowUp'] ? 1 : 0) - (keysPressed['ArrowDown'] ? 1 : 0),
+            strafe: (keysPressed['ArrowRight'] ? 1 : 0) - (keysPressed['ArrowLeft'] ? 1 : 0),
+            sprint: !!keysPressed['ShiftRight'],
+            crouch: !!keysPressed['Period'],
+            yaw: (keysPressed['KeyJ'] ? 1 : 0) - (keysPressed['KeyL'] ? 1 : 0),
+            pitch: (keysPressed['KeyI'] ? 1 : 0) - (keysPressed['KeyK'] ? 1 : 0)
+        };
+    }
+    return {
+        forward: (keysPressed['KeyW'] ? 1 : 0) - (keysPressed['KeyS'] ? 1 : 0),
+        strafe: (keysPressed['KeyD'] ? 1 : 0) - (keysPressed['KeyA'] ? 1 : 0),
+        sprint: !!keysPressed['ShiftLeft'],
+        crouch: !!(keysPressed['ControlLeft'] || keysPressed['ControlRight'] || keysPressed['KeyC']),
+        yaw: 0,
+        pitch: 0
+    };
+}
+
+function updatePlayerState(p, delta) {
+    if (!gameStarted || p.isDead || p.hasEscaped) return;
+
+    const input = getMoveInput(p);
+
+    if (gameMode === MODE.LOCAL && p.index === 1) {
+        p.rotY += input.yaw * 2.2 * delta;
+        p.rotX = clamp(p.rotX + input.pitch * 1.7 * delta, -1.35, 1.35);
+    }
+
+    const targetCamY = p.isHidden
         ? CROUCH_HEIGHT - 0.15
-        : (player.isCrouching ? CROUCH_HEIGHT : PLAYER_HEIGHT);
+        : (p.isCrouching ? CROUCH_HEIGHT : PLAYER_HEIGHT);
 
-    if (player.isHidden) {
-        player.pos.y += (targetCamY - player.pos.y) * 0.12;
-        camera.position.copy(player.pos);
-        camera.rotation.set(player.rotX, player.rotY, 0);
+    if (p.isHidden) {
+        p.pos.y += (targetCamY - p.pos.y) * 0.12;
+        p.camera.position.copy(p.pos);
+        p.camera.rotation.set(p.rotX, p.rotY, 0);
+        p.flashlight.position.copy(p.camera.position);
+        const hiddenDir = new THREE.Vector3(0, 0, -1).applyEuler(p.camera.rotation);
+        p.flashlightTarget.position.copy(p.camera.position).addScaledVector(hiddenDir, 24);
         return;
     }
 
-    player.isCrouching = !!(keysPressed['ControlLeft'] || keysPressed['ControlRight'] || keysPressed['KeyC']);
-    const wantSprint = keysPressed['ShiftLeft'] && !player.isCrouching && player.stamina > 4;
-    player.isSprinting = wantSprint;
+    p.isCrouching = input.crouch;
+    p.isSprinting = input.sprint && !p.isCrouching && p.stamina > 4;
 
-    if (player.isSprinting) {
-        player.stamina = Math.max(0, player.stamina - delta * 24);
+    if (p.isSprinting) {
+        p.stamina = Math.max(0, p.stamina - delta * 24);
     } else {
-        player.stamina = Math.min(100, player.stamina + delta * 15);
+        p.stamina = Math.min(100, p.stamina + delta * 15);
     }
 
     // Batería de la linterna
-    if (player.flashlightOn) {
-        player.battery = Math.max(0, player.battery - delta * BATTERY_DRAIN_PER_SEC);
+    if (p.flashlightOn) {
+        p.battery = Math.max(0, p.battery - delta * BATTERY_DRAIN_PER_SEC);
 
-        if (player.battery <= 0) {
-            player.flashlightOn = false;
-            flashlight.visible = false;
-            flashlightBeam.visible = false;
+        if (p.battery <= 0) {
+            p.flashlightOn = false;
+            p.flashlight.visible = false;
+            p.beam.visible = false;
             showToast('La linterna se apagó. Busca pilas.', 'bad');
             radioSay('Unidad 7, tu señal se está perdiendo...', 'err');
         }
 
-        if (player.battery > 0) {
-            if (player.battery < 18 && Math.random() < 0.08) {
-                flashlight.intensity = Math.random() * FLASHLIGHT_INTENSITY;
-                flashlightBeam.material.opacity = 0.01;
+        if (p.battery > 0) {
+            if (p.battery < 18 && Math.random() < 0.08) {
+                p.flashlight.intensity = Math.random() * FLASHLIGHT_INTENSITY;
+                p.beam.material.opacity = 0.01;
             } else {
-                flashlight.intensity = FLASHLIGHT_INTENSITY;
-                flashlightBeam.material.opacity = 0.035;
+                p.flashlight.intensity = FLASHLIGHT_INTENSITY;
+                p.beam.material.opacity = 0.035;
             }
         }
     }
 
-    // Flicker por eventos
-    if (flashlightFlicker > 0) {
-        flashlightFlicker -= delta;
+    // Flicker por eventos (solo el jugador 1 / anfitrión)
+    if (flashlightFlicker > 0 && p.index === 0) {
         if (Math.random() < 0.45) {
-            flashlight.intensity = Math.random() * 0.8;
-            flashlightBeam.material.opacity = 0.005;
+            p.flashlight.intensity = Math.random() * 0.8;
+            p.beam.material.opacity = 0.005;
         } else {
-            flashlight.intensity = FLASHLIGHT_INTENSITY;
-            flashlightBeam.material.opacity = 0.035;
+            p.flashlight.intensity = FLASHLIGHT_INTENSITY;
+            p.beam.material.opacity = 0.035;
         }
     }
 
     // Movimiento
     let speed = 4.0;
-    if (player.isCrouching) speed = 1.75;
-    if (player.isSprinting) speed = 6.9;
+    if (p.isCrouching) speed = 1.75;
+    if (p.isSprinting) speed = 6.9;
 
     const move = new THREE.Vector3();
-    if (keysPressed['KeyW']) move.z -= 1;
-    if (keysPressed['KeyS']) move.z += 1;
-    if (keysPressed['KeyA']) move.x -= 1;
-    if (keysPressed['KeyD']) move.x += 1;
+    move.z = -input.forward;
+    move.x = input.strafe;
 
     if (move.lengthSq() > 0) {
         move.normalize();
-        move.applyAxisAngle(new THREE.Vector3(0, 1, 0), player.rotY);
+        move.applyAxisAngle(new THREE.Vector3(0, 1, 0), p.rotY);
 
         const dx = move.x * speed * delta;
         const dz = move.z * speed * delta;
 
-        if (!isBlocked(player.pos.x + dx, player.pos.z, PLAYER_RADIUS)) player.pos.x += dx;
-        if (!isBlocked(player.pos.x, player.pos.z + dz, PLAYER_RADIUS)) player.pos.z += dz;
+        if (!isBlocked(p.pos.x + dx, p.pos.z, PLAYER_RADIUS)) p.pos.x += dx;
+        if (!isBlocked(p.pos.x, p.pos.z + dz, PLAYER_RADIUS)) p.pos.z += dz;
 
-        player.bob += delta * (player.isSprinting ? 13 : (player.isCrouching ? 5 : 8));
+        p.bob += delta * (p.isSprinting ? 13 : (p.isCrouching ? 5 : 8));
 
-        const stepInterval = player.isSprinting ? 0.28 : (player.isCrouching ? 0.62 : 0.42);
-        if (clockTime - lastFootstep > stepInterval) {
-            lastFootstep = clockTime;
-            const surface = isOnBridge(player.pos.x, player.pos.z) ? 'wood' : 'leaves';
-            audio.playFootstep(surface, player.isSprinting);
+        const stepInterval = p.isSprinting ? 0.28 : (p.isCrouching ? 0.62 : 0.42);
+        if (clockTime - p.lastFootstep > stepInterval) {
+            p.lastFootstep = clockTime;
+            const surface = isOnBridge(p.pos.x, p.pos.z) ? 'wood' : 'leaves';
+            audio.playFootstep(surface, p.isSprinting);
             if (surface === 'wood' && Math.random() < 0.3) audio.playBridgeCreak();
         }
 
-        makeNoise(player.isSprinting ? 17 : (player.isCrouching ? 4 : 9));
+        makeNoise(p, p.isSprinting ? 17 : (p.isCrouching ? 4 : 9));
     } else {
-        player.bob += delta * 1.5;
+        p.bob += delta * 1.5;
     }
 
-    player.pos.y += (targetCamY - player.pos.y) * 0.14;
-    camera.position.copy(player.pos);
-    camera.position.y += Math.sin(player.bob) * (player.isSprinting ? 0.045 : 0.025);
-    camera.rotation.set(player.rotX, player.rotY, 0);
+    p.pos.y += (targetCamY - p.pos.y) * 0.14;
+    p.camera.position.copy(p.pos);
+    p.camera.position.y += Math.sin(p.bob) * (p.isSprinting ? 0.045 : 0.025);
+    p.camera.rotation.set(p.rotX, p.rotY, 0);
 
     // Linterna sigue a la cámara
-    flashlight.position.copy(camera.position);
-    const dir = new THREE.Vector3(0, 0, -1).applyEuler(camera.rotation);
-    flashlightTarget.position.copy(camera.position).addScaledVector(dir, 24);
+    p.flashlight.position.copy(p.camera.position);
+    const dir = new THREE.Vector3(0, 0, -1).applyEuler(p.camera.rotation);
+    p.flashlightTarget.position.copy(p.camera.position).addScaledVector(dir, 24);
 
-    checkInteraction();
-    updateHUD();
+    checkInteractionFor(p);
+}
+
+function updateLocalPlayers(delta) {
+    if (flashlightFlicker > 0) flashlightFlicker -= delta;
+
+    if (gameMode === MODE.LOCAL) {
+        updatePlayerState(players[0], delta);
+        updatePlayerState(players[1], delta);
+        players.forEach(p => updateAvatar(p));
+    } else {
+        updatePlayerState(localPlayer(), delta);
+
+        const rp = players[1 - localPlayerIndex];
+        if (rp) {
+            const blend = Math.min(1, delta * 14);
+            rp.pos.lerp(rp.remoteTarget, blend);
+            rp.rotY += shortestAngle(rp.rotY, rp.remoteRotY) * blend;
+            rp.rotX += (rp.remoteRotX - rp.rotX) * blend;
+            rp.flashlightOn = rp.remoteFlashlight && !rp.isHidden;
+            rp.flashlight.visible = rp.flashlightOn;
+            rp.flashlight.position.set(rp.pos.x, 1.6, rp.pos.z);
+            const rd = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(rp.rotX, rp.rotY, 0, 'YXZ'));
+            rp.flashlightTarget.position.copy(rp.flashlight.position).addScaledVector(rd, 24);
+            rp.camera.position.copy(rp.pos);
+            rp.camera.rotation.set(rp.rotX, rp.rotY, 0);
+            updateAvatar(rp);
+        }
+    }
+}
+
+function updateAvatar(p) {
+    if (!p.avatar) return;
+    p.avatar.visible = activePlayerCount > 1 && !p.isDead && !p.hasEscaped && !p.isHidden;
+    p.avatar.position.set(p.pos.x, 0, p.pos.z);
+    p.avatar.rotation.y = p.rotY;
+    const lamp = p.avatar.userData.lamp;
+    const lampLight = p.avatar.userData.lampLight;
+    if (lamp) lamp.visible = p.flashlightOn && !p.isHidden;
+    if (lampLight) lampLight.intensity = (p.flashlightOn && !p.isHidden) ? 0.55 : 0;
 }
 
 // ============================================================
 // HUD
 // ============================================================
+function updateHUDFor(p, suffix = '') {
+    const batteryBar = document.getElementById('battery-bar' + suffix);
+    const batteryVal = document.getElementById('battery-val' + suffix);
+    const staminaBar = document.getElementById('stamina-bar' + suffix);
+    const staminaVal = document.getElementById('stamina-val' + suffix);
+    if (!batteryBar) return;
+
+    batteryBar.style.width = `${p.battery}%`;
+    batteryVal.innerText = `${Math.round(p.battery)}%`;
+    batteryVal.className = p.battery < 20 ? 'text-red-400' : 'text-amber-400';
+    batteryBar.className = 'bar-fill ' + (p.battery < 20 ? 'bg-red-600' : 'bg-amber-500');
+
+    staminaBar.style.width = `${p.stamina}%`;
+    staminaVal.innerText = `${Math.round(p.stamina)}%`;
+}
+
+function updateDangerFor(p, elId) {
+    let danger = 0;
+    if (creature && creature.state !== 'hidden' && creature.group.visible) {
+        const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
+        if (creature.state === 'chase') danger = clamp(1 - d / 26, 0.15, 0.8);
+        else if (d < 22) danger = clamp((22 - d) / 40, 0, 0.4);
+    }
+    const el = document.getElementById(elId);
+    if (el) el.style.opacity = danger.toFixed(2);
+}
+
 function updateHUD() {
-    document.getElementById('battery-bar').style.width = `${player.battery}%`;
-    document.getElementById('battery-val').innerText = `${Math.round(player.battery)}%`;
-    document.getElementById('battery-val').className = player.battery < 20 ? 'text-red-400' : 'text-amber-400';
-    document.getElementById('battery-bar').className = 'bar-fill ' + (player.battery < 20 ? 'bg-red-600' : 'bg-amber-500');
+    if (gameMode === MODE.LOCAL) {
+        updateHUDFor(players[0], '');
+        updateHUDFor(players[1], '-p2');
+        updateDangerFor(players[0], 'danger-vignette');
+        updateDangerFor(players[1], 'danger-vignette-p2');
+    } else {
+        const lp = localPlayer();
+        updateHUDFor(lp, '');
+        updateDangerFor(lp, 'danger-vignette');
+    }
 
-    document.getElementById('stamina-bar').style.width = `${player.stamina}%`;
-    document.getElementById('stamina-val').innerText = `${Math.round(player.stamina)}%`;
-
+    const ref = localPlayer();
     if (currentObjectiveTarget) {
-        const d = Math.round(dist2D(player.pos.x, player.pos.z, currentObjectiveTarget.x, currentObjectiveTarget.z));
+        const d = Math.round(dist2D(ref.pos.x, ref.pos.z, currentObjectiveTarget.x, currentObjectiveTarget.z));
         objectiveDistEl.innerText = `${d} m`;
     } else {
         objectiveDistEl.innerText = '';
     }
-
-    // Viñeta de peligro
-    let danger = 0;
-    if (creature && creature.state !== 'hidden' && creature.group.visible) {
-        const d = dist2D(player.pos.x, player.pos.z, creature.group.position.x, creature.group.position.z);
-        if (creature.state === 'chase') danger = clamp(1 - d / 26, 0.15, 0.8);
-        else if (d < 22) danger = clamp((22 - d) / 40, 0, 0.4);
-    }
-    document.getElementById('danger-vignette').style.opacity = danger.toFixed(2);
 }
 
 // ============================================================
 // INTERACCIÓN
 // ============================================================
-function checkInteraction() {
-    if (player.isHidden) {
-        promptEl.classList.add('hidden');
-        crosshair.classList.remove('active');
-        currentTarget = null;
+function promptElementsFor(p) {
+    if (gameMode === MODE.LOCAL && p.index === 1) {
+        return {
+            prompt: document.getElementById('prompt-p2'),
+            crosshair: document.getElementById('crosshair-p2')
+        };
+    }
+    return { prompt: promptEl, crosshair };
+}
+
+function checkInteractionFor(p) {
+    if (p.isRemote) return;
+    const ui = promptElementsFor(p);
+
+    if (p.isHidden) {
+        ui.prompt.classList.add('hidden');
+        ui.crosshair.classList.remove('active');
+        p.currentTarget = null;
         return;
     }
 
     const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-    const meshes = interactables.map(i => i.mesh);
+    raycaster.setFromCamera(new THREE.Vector2(0, 0), p.camera);
+    const meshes = interactables
+        .filter(i => !i.collectedBy || !i.collectedBy[p.index])
+        .map(i => i.mesh);
     const hits = raycaster.intersectObjects(meshes, true);
 
     if (hits.length > 0 && hits[0].distance < 4.2) {
@@ -3653,34 +4217,34 @@ function checkInteraction() {
             node = node.parent;
         }
         if (found) {
-            currentTarget = found;
-            crosshair.classList.add('active');
-            promptEl.innerText = `[E] ${found.prompt}`;
-            promptEl.classList.remove('hidden');
+            p.currentTarget = found;
+            ui.crosshair.classList.add('active');
+            ui.prompt.innerText = `[${interactLabel(p)}] ${found.prompt}`;
+            ui.prompt.classList.remove('hidden');
             return;
         }
     }
 
     // Escondites cercanos
-    const spot = nearestHideSpot();
+    const spot = nearestHideSpotFor(p);
     if (spot) {
-        currentTarget = null;
-        crosshair.classList.remove('active');
-        promptEl.innerText = `[E] Esconderse en ${spot.name}`;
-        promptEl.classList.remove('hidden');
+        p.currentTarget = null;
+        ui.crosshair.classList.remove('active');
+        ui.prompt.innerText = `[${interactLabel(p)}] Esconderse en ${spot.name}`;
+        ui.prompt.classList.remove('hidden');
         return;
     }
 
-    currentTarget = null;
-    crosshair.classList.remove('active');
-    promptEl.classList.add('hidden');
+    p.currentTarget = null;
+    ui.crosshair.classList.remove('active');
+    ui.prompt.classList.add('hidden');
 }
 
-function nearestHideSpot() {
+function nearestHideSpotFor(p) {
     let best = null;
     let bestD = Infinity;
     for (const s of hideSpots) {
-        const d = dist2D(player.pos.x, player.pos.z, s.pos.x, s.pos.z);
+        const d = dist2D(p.pos.x, p.pos.z, s.pos.x, s.pos.z);
         if (d < s.radius + 0.8 && d < bestD) {
             best = s;
             bestD = d;
@@ -3689,34 +4253,53 @@ function nearestHideSpot() {
     return best;
 }
 
-function handleInteraction() {
-    if (player.isHidden) {
-        exitHide();
+function handleInteractionFor(p) {
+    if (!p || !gameStarted || p.isDead || p.hasEscaped) return;
+    if (p.isRemote) return;
+
+    const item = p.currentTarget || null;
+    const spot = nearestHideSpotFor(p);
+
+    // El invitado pide al anfitrión que ejecute la interacción en su nombre.
+    if (netRole === 'guest') {
+        sendNet({
+            t: 'iact',
+            id: item ? item.id : null,
+            spot: spot ? hideSpots.indexOf(spot) : -1
+        });
         return;
     }
 
-    if (currentTarget) {
-        const item = currentTarget;
+    performInteraction(p, item, spot);
+}
+
+function performInteraction(p, item, spot) {
+    if (p.isHidden) {
+        exitHide(p);
+        return;
+    }
+
+    if (item) {
+        if (item.collectedBy && item.collectedBy[p.index]) return;
         switch (item.type) {
-            case 'key': collectKey(item); break;
-            case 'fuse': collectFuse(item); break;
-            case 'genBattery': collectGenBattery(item); break;
-            case 'pila': collectPila(item); break;
-            case 'campNote': readCampNote(); break;
-            case 'map': examineMap(); break;
-            case 'photo': examinePhoto(item); break;
-            case 'oldRadio': useOldRadio(); break;
-            case 'recorder': useRecorder(); break;
-            case 'generator': useGenerator(item); break;
+            case 'key': collectKey(item, p); break;
+            case 'fuse': collectFuse(item, p); break;
+            case 'genBattery': collectGenBattery(item, p); break;
+            case 'pila': collectPila(item, p); break;
+            case 'campNote': readCampNote(p); break;
+            case 'map': examineMap(p); break;
+            case 'photo': examinePhoto(item, p); break;
+            case 'oldRadio': useOldRadio(p); break;
+            case 'recorder': useRecorder(p); break;
+            case 'generator': useGenerator(item, p); break;
             case 'shedDoor': openSimpleDoor(item, 'caseta de mantenimiento'); break;
             case 'houseDoor': openSimpleDoor(item, 'casa abandonada'); break;
-            case 'towerDoor': useTowerDoor(item); break;
+            case 'towerDoor': useTowerDoor(item, p); break;
         }
         return;
     }
 
-    const spot = nearestHideSpot();
-    if (spot) enterHide(spot);
+    if (spot) enterHide(p, spot);
 }
 
 // ============================================================
@@ -3728,51 +4311,77 @@ function removeInteractableObject(item, withLight = true) {
     unregisterInteractable(item);
 }
 
-function checkAllItems() {
-    if (player.items.key && player.items.fuse && player.items.genBattery && !story.generatorOn) {
-        setObjective('Vuelve al generador auxiliar y restablece la energía.', PLACES.generator);
-        radioSay('Tienes todo. Lleva la llave, el fusible y la batería al generador.', 'voice');
-        showToast('Equipo completo. Vuelve al generador.', 'good');
+function markCollected(item, p) {
+    if (!item.collectedBy) item.collectedBy = [false, false];
+    item.collectedBy[p.index] = true;
+    const allCollected = activePlayers().every(pl => item.collectedBy[pl.index]);
+    if (allCollected) removeInteractableObject(item);
+}
+
+function checkAllItems(p) {
+    if (!p || story.generatorOn) return;
+    const hasAll = p.items.key && p.items.fuse && p.items.genBattery;
+    if (!hasAll) return;
+
+    if (activePlayerCount > 1) {
+        const bothReady = activePlayers().every(pl => pl.items.key && pl.items.fuse && pl.items.genBattery);
+        if (!bothReady) {
+            showToast('Tienes todo. Tu compañero aún debe reunir su equipo.', 'warn');
+            setObjective('Espera a que tu compañero reúna su <span class="text-amber-300">llave</span>, <span class="text-amber-300">fusible</span> y <span class="text-amber-300">batería</span>.', PLACES.generator);
+            return;
+        }
     }
+
+    setObjective('Vuelve al generador auxiliar y restablece la energía.', PLACES.generator);
+    radioSay('Tienes todo. Lleva la llave, el fusible y la batería al generador.', 'voice');
+    showToast('Equipo completo. Vuelve al generador.', 'good');
 }
 
-function collectKey(item) {
-    player.items.key = true;
-    removeInteractableObject(item);
+function collectKey(item, p) {
+    p.items.key = true;
+    markCollected(item, p);
     audio.playPickup();
-    showToast('Llave de la caja eléctrica obtenida', 'good');
-    radioSay('La llave de la caja eléctrica. Bien hecho, Unidad 7.', 'voice');
-    updateInventoryHUD();
-    checkAllItems();
+    if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) {
+        showToast('Llave de la caja eléctrica obtenida', 'good');
+        radioSay('La llave de la caja eléctrica. Bien hecho, Unidad 7.', 'voice');
+    }
+    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    checkAllItems(p);
 }
 
-function collectFuse(item) {
-    player.items.fuse = true;
-    removeInteractableObject(item);
+function collectFuse(item, p) {
+    p.items.fuse = true;
+    markCollected(item, p);
     audio.playPickup();
-    showToast('Fusible de alto voltaje obtenido', 'good');
-    radioSay('Ese fusible debería aguantar la carga. Continúa.', 'voice');
-    updateInventoryHUD();
-    checkAllItems();
+    if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) {
+        showToast('Fusible de alto voltaje obtenido', 'good');
+        radioSay('Ese fusible debería aguantar la carga. Continúa.', 'voice');
+    }
+    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    checkAllItems(p);
 }
 
-function collectGenBattery(item) {
-    player.items.genBattery = true;
-    removeInteractableObject(item);
+function collectGenBattery(item, p) {
+    p.items.genBattery = true;
+    markCollected(item, p);
     audio.playPickup();
-    showToast('Batería del generador obtenida', 'good');
-    radioSay('La batería del generador. Ya casi está.', 'voice');
-    updateInventoryHUD();
-    checkAllItems();
+    if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) {
+        showToast('Batería del generador obtenida', 'good');
+        radioSay('La batería del generador. Ya casi está.', 'voice');
+    }
+    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    checkAllItems(p);
 }
 
-function collectPila(item) {
-    player.spareBatteries++;
-    player.battery = Math.min(100, player.battery + 35);
-    removeInteractableObject(item);
+function collectPila(item, p) {
+    p.spareBatteries++;
+    p.battery = Math.min(100, p.battery + 35);
+    markCollected(item, p);
     audio.playPickup();
-    showToast(`Pilas encontradas (+35% linterna)`, 'good');
-    updateInventoryHUD();
+    if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) {
+        showToast(`Pilas encontradas (+35% linterna)`, 'good');
+    }
+    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
 }
 
 function readCampNote() {
@@ -3820,22 +4429,37 @@ function useRecorder() {
     playRecording();
 }
 
-function useGenerator(item) {
+function useGenerator(item, p) {
+    p = p || player;
     if (story.generatorOn) {
         showToast('El generador ya está en línea.', '');
         return;
     }
 
     const missing = [];
-    if (!player.items.key) missing.push('llave');
-    if (!player.items.fuse) missing.push('fusible');
-    if (!player.items.genBattery) missing.push('batería');
+    if (!p.items.key) missing.push('llave');
+    if (!p.items.fuse) missing.push('fusible');
+    if (!p.items.genBattery) missing.push('batería');
 
     if (missing.length > 0) {
         audio.playLocked();
         showToast(`Falta: ${missing.join(', ')}`, 'warn');
         radioSay(`Aún te falta ${missing.join(' y ')}. Revisa el bosque.`, 'voice');
         return;
+    }
+
+    if (activePlayerCount > 1) {
+        const partner = players[1 - p.index];
+        const partnerMissing = [];
+        if (!partner.items.key) partnerMissing.push('llave');
+        if (!partner.items.fuse) partnerMissing.push('fusible');
+        if (!partner.items.genBattery) partnerMissing.push('batería');
+        if (partnerMissing.length > 0) {
+            audio.playLocked();
+            showToast(`Tu compañero aún necesita: ${partnerMissing.join(', ')}`, 'warn');
+            radioSay('El generador necesita las dos dotaciones completas. Espera a tu compañero.', 'voice');
+            return;
+        }
     }
 
     activateGenerator(item);
@@ -3849,11 +4473,12 @@ function openSimpleDoor(item, label) {
     if (idx > -1) boxColliders.splice(idx, 1);
     audio.playDoorCreak();
     showToast(`Has abierto la ${label}.`, '');
+    if (netRole === 'host') sendNet({ t: 'door', id: item.id, open: true });
 }
 
-function useTowerDoor(item) {
+function useTowerDoor(item, p) {
     if (story.phase === 'return' || story.phase === 'ending') {
-        triggerEnding(item);
+        triggerEnding(item, p || player);
         return;
     }
     audio.playLocked();
@@ -3864,31 +4489,52 @@ function useTowerDoor(item) {
 // ============================================================
 // ESCONDERSE
 // ============================================================
-function enterHide(spot) {
-    player.isHidden = true;
-    player.hideSpot = spot;
-    player.isCrouching = true;
-    player.flashlightOn = false;
-    flashlight.visible = false;
-    flashlightBeam.visible = false;
-
-    document.getElementById('hidden-overlay').classList.add('show');
-    document.getElementById('hide-badge').style.display = 'block';
-    promptEl.classList.add('hidden');
-    crosshair.classList.remove('active');
-
-    audio.playFootstep('leaves', false);
-    showToast(`Te has escondido en ${spot.name}`, '');
-    radioSay('No hagas ruido. No enciendas la luz.', 'voice');
+function hideOverlayFor(p) {
+    if (gameMode === MODE.LOCAL) {
+        return p.index === 1
+            ? { overlay: document.getElementById('hidden-overlay-p2'), badge: document.getElementById('hide-badge-p2') }
+            : { overlay: document.getElementById('hidden-overlay'), badge: document.getElementById('hide-badge') };
+    }
+    if (p.index !== localPlayerIndex) return { overlay: null, badge: null };
+    return {
+        overlay: document.getElementById('hidden-overlay'),
+        badge: document.getElementById('hide-badge')
+    };
 }
 
-function exitHide() {
-    player.isHidden = false;
-    player.hideSpot = null;
-    player.isCrouching = false;
-    document.getElementById('hidden-overlay').classList.remove('show');
-    document.getElementById('hide-badge').style.display = 'none';
-    showToast('Sales de tu escondite', '');
+function enterHide(p, spot) {
+    p.isHidden = true;
+    p.hideSpot = spot;
+    p.isCrouching = true;
+    p.flashlightOn = false;
+    p.flashlight.visible = false;
+    p.beam.visible = false;
+
+    const ui = hideOverlayFor(p);
+    if (ui.overlay) ui.overlay.classList.add('show');
+    if (ui.badge) ui.badge.style.display = 'block';
+
+    const pu = promptElementsFor(p);
+    pu.prompt.classList.add('hidden');
+    pu.crosshair.classList.remove('active');
+
+    audio.playFootstep('leaves', false);
+    if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) {
+        showToast(`Te has escondido en ${spot.name}`, '');
+        radioSay('No hagas ruido. No enciendas la luz.', 'voice');
+    }
+    if (netRole === 'host') sendNet({ t: 'hide', i: p.index, on: true, spot: hideSpots.indexOf(spot) });
+}
+
+function exitHide(p) {
+    p.isHidden = false;
+    p.hideSpot = null;
+    p.isCrouching = false;
+    const ui = hideOverlayFor(p);
+    if (ui.overlay) ui.overlay.classList.remove('show');
+    if (ui.badge) ui.badge.style.display = 'none';
+    if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) showToast('Sales de tu escondite', '');
+    if (netRole === 'host') sendNet({ t: 'hide', i: p.index, on: false });
 }
 
 // ============================================================
@@ -3916,11 +4562,28 @@ function vanishCreature() {
     creature.timer = 1.3;
 }
 
+function creatureTarget() {
+    let best = null;
+    let bestD = Infinity;
+    for (const p of activePlayers()) {
+        if (p.isDead || p.hasEscaped) continue;
+        if (p.isHidden) continue;
+        const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
+        if (d < bestD) { best = p; bestD = d; }
+    }
+    return best;
+}
+
+function anyVisiblePlayer() {
+    return activePlayers().find(p => !p.isDead && !p.hasEscaped && !p.isHidden) || null;
+}
+
 function spawnCreatureAt(x, z, state = 'observe', timer = 8) {
     if (!creature) return;
     creature.group.position.set(x, 0, z);
     creature.group.visible = true;
-    creature.group.lookAt(player.pos.x, 0, player.pos.z);
+    const ref = nearestPlayerTo(x, z) || player;
+    creature.group.lookAt(ref.pos.x, 0, ref.pos.z);
     creature.state = state;
     creature.timer = timer;
     creature.opacity = 0;
@@ -3934,7 +4597,8 @@ function spawnCreatureAt(x, z, state = 'observe', timer = 8) {
 }
 
 function chooseCreatureSpawn(minD, maxD, inFront = false) {
-    const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), player.rotY);
+    const ref = nearestPlayerTo(player.pos.x, player.pos.z) || player;
+    const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), ref.rotY);
 
     for (let i = 0; i < 40; i++) {
         let dx, dz;
@@ -3948,22 +4612,23 @@ function chooseCreatureSpawn(minD, maxD, inFront = false) {
             dx = Math.cos(a) * dist;
             dz = Math.sin(a) * dist;
         }
-        const x = player.pos.x + dx;
-        const z = player.pos.z + dz;
+        const x = ref.pos.x + dx;
+        const z = ref.pos.z + dz;
         if (Math.abs(x) > MAP_HALF - 6 || Math.abs(z) > MAP_HALF - 6) continue;
         if (isBlocked(x, z, 1.0)) continue;
         return new THREE.Vector3(x, 0, z);
     }
 
     return new THREE.Vector3(
-        clamp(player.pos.x + forward.x * 30, -MAP_HALF + 8, MAP_HALF - 8),
+        clamp(ref.pos.x + forward.x * 30, -MAP_HALF + 8, MAP_HALF - 8),
         0,
-        clamp(player.pos.z + forward.z * 30, -MAP_HALF + 8, MAP_HALF - 8)
+        clamp(ref.pos.z + forward.z * 30, -MAP_HALF + 8, MAP_HALF - 8)
     );
 }
 
 function startCreatureChase() {
-    if (!creature || player.isDead || player.hasEscaped) return;
+    if (!creature || !isWorldAuthority()) return;
+    if (!anyVisiblePlayer()) return;
     if (creature.state === 'chase') return;
 
     const pos = chooseCreatureSpawn(20, 32, false);
@@ -3975,18 +4640,24 @@ function startCreatureChase() {
     audio.playCreatureScreech();
     showToast('¡ALGO TE ESTÁ PERSIGUIENDO!', 'bad');
     radioSay('¡Unidad 7, corre! ¡No mires atrás!', 'err');
+    if (netRole === 'host') sendNet({ t: 'fx', k: 'chase' });
 }
 
 function isCreatureLit() {
-    if (!player.flashlightOn || !creature || !creature.group.visible) return false;
+    if (!creature || !creature.group.visible) return false;
     const target = creature.group.position.clone();
     target.y = 2.0;
-    const toC = target.clone().sub(camera.position);
-    const dist = toC.length();
-    if (dist > 42) return false;
-    toC.normalize();
-    const fwd = new THREE.Vector3(0, 0, -1).applyEuler(camera.rotation);
-    return fwd.dot(toC) > 0.9;
+
+    for (const p of activePlayers()) {
+        if (!p.flashlightOn || p.isHidden || p.isDead || p.hasEscaped || !p.camera) continue;
+        const toC = target.clone().sub(p.camera.position);
+        const dist = toC.length();
+        if (dist > 42) continue;
+        toC.normalize();
+        const fwd = new THREE.Vector3(0, 0, -1).applyEuler(p.camera.rotation);
+        if (fwd.dot(toC) > 0.9) return true;
+    }
+    return false;
 }
 
 function moveCreatureToward(target, speed, delta) {
@@ -4002,12 +4673,14 @@ function moveCreatureToward(target, speed, delta) {
     if (!isBlocked(creature.group.position.x, nz, 0.5)) creature.group.position.z = nz;
 }
 
-function makeNoise(radius) {
+function makeNoise(p, radius) {
+    if (!isWorldAuthority()) return;
     if (!creature || creature.state === 'hidden' || creature.state === 'vanish') return;
-    if (player.isHidden || creature.state === 'chase') return;
+    if (!p || p.isHidden || p.isDead || p.hasEscaped) return;
+    if (creature.state === 'chase') return;
     if ((creature.noiseCooldown || 0) > 0) return;
 
-    const d = dist2D(player.pos.x, player.pos.z, creature.group.position.x, creature.group.position.z);
+    const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
     if (d > radius) return;
 
     creature.noiseCooldown = 2.6;
@@ -4018,12 +4691,15 @@ function makeNoise(radius) {
     } else {
         creature.state = 'stalk';
         creature.timer = 10;
+        creature.targetIndex = p.index;
         audio.playCreatureGrowl(d);
     }
 }
 
 function updateCreature(delta) {
-    if (!creature || !gameStarted || player.isDead || player.hasEscaped) return;
+    if (!creature || !gameStarted) return;
+    if (!isWorldAuthority()) return;
+    if (!activePlayers().some(p => !p.isDead && !p.hasEscaped)) return;
     const c = creature;
 
     c.spawnCooldown -= delta;
@@ -4063,13 +4739,17 @@ function updateCreature(delta) {
     c.opacity = Math.min(1, c.opacity + delta * 1.6);
     applyCreatureOpacity(c.opacity);
 
-    const d = dist2D(player.pos.x, player.pos.z, c.group.position.x, c.group.position.z);
-    c.group.lookAt(player.pos.x, c.group.position.y, player.pos.z);
+    const target = creatureTarget();
+    const d = target
+        ? dist2D(target.pos.x, target.pos.z, c.group.position.x, c.group.position.z)
+        : Infinity;
+
+    if (target) c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
 
     if (c.state === 'observe') {
         c.timer -= delta;
         if (c.timer <= 0) { vanishCreature(); return; }
-        if (!player.isHidden && d < 10 && Math.random() < 0.008) startCreatureChase();
+        if (target && d < 10 && Math.random() < 0.008) startCreatureChase();
         return;
     }
 
@@ -4077,17 +4757,19 @@ function updateCreature(delta) {
         c.timer -= delta;
         const lit = isCreatureLit();
 
-        if (!lit) moveCreatureToward(player.pos, 1.45, delta);
+        if (target && !lit) moveCreatureToward(target.pos, 1.45, delta);
 
         if (c.growlTimer <= 0) {
             audio.playCreatureGrowl(d);
             c.growlTimer = rand(4, 8);
         }
 
-        if (!player.isHidden && d < 8) { startCreatureChase(); return; }
-        if (player.isHidden) {
+        if (target && d < 8) { startCreatureChase(); return; }
+        if (!target) {
             c.loseTimer += delta;
             if (c.loseTimer > 5) { vanishCreature(); return; }
+        } else {
+            c.loseTimer = 0;
         }
         if (c.timer <= 0) vanishCreature();
         return;
@@ -4105,19 +4787,17 @@ function updateCreature(delta) {
             c.breathTimer = rand(2.2, 4.2);
         }
 
-        moveCreatureToward(player.pos, player.isHidden ? 1.2 : 5.0, delta);
-
-        if (player.isHidden) {
-            // Si te escondes, la criatura pierde tu rastro y se disuelve.
+        if (target) {
+            moveCreatureToward(target.pos, 5.0, delta);
+            c.loseTimer = 0;
+            if (d < 1.9) {
+                triggerDeath('La criatura del bosque alcanzó al equipo. El bosque volvió a quedarse en silencio.');
+                return;
+            }
+        } else {
+            // Todos escondidos: la criatura pierde el rastro y se disuelve.
             c.loseTimer += delta;
             if (c.loseTimer > 3.5) { vanishCreature(); return; }
-        } else {
-            c.loseTimer = 0;
-        }
-
-        if (!player.isHidden && d < 1.9) {
-            triggerDeath('La criatura del bosque te alcanzó. El bosque volvió a quedarse en silencio.');
-            return;
         }
 
         if (c.chaseTimer > 32) vanishCreature();
@@ -4141,7 +4821,8 @@ function chooseAppearanceMode() {
 // EVENTOS ALEATORIOS
 // ============================================================
 function updateRandomEvents(delta) {
-    if (!gameStarted || player.isDead || player.hasEscaped) return;
+    if (!gameStarted || !isWorldAuthority()) return;
+    if (!activePlayers().some(p => !p.isDead && !p.hasEscaped)) return;
     if (story.phase === 'intro' || story.phase === 'blackout' || story.phase === 'ending' || story.phase === 'done') return;
 
     randomEventTimer -= delta;
@@ -4168,8 +4849,9 @@ function triggerRandomEvent() {
     switch (pick) {
         case 'bush': {
             let best = null, bestD = 34;
+            const ref = anyVisiblePlayer() || player;
             for (const b of eventBushes) {
-                const d = dist2D(player.pos.x, player.pos.z, b.base.x, b.base.z);
+                const d = dist2D(ref.pos.x, ref.pos.z, b.base.x, b.base.z);
                 if (d < bestD) { best = b; bestD = d; }
             }
             if (best) {
@@ -4257,6 +4939,7 @@ function triggerRandomEvent() {
 }
 
 function createShadowFigure() {
+    const ref = anyVisiblePlayer() || player;
     const mat = new THREE.MeshBasicMaterial({
         color: 0x000000,
         transparent: true,
@@ -4267,15 +4950,15 @@ function createShadowFigure() {
     });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 3.4), mat);
 
-    const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), player.rotY);
+    const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), ref.rotY);
     const right = new THREE.Vector3(-forward.z, 0, forward.x);
-    const base = camera.position.clone()
+    const base = ref.camera.position.clone()
         .addScaledVector(forward, rand(9, 16))
         .addScaledVector(right, rand(-7, 7));
     base.y = 1.75;
 
     mesh.position.copy(base);
-    mesh.lookAt(camera.position.x, 1.75, camera.position.z);
+    mesh.lookAt(ref.camera.position.x, 1.75, ref.camera.position.z);
     scene.add(mesh);
 
     const dir = right.clone().multiplyScalar(Math.random() < 0.5 ? -1 : 1).normalize();
@@ -4294,7 +4977,8 @@ function createShadowFigure() {
 // HISTORIA
 // ============================================================
 function updateStory(delta) {
-    if (!gameStarted || player.hasEscaped || player.isDead) return;
+    if (!gameStarted || !isWorldAuthority()) return;
+    if (!activePlayers().some(p => !p.isDead && !p.hasEscaped)) return;
 
     story.time += delta;
     story.phaseTime = (story.phaseTime || 0) + delta;
@@ -4315,12 +4999,14 @@ function updateStory(delta) {
 
     if (story.phase === 'search') {
         if (!story.generatorFound) {
-            const d = dist2D(player.pos.x, player.pos.z, PLACES.generator.x, PLACES.generator.z);
-            if (d < 14) {
+            const near = activePlayers().find(p => !p.isDead && !p.hasEscaped &&
+                dist2D(p.pos.x, p.pos.z, PLACES.generator.x, PLACES.generator.z) < 14);
+            if (near) {
                 story.generatorFound = true;
                 radioSay('Ese zumbido... es el generador. Necesitas la llave de la caja, un fusible y una batería.', 'voice');
                 showToast('Generador encontrado. Consigue el equipo.', 'warn');
-                if (!(player.items.key && player.items.fuse && player.items.genBattery)) {
+                const ready = activePlayers().every(pl => pl.items.key && pl.items.fuse && pl.items.genBattery);
+                if (!ready) {
                     setObjective('Consigue la <span class="text-amber-300">llave</span>, el <span class="text-amber-300">fusible</span> y la <span class="text-amber-300">batería</span> del generador.', null);
                 }
             }
@@ -4329,7 +5015,7 @@ function updateStory(delta) {
     }
 
     if (story.phase === 'afterGenerator') {
-        if (!story.houseEntered && insideHouse()) {
+        if (!story.houseEntered && activePlayers().some(p => !p.isDead && !p.hasEscaped && insideHouse(p))) {
             triggerHouseScene();
         }
         return;
@@ -4343,11 +5029,12 @@ function updateStory(delta) {
     }
 }
 
-function insideHouse() {
-    return player.pos.x > PLACES.house.x - 8 &&
-        player.pos.x < PLACES.house.x + 8 &&
-        player.pos.z > PLACES.house.z - 5.5 &&
-        player.pos.z < PLACES.house.z + 5.5;
+function insideHouse(p) {
+    p = p || player;
+    return p.pos.x > PLACES.house.x - 8 &&
+        p.pos.x < PLACES.house.x + 8 &&
+        p.pos.z > PLACES.house.z - 5.5 &&
+        p.pos.z < PLACES.house.z + 5.5;
 }
 
 function triggerBlackout() {
@@ -4497,17 +5184,29 @@ function playRecording() {
     showToast('Grabación reproducida', 'bad');
 }
 
-function triggerEnding(item) {
-    if (story.phase === 'ending' || player.hasEscaped) return;
+function triggerEnding(item, p) {
+    if (story.phase === 'ending') return;
 
     story.phase = 'ending';
-    player.hasEscaped = true;
+    activePlayers().forEach(pl => { pl.hasEscaped = true; });
 
+    if (item && item.pivot) item.pivot.rotation.y = -Math.PI / 2;
+
+    if (netRole === 'host') sendNet({ t: 'ending' });
+    if (netRole === 'guest') return;
+
+    playEndingSequence(item);
+}
+
+function playEndingSequence(item) {
     document.exitPointerLock();
     promptEl.classList.add('hidden');
     crosshair.classList.remove('active');
+    const p2 = document.getElementById('prompt-p2');
+    const c2 = document.getElementById('crosshair-p2');
+    if (p2) p2.classList.add('hidden');
+    if (c2) c2.classList.remove('active');
 
-    if (item && item.pivot) item.pivot.rotation.y = -Math.PI / 2;
     audio.playDoorCreak();
 
     setTimeout(() => {
@@ -4564,9 +5263,15 @@ function updateHouseEffects(delta) {
 // MUERTE / JUMPSCARE
 // ============================================================
 function triggerDeath(reason) {
-    if (player.isDead) return;
+    if (!document.getElementById('gameover-overlay').classList.contains('hidden')) return;
 
-    player.isDead = true;
+    activePlayers().forEach(p => { p.isDead = true; });
+    if (netRole === 'host') sendNet({ t: 'death', reason });
+
+    showDeathSequence(reason);
+}
+
+function showDeathSequence(reason) {
     document.exitPointerLock();
     audio.playJumpscare();
 
@@ -4665,29 +5370,55 @@ function triggerDeath(reason) {
     requestAnimationFrame(renderFrame);
 }
 
+function requestRetry() {
+    if (netRole === 'guest') {
+        sendNet({ t: 'retry' });
+        showToast('Esperando al anfitrión…', '');
+        return;
+    }
+    retryFromCheckpoint();
+    if (netRole === 'host') sendNet({ t: 'retryNow' });
+}
+
 function retryFromCheckpoint() {
     document.getElementById('gameover-overlay').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
     document.getElementById('blackout').style.opacity = '0';
 
-    player.isDead = false;
-    player.hasEscaped = false;
-    player.isHidden = false;
-    player.hideSpot = null;
-    player.pos.copy(story.checkpoint);
-    player.pos.y = PLAYER_HEIGHT;
-    player.rotY = 0;
-    player.rotX = 0;
-    player.stamina = 100;
-    player.battery = Math.max(player.battery, 60);
-    player.flashlightOn = true;
-    flashlight.visible = true;
-    flashlightBeam.visible = true;
-    flashlight.intensity = FLASHLIGHT_INTENSITY;
+    activePlayers().forEach((p, i) => {
+        p.isDead = false;
+        p.hasEscaped = false;
+        p.isHidden = false;
+        p.hideSpot = null;
+        p.isCrouching = false;
+        p.isSprinting = false;
+        p.pos.copy(story.checkpoint);
+        p.pos.x += i * 1.4;
+        p.pos.y = PLAYER_HEIGHT;
+        p.rotY = 0;
+        p.rotX = 0;
+        p.stamina = 100;
+        p.battery = Math.max(p.battery, 60);
+        p.flashlightOn = true;
+        p.flashlight.visible = true;
+        p.beam.visible = true;
+        p.flashlight.intensity = FLASHLIGHT_INTENSITY;
+        p.camera.position.copy(p.pos);
+        p.camera.rotation.set(0, 0, 0);
+        p.remoteTarget.copy(p.pos);
+        p.remoteRotY = 0;
+        p.remoteRotX = 0;
+        p.remoteFlashlight = true;
+    });
 
     document.getElementById('hidden-overlay').classList.remove('show');
+    document.getElementById('hidden-overlay-p2').classList.remove('show');
     document.getElementById('hide-badge').style.display = 'none';
+    document.getElementById('hide-badge-p2').style.display = 'none';
     promptEl.classList.add('hidden');
+    document.getElementById('prompt-p2').classList.add('hidden');
+    crosshair.classList.remove('active');
+    document.getElementById('crosshair-p2').classList.remove('active');
 
     if (creature) {
         hideCreature();
@@ -4702,10 +5433,478 @@ function retryFromCheckpoint() {
         setObjective('Regresa a la torre eléctrica.', PLACES.tower);
     }
 
+    updateInventoryHUD(players[0], '');
+    updateInventoryHUD(players[1], '-p2');
     updateHUD();
-    canvas.requestPointerLock();
-    showToast('Has vuelto al último punto seguro', '');
-    radioSay('Unidad 7, te perdimos unos segundos. Sigue con la misión.', 'voice');
+
+    if (netRole !== 'guest') canvas.requestPointerLock();
+    showToast('Habéis vuelto al último punto seguro', '');
+    radioSay('Unidad 7, os perdimos unos segundos. Seguid con la misión.', 'voice');
+}
+
+// ============================================================
+// MULTIJUGADOR · RED (PeerJS / WebRTC)
+// ============================================================
+const ROOM_PREFIX = 'malo-forest-';
+let lastEnvKey = '';
+let lastObjectiveText = '';
+
+function setOnlineStatus(text) {
+    const el = document.getElementById('online-status');
+    if (el) el.innerText = text;
+}
+
+function randomRoomCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let out = '';
+    for (let i = 0; i < 5; i++) out += chars[Math.floor(Math.random() * chars.length)];
+    return out;
+}
+
+function showOnlinePanel(mode) {
+    const panel = document.getElementById('online-panel');
+    panel.classList.remove('hidden');
+    document.getElementById('host-info').classList.toggle('hidden', mode !== 'host');
+    document.getElementById('join-info').classList.toggle('hidden', mode !== 'join');
+    document.getElementById('online-cancel-btn').classList.remove('hidden');
+    document.getElementById('join-connect-btn').disabled = false;
+    setOnlineStatus(mode === 'host' ? 'Preparando sala…' : 'Introduce el código de sala.');
+    if (mode === 'join') {
+        const input = document.getElementById('join-code');
+        input.value = '';
+        setTimeout(() => input.focus(), 60);
+    }
+}
+
+function closeOnlinePanel() {
+    document.getElementById('online-panel').classList.add('hidden');
+    if (!netConnected) {
+        if (netConn) { try { netConn.close(); } catch (e) {} }
+        if (netPeer) { try { netPeer.destroy(); } catch (e) {} }
+        netConn = null;
+        netPeer = null;
+    }
+}
+
+function sendNet(data) {
+    if (netConn && netConn.open) {
+        try {
+            netConn.send(data);
+            netSendCount++;
+        } catch (e) {}
+    }
+}
+
+function beginHost() {
+    if (typeof Peer === 'undefined') {
+        showToast('No se pudo cargar PeerJS. Comprueba tu conexión.', 'bad');
+        return;
+    }
+    if (netPeer) { try { netPeer.destroy(); } catch (e) {} }
+    netConn = null;
+    netConnected = false;
+
+    showOnlinePanel('host');
+    const code = randomRoomCode();
+    document.getElementById('room-code').innerText = code;
+    document.getElementById('host-info').classList.remove('hidden');
+
+    const peer = new Peer(ROOM_PREFIX + code, { debug: 0 });
+    netPeer = peer;
+
+    peer.on('open', () => {
+        setOnlineStatus('Sala creada. Comparte el código y espera.');
+    });
+
+    peer.on('connection', (conn) => {
+        if (netConn) { try { conn.close(); } catch (e) {} return; }
+        netConn = conn;
+
+        conn.on('open', () => {
+            netConnected = true;
+            setOnlineStatus('Compañero conectado. Iniciando partida…');
+            startGame(MODE.HOST);
+            setTimeout(sendWorld, 600);
+        });
+        conn.on('data', handleNetData);
+        conn.on('close', onNetClose);
+        conn.on('error', onNetClose);
+    });
+
+    peer.on('error', (err) => {
+        if (err && err.type === 'unavailable-id' && !netConnected) {
+            try { peer.destroy(); } catch (e) {}
+            beginHost();
+            return;
+        }
+        setOnlineStatus('Error de conexión: ' + (err ? err.type : 'desconocido'));
+        showToast('No se pudo crear la sala. Inténtalo de nuevo.', 'bad');
+    });
+}
+
+function beginGuest(code) {
+    code = (code || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length !== 5) {
+        showToast('El código debe tener 5 caracteres.', 'warn');
+        return;
+    }
+    if (typeof Peer === 'undefined') {
+        showToast('No se pudo cargar PeerJS. Comprueba tu conexión.', 'bad');
+        return;
+    }
+    if (netPeer) { try { netPeer.destroy(); } catch (e) {} }
+    netConn = null;
+    netConnected = false;
+
+    showOnlinePanel('join');
+    setOnlineStatus('Conectando a la sala ' + code + '…');
+
+    const peer = new Peer({ debug: 0 });
+    netPeer = peer;
+
+    peer.on('open', () => {
+        const conn = peer.connect(ROOM_PREFIX + code, { reliable: true });
+        netConn = conn;
+
+        conn.on('open', () => {
+            netConnected = true;
+            setOnlineStatus('Conectado. Iniciando partida…');
+            startGame(MODE.GUEST);
+            sendNet({ t: 'hello' });
+        });
+        conn.on('data', handleNetData);
+        conn.on('close', onNetClose);
+        conn.on('error', onNetClose);
+    });
+
+    peer.on('error', (err) => {
+        setOnlineStatus('No se pudo conectar: ' + (err ? err.type : 'desconocido'));
+        showToast('No se encontró la sala o la conexión falló.', 'bad');
+    });
+}
+
+function onNetClose() {
+    if (!gameStarted) {
+        setOnlineStatus('Conexión cerrada.');
+        return;
+    }
+    netConnected = false;
+    document.exitPointerLock();
+    document.getElementById('hud').classList.add('hidden');
+    document.getElementById('disconnect-overlay').classList.remove('hidden');
+    try { if (netConn) netConn.close(); } catch (e) {}
+    try { if (netPeer) netPeer.destroy(); } catch (e) {}
+}
+
+function handleNetData(data) {
+    if (!data || typeof data !== 'object') return;
+    netRecvCount++;
+
+    if (netRole === 'host') {
+        switch (data.t) {
+            case 'state':
+                applyRemoteState(data, 1);
+                break;
+            case 'iact': {
+                const item = data.id ? interactableById[data.id] : null;
+                const spot = (typeof data.spot === 'number' && data.spot >= 0 && data.spot < hideSpots.length)
+                    ? hideSpots[data.spot] : null;
+                if (players[1].isHidden || item || spot) performInteraction(players[1], item, spot);
+                break;
+            }
+            case 'retry':
+                retryFromCheckpoint();
+                sendNet({ t: 'retryNow' });
+                break;
+            case 'hello':
+                sendWorld();
+                sendPlayerState(players[0], 0);
+                break;
+        }
+        return;
+    }
+
+    if (netRole === 'guest') {
+        switch (data.t) {
+            case 'world': applyWorldSnapshot(data); break;
+            case 'state': applyRemoteState(data, 0); break;
+            case 'fx': applyFx(data); break;
+            case 'door': applyDoorState(data.id, data.open); break;
+            case 'hide': applyRemoteHide(data); break;
+            case 'death': triggerDeath(data.reason || 'La criatura os alcanzó.'); break;
+            case 'ending':
+                if (story.phase !== 'ending') {
+                    story.phase = 'ending';
+                    activePlayers().forEach(p => { p.hasEscaped = true; });
+                    playEndingSequence(null);
+                }
+                break;
+            case 'retryNow': retryFromCheckpoint(); break;
+        }
+    }
+}
+
+function sendPlayerState(p, index) {
+    sendNet({
+        t: 'state',
+        i: index,
+        x: p.pos.x,
+        z: p.pos.z,
+        ry: p.rotY,
+        rx: p.rotX,
+        fl: p.flashlightOn,
+        hid: p.isHidden,
+        crouch: p.isCrouching,
+        sprint: p.isSprinting,
+        sta: p.stamina,
+        bat: p.battery,
+        items: p.items,
+        spare: p.spareBatteries,
+        dead: p.isDead,
+        escaped: p.hasEscaped
+    });
+}
+
+function applyRemoteState(d, index) {
+    const p = players[index];
+    if (!p || index === localPlayerIndex) return;
+
+    p.remoteTarget.set(d.x, PLAYER_HEIGHT, d.z);
+    p.remoteRotY = d.ry || 0;
+    p.remoteRotX = d.rx || 0;
+    p.remoteFlashlight = !!d.fl;
+    p.isHidden = !!d.hid;
+    p.isCrouching = !!d.crouch;
+    p.isSprinting = !!d.sprint;
+    p.stamina = typeof d.sta === 'number' ? d.sta : p.stamina;
+    p.battery = typeof d.bat === 'number' ? d.bat : p.battery;
+    if (d.items) {
+        if (!(netRole === 'host' && index === 1)) {
+            p.items = { key: !!d.items.key, fuse: !!d.items.fuse, genBattery: !!d.items.genBattery };
+        }
+    }
+    if (!(netRole === 'host' && index === 1)) p.spareBatteries = d.spare || 0;
+    p.isDead = !!d.dead;
+    p.hasEscaped = !!d.escaped;
+
+    if (p.isHidden) {
+        p.flashlight.visible = false;
+        p.beam.visible = false;
+    }
+}
+
+function applyRemoteHide(d) {
+    const p = players[d.i];
+    if (!p) return;
+    if (d.on) {
+        p.isHidden = true;
+        p.hideSpot = (typeof d.spot === 'number' && d.spot >= 0) ? hideSpots[d.spot] : null;
+        p.isCrouching = true;
+        p.flashlightOn = false;
+        p.flashlight.visible = false;
+        p.beam.visible = false;
+        const ui = hideOverlayFor(p);
+        if (ui.overlay) ui.overlay.classList.add('show');
+        if (ui.badge) ui.badge.style.display = 'block';
+    } else {
+        p.isHidden = false;
+        p.hideSpot = null;
+        p.isCrouching = false;
+        const ui = hideOverlayFor(p);
+        if (ui.overlay) ui.overlay.classList.remove('show');
+        if (ui.badge) ui.badge.style.display = 'none';
+    }
+}
+
+function applyDoorState(id, open) {
+    const item = interactableById[id];
+    if (!item || !open || item.open) return;
+    item.open = true;
+    if (item.pivot) item.pivot.rotation.y = -Math.PI / 2;
+    const idx = boxColliders.indexOf(item.collider);
+    if (idx > -1) boxColliders.splice(idx, 1);
+    audio.playDoorCreak();
+}
+
+function applyEnvironmentState(blackout, gen) {
+    const key = (blackout ? '1' : '0') + (gen ? '1' : '0');
+    if (key === lastEnvKey) return;
+    lastEnvKey = key;
+
+    if (gen) {
+        towerLights.forEach(t => {
+            t.light.intensity = t.base;
+            if (t.mat) t.mat.emissiveIntensity = 2.2;
+        });
+        ambientLight.intensity = 0.26;
+        hemiLight.intensity = 0.16;
+        moonLight.intensity = 0.20;
+        scene.fog.density = 0.046;
+        scene.background.setHex(0x04060a);
+        if (houseState) {
+            houseState.recorderLed.material.emissive.setHex(0xdc2626);
+            houseState.recorderLed.material.emissiveIntensity = 1.8;
+        }
+    } else if (blackout) {
+        towerLights.forEach(t => {
+            t.light.intensity = 0;
+            if (t.mat) t.mat.emissiveIntensity = 0.05;
+        });
+        ambientLight.intensity = 0.10;
+        hemiLight.intensity = 0.045;
+        moonLight.intensity = 0.09;
+        scene.fog.density = 0.058;
+        scene.background.setHex(0x010204);
+    } else {
+        towerLights.forEach(t => {
+            t.light.intensity = t.base;
+            if (t.mat) t.mat.emissiveIntensity = 1;
+        });
+        ambientLight.intensity = 0.36;
+        hemiLight.intensity = 0.22;
+        moonLight.intensity = 0.26;
+        scene.fog.density = 0.042;
+        scene.background.setHex(0x04060a);
+    }
+}
+
+function applyPlayerSnapshot(p, d) {
+    if (!p || !d) return;
+    p.items = { key: !!d.k, fuse: !!d.f, genBattery: !!d.b };
+    p.spareBatteries = d.s || 0;
+    p.isDead = !!d.dead;
+    p.hasEscaped = !!d.esc;
+    p.isHidden = !!d.hid;
+    if (p.isHidden) {
+        p.flashlight.visible = false;
+        p.beam.visible = false;
+    }
+}
+
+function applyCreatureSnapshot(cr) {
+    if (!creature) return;
+    if (cr && cr.vis) {
+        creature.group.visible = true;
+        creature.group.position.set(cr.x, 0, cr.z);
+        creature.state = cr.st || 'observe';
+        creature.opacity = typeof cr.op === 'number' ? cr.op : 1;
+        applyCreatureOpacity(creature.opacity);
+    } else {
+        creature.group.visible = false;
+        creature.state = 'hidden';
+        creature.opacity = 0;
+        applyCreatureOpacity(0);
+    }
+}
+
+function applyWorldSnapshot(d) {
+    if (!d) return;
+
+    story.phase = d.ph || story.phase;
+    story.phaseTime = d.pt || 0;
+    story.generatorOn = !!d.gen;
+    story.generatorFound = !!d.gf;
+    story.houseEntered = !!d.he;
+    story.recordingHeard = !!d.rec;
+    if (d.cp) {
+        story.checkpoint.set(d.cp.x, PLAYER_HEIGHT, d.cp.z);
+        story.checkpointName = d.cp.n || story.checkpointName;
+    }
+
+    applyEnvironmentState(!!d.bo, !!d.gen);
+    applyPlayerSnapshot(players[0], d.p0);
+    applyPlayerSnapshot(players[1], d.p1);
+
+    if (Array.isArray(d.doors)) d.doors.forEach(o => applyDoorState(o.id, o.open));
+    applyCreatureSnapshot(d.cr);
+
+    if (d.obj && d.obj !== lastObjectiveText) {
+        lastObjectiveText = d.obj;
+        objectiveEl.innerHTML = d.obj;
+        currentObjectiveTarget = (typeof d.objx === 'number' && typeof d.objz === 'number')
+            ? new THREE.Vector3(d.objx, 0, d.objz) : null;
+    }
+
+    if (d.ph === 'ending' && lastAppliedPhase !== 'ending') {
+        activePlayers().forEach(p => { p.hasEscaped = true; });
+        playEndingSequence(null);
+    }
+    lastAppliedPhase = d.ph;
+
+    if (gameMode === MODE.LOCAL) {
+        updateInventoryHUD(players[0], '');
+        updateInventoryHUD(players[1], '-p2');
+    } else {
+        updateInventoryHUD(localPlayer(), '');
+    }
+}
+
+function applyFx(d) {
+    switch (d.k) {
+        case 'chase':
+            audio.playCreatureScreech();
+            showToast('¡ALGO OS ESTÁ PERSIGUIENDO!', 'bad');
+            radioSay('¡Unidad 7, corred! ¡No miréis atrás!', 'err');
+            break;
+        case 'growl':
+            audio.playCreatureGrowl(28);
+            break;
+        case 'whisper':
+            audio.playWhisper();
+            break;
+        case 'static':
+            audio.playRadioStatic(2, 0.06);
+            break;
+        case 'flicker':
+            flashlightFlicker = 1.8;
+            audio.playRadioStatic(0.5, 0.04);
+            break;
+        case 'door':
+            audio.playDoorCreak();
+            break;
+        case 'bush':
+            audio.playBushRustle();
+            break;
+    }
+}
+
+function sendWorld() {
+    if (netRole !== 'host' || !netConnected) return;
+
+    const doors = interactables
+        .filter(i => i.type === 'shedDoor' || i.type === 'houseDoor')
+        .map(i => ({ id: i.id, open: !!i.open }));
+
+    sendNet({
+        t: 'world',
+        ph: story.phase,
+        pt: story.phaseTime,
+        gen: story.generatorOn,
+        gf: story.generatorFound,
+        he: story.houseEntered,
+        rec: story.recordingHeard,
+        bo: story.blackoutDone,
+        cp: { x: story.checkpoint.x, z: story.checkpoint.z, n: story.checkpointName },
+        obj: objectiveEl.innerHTML,
+        objx: currentObjectiveTarget ? currentObjectiveTarget.x : null,
+        objz: currentObjectiveTarget ? currentObjectiveTarget.z : null,
+        p0: {
+            k: players[0].items.key, f: players[0].items.fuse, b: players[0].items.genBattery,
+            s: players[0].spareBatteries, dead: players[0].isDead, esc: players[0].hasEscaped, hid: players[0].isHidden
+        },
+        p1: {
+            k: players[1].items.key, f: players[1].items.fuse, b: players[1].items.genBattery,
+            s: players[1].spareBatteries, dead: players[1].isDead, esc: players[1].hasEscaped, hid: players[1].isHidden
+        },
+        doors,
+        cr: creature ? {
+            vis: creature.group.visible,
+            st: creature.state,
+            x: creature.group.position.x,
+            z: creature.group.position.z,
+            op: creature.opacity
+        } : null
+    });
 }
 
 // ============================================================
@@ -4731,7 +5930,8 @@ function updateAnimated(delta, now) {
             obj.life -= delta;
             obj.mesh.position.addScaledVector(obj.dir, obj.speed * delta);
             obj.mesh.material.opacity = clamp(obj.life / obj.maxLife, 0, 0.9);
-            obj.mesh.lookAt(camera.position.x, 1.75, camera.position.z);
+            const cam = (localPlayer() && localPlayer().camera) || camera;
+            obj.mesh.lookAt(cam.position.x, 1.75, cam.position.z);
             if (obj.life <= 0) {
                 scene.remove(obj.mesh);
                 obj.mesh.geometry.dispose();
@@ -4765,10 +5965,56 @@ function updateAnimated(delta, now) {
 // ============================================================
 // BUCLE PRINCIPAL
 // ============================================================
+function updateCameraAspects() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const aspect = gameMode === MODE.LOCAL ? (w / 2) / h : w / h;
+    players.forEach(p => {
+        if (!p.camera) return;
+        p.camera.aspect = aspect;
+        p.camera.updateProjectionMatrix();
+    });
+}
+
+function applyViewVisibility(viewIndex) {
+    players.forEach((p, i) => {
+        if (!p.avatar) return;
+        p.avatar.visible = activePlayerCount > 1 && i !== viewIndex &&
+            !p.isDead && !p.hasEscaped && !p.isHidden;
+    });
+}
+
+function renderViews() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if (gameMode === MODE.LOCAL) {
+        const half = Math.floor(w / 2);
+        renderer.setScissorTest(true);
+
+        applyViewVisibility(0);
+        renderer.setViewport(0, 0, half, h);
+        renderer.setScissor(0, 0, half, h);
+        renderer.render(scene, players[0].camera);
+
+        applyViewVisibility(1);
+        renderer.setViewport(half, 0, w - half, h);
+        renderer.setScissor(half, 0, w - half, h);
+        renderer.render(scene, players[1].camera);
+
+        renderer.setScissorTest(false);
+        renderer.setViewport(0, 0, w, h);
+    } else {
+        applyViewVisibility(localPlayerIndex);
+        renderer.setViewport(0, 0, w, h);
+        renderer.setScissorTest(false);
+        renderer.render(scene, localPlayer().camera);
+    }
+}
+
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    updateCameraAspects();
 }
 
 function animate(now) {
@@ -4779,21 +6025,43 @@ function animate(now) {
     clockTime += delta;
 
     if (gameStarted) {
-        updateStory(delta);
-        updateRandomEvents(delta);
-        updatePlayer(delta);
-        updateCreature(delta);
-        updateHouseEffects(delta);
+        if (isWorldAuthority()) {
+            updateStory(delta);
+            updateRandomEvents(delta);
+            updateCreature(delta);
+            updateHouseEffects(delta);
+        }
+
+        updateLocalPlayers(delta);
         updateHUD();
+
+        if (netConnected) {
+            netStateTimer += delta;
+            if (netStateTimer >= 0.05) {
+                netStateTimer = 0;
+                if (netRole === 'host') sendPlayerState(players[0], 0);
+                else if (netRole === 'guest') sendPlayerState(players[1], 1);
+            }
+
+            if (netRole === 'host') {
+                netWorldTimer += delta;
+                if (netWorldTimer >= 0.25) {
+                    netWorldTimer = 0;
+                    sendWorld();
+                }
+            }
+        }
     }
 
     updateAnimated(delta, now);
-    renderer.render(scene, camera);
+    renderViews();
 }
 
 window.onload = () => {
     initEngine();
-    updateInventoryHUD();
+    updateCameraAspects();
+    updateInventoryHUD(players[0], '');
+    updateInventoryHUD(players[1], '-p2');
     setObjective('Revisa las instalaciones eléctricas del bosque. No te alejes demasiado de la torre.', PLACES.tower);
     updateHUD();
     requestAnimationFrame(animate);
