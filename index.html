@@ -520,6 +520,176 @@
             text-shadow: 0 0 22px rgba(34,197,94,0.35);
             margin: 6px 0 4px;
         }
+
+        /* ================= CO-OP LOCAL 4 JUGADORES (2x2) ================= */
+        #crosshair-p3, #crosshair-p4, #prompt-p3, #prompt-p4,
+        #danger-vignette-p3, #danger-vignette-p4,
+        #hidden-overlay-p3, #hidden-overlay-p4,
+        #hide-badge-p3, #hide-badge-p4,
+        #stats-p3, #stats-p4, #player-tag-3, #player-tag-4,
+        #split-h, #split-v { display: none; }
+
+        #danger-vignette-p3, #danger-vignette-p4 {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at center, rgba(120,0,0,0) 35%, rgba(120,0,0,0.5) 100%);
+            transition: opacity 0.4s ease;
+        }
+        #hidden-overlay-p3, #hidden-overlay-p4 {
+            position: absolute;
+            z-index: 18;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.25) 20%, rgba(0,0,0,0.9) 100%);
+        }
+        #hidden-overlay-p3.show, #hidden-overlay-p4.show { opacity: 1; }
+
+        #hide-badge-p3, #hide-badge-p4 {
+            position: absolute;
+            z-index: 26;
+            transform: translateX(-50%);
+            padding: 7px 18px;
+            border-radius: 6px;
+            border: 1px solid #14532d;
+            background: rgba(4, 12, 7, 0.9);
+            color: #86efac;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            display: none;
+        }
+
+        #prompt-p3, #prompt-p4 {
+            position: absolute;
+            z-index: 25;
+            transform: translateX(-50%);
+            padding: 8px 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(251,191,36,0.5);
+            background: rgba(12, 10, 4, 0.88);
+            color: #fde68a;
+            font-size: 13px;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+            box-shadow: 0 0 26px rgba(0,0,0,0.85);
+        }
+
+        #split-h {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 2px;
+            margin-top: -1px;
+            z-index: 22;
+            pointer-events: none;
+            background: linear-gradient(90deg, rgba(34,197,94,0.05), rgba(34,197,94,0.35), rgba(34,197,94,0.05));
+            box-shadow: 0 0 12px rgba(0,0,0,0.9);
+        }
+        #split-v {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            margin-left: -1px;
+            z-index: 22;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(34,197,94,0.05), rgba(34,197,94,0.35), rgba(34,197,94,0.05));
+            box-shadow: 0 0 12px rgba(0,0,0,0.9);
+        }
+
+        #player-tag-3, #player-tag-4 {
+            display: none;
+            position: absolute;
+            z-index: 24;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(4, 10, 6, 0.85);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            color: #86efac;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            pointer-events: none;
+        }
+
+        body.split4 #crosshair { left: 25%; top: 25%; }
+        body.split4 #crosshair-p2 { display: block; left: 75%; top: 25%; }
+        body.split4 #crosshair-p3 { display: block; position: absolute; left: 25%; top: 75%; width: 6px; height: 6px; background: rgba(220,235,220,0.45); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 20; box-shadow: 0 0 6px rgba(0,0,0,0.9); }
+        body.split4 #crosshair-p4 { display: block; position: absolute; left: 75%; top: 75%; width: 6px; height: 6px; background: rgba(220,235,220,0.45); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 20; box-shadow: 0 0 6px rgba(0,0,0,0.9); }
+        body.split4 #crosshair-p3.active, body.split4 #crosshair-p4.active { background: #fbbf24; transform: translate(-50%,-50%) scale(2); box-shadow: 0 0 12px rgba(251,191,36,0.8); }
+
+        body.split4 #prompt { left: 25%; bottom: 54%; max-width: 40vw; white-space: normal; text-align: center; }
+        body.split4 #prompt-p2 { display: block; left: 75%; bottom: 54%; max-width: 40vw; white-space: normal; text-align: center; }
+        body.split4 #prompt-p3 { display: block; left: 25%; bottom: 6%; max-width: 40vw; white-space: normal; text-align: center; }
+        body.split4 #prompt-p4 { display: block; left: 75%; bottom: 6%; max-width: 40vw; white-space: normal; text-align: center; }
+
+        body.split4 #danger-vignette { top: 0; left: 0; width: 50%; height: 50%; }
+        body.split4 #danger-vignette-p2 { display: block; top: 0; left: 50%; width: 50%; height: 50%; }
+        body.split4 #danger-vignette-p3 { display: block; top: 50%; left: 0; width: 50%; height: 50%; }
+        body.split4 #danger-vignette-p4 { display: block; top: 50%; left: 50%; width: 50%; height: 50%; }
+
+        body.split4 #hidden-overlay { top: 0; left: 0; width: 50%; height: 50%; }
+        body.split4 #hidden-overlay-p2 { display: block; top: 0; left: 50%; width: 50%; height: 50%; }
+        body.split4 #hidden-overlay-p3 { display: block; top: 50%; left: 0; width: 50%; height: 50%; }
+        body.split4 #hidden-overlay-p4 { display: block; top: 50%; left: 50%; width: 50%; height: 50%; }
+
+        body.split4 #hide-badge { left: 25%; bottom: 46%; }
+        body.split4 #hide-badge-p2 { display: block; left: 75%; bottom: 46%; }
+        body.split4 #hide-badge-p3 { display: block; left: 25%; bottom: 3%; }
+        body.split4 #hide-badge-p4 { display: block; left: 75%; bottom: 3%; }
+
+        body.split4 #stats-p1 { position: absolute; left: 25%; top: 8px; transform: translateX(-50%); width: 13rem; }
+        body.split4 #stats-p2 { display: block; position: absolute; left: 75%; top: 8px; transform: translateX(-50%); width: 13rem; }
+        body.split4 #stats-p3 { display: block; position: absolute; left: 25%; top: calc(50% + 8px); transform: translateX(-50%); width: 13rem; }
+        body.split4 #stats-p4 { display: block; position: absolute; left: 75%; top: calc(50% + 8px); transform: translateX(-50%); width: 13rem; }
+
+        body.split4 #objective-panel { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 24rem; max-width: 34vw; }
+        body.split4 #radio-panel { display: none; }
+        body.split4 #controls-hint { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); max-width: 66vw; width: auto; }
+        body.split4 #player-tag-1 { display: block; left: 8px; top: 8px; }
+        body.split4 #player-tag-2 { display: block; left: calc(50% + 8px); top: 8px; }
+        body.split4 #player-tag-3 { display: block; left: 8px; top: calc(50% + 8px); }
+        body.split4 #player-tag-4 { display: block; left: calc(50% + 8px); top: calc(50% + 8px); }
+        body.split4 #split-h, body.split4 #split-v { display: block; }
+
+        /* ================= MINIMAPA ================= */
+        #minimap-wrap {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 27;
+            padding: 6px;
+            width: 196px;
+            pointer-events: none;
+        }
+        #minimap {
+            display: block;
+            width: 184px;
+            height: 184px;
+            border-radius: 6px;
+            background: rgba(2, 6, 3, 0.9);
+        }
+        #minimap-label {
+            margin-top: 4px;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #86efac;
+            opacity: 0.75;
+            text-align: center;
+        }
+        body.split4 #minimap-wrap {
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            width: 148px;
+            padding: 5px;
+        }
+        body.split4 #minimap { width: 138px; height: 138px; }
+        body.split4 #minimap-label { font-size: 8px; }
     </style>
 </head>
 <body class="bg-black text-white select-none">
@@ -531,24 +701,42 @@
     <div class="grain"></div>
     <div id="danger-vignette"></div>
     <div id="danger-vignette-p2"></div>
+    <div id="danger-vignette-p3"></div>
+    <div id="danger-vignette-p4"></div>
     <div id="hidden-overlay"></div>
     <div id="hidden-overlay-p2"></div>
+    <div id="hidden-overlay-p3"></div>
+    <div id="hidden-overlay-p4"></div>
     <div id="blackout"></div>
     <div id="split-divider"></div>
+    <div id="split-h"></div>
+    <div id="split-v"></div>
 
     <div id="crosshair" class="crosshair"></div>
     <div id="crosshair-p2" class="crosshair"></div>
+    <div id="crosshair-p3" class="crosshair"></div>
+    <div id="crosshair-p4" class="crosshair"></div>
     <div id="prompt" class="hidden"></div>
     <div id="prompt-p2" class="hidden"></div>
+    <div id="prompt-p3" class="hidden"></div>
+    <div id="prompt-p4" class="hidden"></div>
     <div id="toast"></div>
     <div id="subtitle"></div>
     <div id="hide-badge">ESCONDIDO &nbsp;·&nbsp; <span class="text-gray-400">[E] SALIR</span></div>
     <div id="hide-badge-p2">ESCONDIDO &nbsp;·&nbsp; <span class="text-gray-400">[M] SALIR</span></div>
+    <div id="hide-badge-p3">ESCONDIDO &nbsp;·&nbsp; <span class="text-gray-400">[X] SALIR</span></div>
+    <div id="hide-badge-p4">ESCONDIDO &nbsp;·&nbsp; <span class="text-gray-400">[ENT] SALIR</span></div>
     <div id="player-tag-1">JUGADOR 1</div>
     <div id="player-tag-2">JUGADOR 2</div>
+    <div id="player-tag-3">JUGADOR 3</div>
+    <div id="player-tag-4">JUGADOR 4</div>
 
     <!-- HUD -->
     <div id="hud" class="absolute inset-0 z-20 pointer-events-none hidden flex flex-col justify-between p-5">
+        <div id="minimap-wrap" class="panel">
+            <canvas id="minimap" width="368" height="368"></canvas>
+            <div id="minimap-label">Mapa · puntos y criatura</div>
+        </div>
         <!-- TOP -->
         <div class="flex justify-between items-start gap-4">
             <div class="flex flex-col gap-3 max-w-md" id="objective-panel">
@@ -620,6 +808,62 @@
                     <span id="inv-hint-p2" class="text-[9px] text-gray-500 ml-1"></span>
                 </div>
             </div>
+
+            <div id="stats-p3" class="panel px-4 py-3 w-64 shrink-0">
+                <div class="mb-2">
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-gray-400"><i class="fa-solid fa-person-running mr-1"></i> Resistencia <span class="text-gray-600">[J3]</span></span>
+                        <span id="stamina-val-p3" class="text-green-400">100%</span>
+                    </div>
+                    <div class="bar-track"><div id="stamina-bar-p3" class="bar-fill bg-green-600"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-gray-400"><i class="fa-solid fa-flashlight mr-1"></i> Linterna <span class="text-gray-600">[Z]</span></span>
+                        <span id="battery-val-p3" class="text-amber-400">100%</span>
+                    </div>
+                    <div class="bar-track"><div id="battery-bar-p3" class="bar-fill bg-amber-500"></div></div>
+                    <div class="mt-1.5 flex items-center gap-2 text-[10px] text-gray-500">
+                        <i class="fa-solid fa-battery-half"></i>
+                        <span id="spare-batteries-p3">Pilas de repuesto: 0</span>
+                    </div>
+                </div>
+                <div class="mt-2 flex items-center gap-1.5">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-widest">Equipo</span>
+                    <div id="inv-key-p3" class="inv-slot" title="Llave"><i class="fa-solid fa-key text-sm"></i></div>
+                    <div id="inv-fuse-p3" class="inv-slot" title="Fusible"><i class="fa-solid fa-plug text-sm"></i></div>
+                    <div id="inv-battery-p3" class="inv-slot" title="Batería"><i class="fa-solid fa-car-battery text-sm"></i></div>
+                    <span id="inv-hint-p3" class="text-[9px] text-gray-500 ml-1"></span>
+                </div>
+            </div>
+
+            <div id="stats-p4" class="panel px-4 py-3 w-64 shrink-0">
+                <div class="mb-2">
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-gray-400"><i class="fa-solid fa-person-running mr-1"></i> Resistencia <span class="text-gray-600">[J4]</span></span>
+                        <span id="stamina-val-p4" class="text-green-400">100%</span>
+                    </div>
+                    <div class="bar-track"><div id="stamina-bar-p4" class="bar-fill bg-green-600"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-gray-400"><i class="fa-solid fa-flashlight mr-1"></i> Linterna <span class="text-gray-600">[+]</span></span>
+                        <span id="battery-val-p4" class="text-amber-400">100%</span>
+                    </div>
+                    <div class="bar-track"><div id="battery-bar-p4" class="bar-fill bg-amber-500"></div></div>
+                    <div class="mt-1.5 flex items-center gap-2 text-[10px] text-gray-500">
+                        <i class="fa-solid fa-battery-half"></i>
+                        <span id="spare-batteries-p4">Pilas de repuesto: 0</span>
+                    </div>
+                </div>
+                <div class="mt-2 flex items-center gap-1.5">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-widest">Equipo</span>
+                    <div id="inv-key-p4" class="inv-slot" title="Llave"><i class="fa-solid fa-key text-sm"></i></div>
+                    <div id="inv-fuse-p4" class="inv-slot" title="Fusible"><i class="fa-solid fa-plug text-sm"></i></div>
+                    <div id="inv-battery-p4" class="inv-slot" title="Batería"><i class="fa-solid fa-car-battery text-sm"></i></div>
+                    <span id="inv-hint-p4" class="text-[9px] text-gray-500 ml-1"></span>
+                </div>
+            </div>
         </div>
 
         <!-- BOTTOM -->
@@ -688,7 +932,7 @@
                     <i class="fa-solid fa-satellite-dish mr-2"></i> JUGAR SOLO
                 </button>
                 <button id="local-btn" class="btn-menu">
-                    <i class="fa-solid fa-people-group mr-2"></i> CO-OP LOCAL · 2P
+                    <i class="fa-solid fa-people-group mr-2"></i> CO-OP LOCAL · 4P
                 </button>
                 <button id="host-btn" class="btn-menu secondary">
                     <i class="fa-solid fa-tower-broadcast mr-2"></i> CREAR SALA ONLINE
@@ -703,7 +947,7 @@
                 <div id="host-info" class="hidden text-center mt-2">
                     <div class="text-[9px] tracking-[0.3em] text-gray-500 uppercase">Código de sala</div>
                     <div id="room-code">-----</div>
-                    <div class="text-[10px] text-gray-500">Comparte este código con tu compañero</div>
+                    <div class="text-[10px] text-gray-500">Comparte este código con tus compañeros (hasta 3)</div>
                 </div>
                 <div id="join-info" class="hidden flex gap-2 justify-center mt-2">
                     <input id="join-code" maxlength="5" placeholder="CÓDIGO" autocomplete="off" spellcheck="false">
@@ -745,7 +989,7 @@
     <div id="disconnect-overlay" class="overlay-screen hidden" style="background: rgba(0,0,0,0.96);">
         <i class="fa-solid fa-link-slash text-4xl text-red-700 mb-4"></i>
         <h1 class="font-horror text-5xl text-red-600 mb-3">CONEXIÓN PERDIDA</h1>
-        <p class="text-gray-400 text-sm max-w-md mb-8">Tu compañero ha salido de la partida o la conexión se ha cortado.</p>
+        <p class="text-gray-400 text-sm max-w-md mb-8">La conexión con el anfitrión se ha perdido.</p>
         <button id="disconnect-menu-btn" class="px-8 py-3 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold rounded-lg tracking-widest text-xs border border-gray-700 transition">
             <i class="fa-solid fa-rotate-right mr-2"></i> VOLVER AL MENÚ
         </button>
@@ -1403,7 +1647,7 @@ const audio = new SoundEngine();
 // ============================================================
 // CONSTANTES
 // ============================================================
-const MAP_SIZE = 220;
+const MAP_SIZE = 340;
 const MAP_HALF = MAP_SIZE / 2;
 const PLAYER_HEIGHT = 1.7;
 const CROUCH_HEIGHT = 1.05;
@@ -1412,18 +1656,23 @@ const FLASHLIGHT_DISTANCE = 46;
 const FLASHLIGHT_ANGLE = Math.PI / 5.2;
 const FLASHLIGHT_INTENSITY = 3.6;
 const PLAYER_RADIUS = 0.42;
+const MAX_PLAYERS = 4;
 
-// Lugares clave
+// Lugares clave (mundo ampliado x1.55)
 const PLACES = {
-    tower:      new THREE.Vector3(0, 0, 60),
-    shed:       new THREE.Vector3(14, 0, 58),
-    generator:  new THREE.Vector3(-58, 0, 26),
-    vehicle:    new THREE.Vector3(58, 0, 40),
-    camp:       new THREE.Vector3(52, 0, -18),
-    bridge:     new THREE.Vector3(-34, 0, -34),
-    antenna:    new THREE.Vector3(-72, 0, -58),
-    house:      new THREE.Vector3(35, 0, -62)
+    tower:      new THREE.Vector3(0, 0, 93),
+    shed:       new THREE.Vector3(22, 0, 90),
+    generator:  new THREE.Vector3(-90, 0, 40),
+    vehicle:    new THREE.Vector3(90, 0, 62),
+    camp:       new THREE.Vector3(81, 0, -28),
+    bridge:     new THREE.Vector3(-53, 0, -53),
+    antenna:    new THREE.Vector3(-112, 0, -90),
+    house:      new THREE.Vector3(54, 0, -96)
 };
+
+const SPAWN_POINTS = [
+    [0, 118], [2.4, 118], [-2.4, 118], [0, 120.6]
+];
 
 // ============================================================
 // ESTADO
@@ -1444,8 +1693,10 @@ let gameMode = MODE.SOLO;
 let netRole = null;              // 'host' | 'guest' | null
 let localPlayerIndex = 0;        // índice del jugador de esta pantalla
 let activePlayerCount = 1;
+let activeIndices = [0];         // jugadores que participan en la partida
 let netPeer = null;
-let netConn = null;
+let netConn = null;              // conexión del invitado
+let netConns = [null, null, null, null]; // anfitrión: conexiones por índice (1..3)
 let netConnected = false;
 let netStateTimer = 0;
 let netWorldTimer = 0;
@@ -1453,11 +1704,12 @@ let netFxQueue = [];
 let lastAppliedPhase = '';
 let netSendCount = 0;
 let netRecvCount = 0;
+let hostRetryCount = 0;
 
 function createPlayerState(index, x, z) {
     return {
         index,
-        name: index === 0 ? 'Jugador 1' : 'Jugador 2',
+        name: 'Jugador ' + (index + 1),
         pos: new THREE.Vector3(x, PLAYER_HEIGHT, z),
         rotY: 0,
         rotX: 0,
@@ -1488,12 +1740,25 @@ function createPlayerState(index, x, z) {
     };
 }
 
-const players = [createPlayerState(0, 0, 76), createPlayerState(1, 2.6, 76)];
+const players = SPAWN_POINTS.map((s, i) => createPlayerState(i, s[0], s[1]));
 const player = players[0];   // alias histórico: jugador 1 / anfitrión
 
 function activePlayers() {
-    return activePlayerCount > 1 ? players : [players[0]];
+    return activeIndices.map(i => players[i]).filter(Boolean);
 }
+function activePlayerList() {
+    return activeIndices.slice();
+}
+function refreshActiveCount() {
+    activePlayerCount = activeIndices.length;
+}
+function setActiveIndices(list) {
+    const clean = Array.from(new Set((list || [0]).filter(i => i >= 0 && i < players.length)));
+    if (!clean.includes(0)) clean.unshift(0);
+    activeIndices = clean.sort((a, b) => a - b);
+    refreshActiveCount();
+}
+refreshActiveCount();
 function isWorldAuthority() {
     return netRole !== 'guest';
 }
@@ -1522,7 +1787,7 @@ const story = {
     recordingHeard: false,
     houseEntered: false,
     towerDoorOpen: false,
-    checkpoint: new THREE.Vector3(0, PLAYER_HEIGHT, 76),
+    checkpoint: new THREE.Vector3(0, PLAYER_HEIGHT, 118),
     checkpointName: 'torre',
     endingStep: 0,
     endingTimer: 0,
@@ -1637,6 +1902,14 @@ function updateInventoryHUD(p = player, suffix = '') {
     if (hint) hint.innerText = missing.length ? `Falta: ${missing.join(', ')}` : 'Todo listo';
     const spare = document.getElementById('spare-batteries' + suffix);
     if (spare) spare.innerText = `Pilas de repuesto: ${p.spareBatteries}`;
+}
+
+function playerSuffix(p) {
+    return ['', '-p2', '-p3', '-p4'][p.index] || '';
+}
+
+function updateAllInventoryHUD() {
+    players.forEach(p => updateInventoryHUD(p, playerSuffix(p)));
 }
 
 // ============================================================
@@ -1961,6 +2234,8 @@ function initEngine() {
 
     createPlayerView(players[0], true);
     createPlayerView(players[1], false);
+    createPlayerView(players[2], false);
+    createPlayerView(players[3], false);
 
     camera = players[0].camera;
     camera2 = players[1].camera;
@@ -2079,16 +2354,16 @@ function buildGround() {
 
     const dirtMat = new THREE.MeshStandardMaterial({ color: 0x241f18, roughness: 1 });
     const roadDefs = [
-        { x: 0, z: 22, w: 9, d: 104 },        // camino principal norte-sur
-        { x: -29, z: 10, w: 62, d: 7 },       // camino oeste al generador
-        { x: 29, z: 40, w: 62, d: 7 },        // camino este al vehículo
-        { x: -14, z: -32, w: 32, d: 8 },      // conexión al puente
-        { x: -34, z: -52, w: 7, d: 30 },      // salida sur del puente
-        { x: -53, z: -59, w: 42, d: 7 },      // camino a la antena
-        { x: 2, z: -62, w: 68, d: 8 },        // camino a la casa
-        { x: 35, z: -56, w: 8, d: 14 },       // entrada de la casa
-        { x: -58, z: 18, w: 7, d: 20 },       // acceso al generador
-        { x: 56, z: 11, w: 7, d: 58 }         // acceso al campamento
+        { x: 0, z: 34, w: 9, d: 172 },        // camino principal norte-sur
+        { x: -45, z: 16, w: 96, d: 7 },       // camino oeste al generador
+        { x: 45, z: 62, w: 96, d: 7 },        // camino este al vehículo
+        { x: -22, z: -50, w: 50, d: 8 },      // conexión al puente
+        { x: -53, z: -81, w: 7, d: 46 },      // salida sur del puente
+        { x: -82, z: -91, w: 65, d: 7 },      // camino a la antena
+        { x: 3, z: -96, w: 105, d: 8 },       // camino a la casa
+        { x: 54, z: -87, w: 8, d: 22 },       // entrada de la casa
+        { x: -90, z: 28, w: 7, d: 31 },       // acceso al generador
+        { x: 87, z: 17, w: 7, d: 90 }         // acceso al campamento
     ];
     roadDefs.forEach(r => {
         const road = new THREE.Mesh(new THREE.PlaneGeometry(r.w, r.d), dirtMat);
@@ -2101,21 +2376,21 @@ function buildGround() {
     // Plaza de la torre
     const plaza = new THREE.Mesh(new THREE.CircleGeometry(13, 24), dirtMat);
     plaza.rotation.x = -Math.PI / 2;
-    plaza.position.set(0, 0.014, 60);
+    plaza.position.set(0, 0.014, 93);
     scene.add(plaza);
 }
 
 function isOnPath(x, z) {
-    if (Math.abs(x) < 5.2 && z > -30 && z < 76) return true;                 // principal
-    if (Math.abs(z - 10) < 4.2 && x > -64 && x < 6) return true;             // oeste
-    if (Math.abs(z - 40) < 4.2 && x > -6 && x < 64) return true;             // este
-    if (z > -38 && z < -27 && x > -34 && x < 4) return true;                 // conexión puente
-    if (Math.abs(x + 34) < 4.5 && z > -70 && z < -24) return true;           // sur del puente
-    if (Math.abs(z + 59) < 4.2 && x > -76 && x < -24) return true;           // antena
-    if (Math.abs(z + 62) < 4.6 && x > -32 && x < 42) return true;            // casa
-    if (Math.abs(x - 35) < 4.6 && z > -62 && z < -50) return true;           // entrada casa
-    if (Math.abs(x + 58) < 4.2 && z > 6 && z < 30) return true;              // acceso generador
-    if (Math.abs(x - 56) < 4.2 && z > -22 && z < 42) return true;            // acceso campamento
+    if (Math.abs(x) < 5.2 && z > -52 && z < 121) return true;              // principal
+    if (Math.abs(z - 16) < 4.2 && x > -99 && x < 9.3) return true;           // oeste
+    if (Math.abs(z - 62) < 4.2 && x > -9 && x < 99) return true;             // este
+    if (z > -59 && z < -42 && x > -53 && x < 6.2) return true;               // conexión puente
+    if (Math.abs(x + 53) < 4.5 && z > -108.5 && z < -37) return true;        // sur del puente
+    if (Math.abs(z + 91) < 4.2 && x > -118 && x < -37) return true;          // antena
+    if (Math.abs(z + 96) < 4.6 && x > -49.6 && x < 65) return true;          // casa
+    if (Math.abs(x - 54) < 4.6 && z > -96 && z < -77.5) return true;         // entrada casa
+    if (Math.abs(x + 90) < 4.2 && z > 9.3 && z < 46.5) return true;          // acceso generador
+    if (Math.abs(x - 87) < 4.2 && z > -34 && z < 65) return true;            // acceso campamento
     return false;
 }
 
@@ -2138,7 +2413,7 @@ function inClearing(x, z, extra = 0) {
 function isFreeForProp(x, z, extra = 0) {
     if (isOnPath(x, z)) return false;
     if (inClearing(x, z, extra)) return false;
-    if (Math.abs(z + 34) < 8 + extra) return false;   // arroyo
+    if (Math.abs(z + 53) < 8 + extra) return false;   // arroyo
     if (isBlocked(x, z, 0.8 + extra)) return false;
     return true;
 }
@@ -2154,32 +2429,32 @@ function buildStreamAndBridgeColliders() {
     });
     const water = new THREE.Mesh(new THREE.PlaneGeometry(MAP_SIZE, 13), waterMat);
     water.rotation.x = -Math.PI / 2;
-    water.position.set(0, 0.025, -34);
+    water.position.set(0, 0.025, -53);
     scene.add(water);
 
     // Juncos y rocas en las orillas
     const rockMat = new THREE.MeshStandardMaterial({ color: 0x1f2426, roughness: 0.95 });
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 150; i++) {
         const x = rand(-MAP_HALF + 6, MAP_HALF - 6);
-        if (Math.abs(x + 34) < 5) continue;
+        if (Math.abs(x + 53) < 5) continue;
         const side = Math.random() < 0.5 ? -1 : 1;
         const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(rand(0.4, 1.4), 0), rockMat);
-        rock.position.set(x, rand(0.1, 0.4), -34 + side * rand(6.2, 8.2));
+        rock.position.set(x, rand(0.1, 0.4), -53 + side * rand(6.2, 8.2));
         rock.rotation.set(Math.random(), Math.random(), Math.random());
         rock.scale.y = 0.7;
         scene.add(rock);
     }
 
-    // Colisión del arroyo (deja hueco para el puente en x = -34)
-    addBoxCollider(-MAP_HALF, -38, -39, -29);
-    addBoxCollider(-30, MAP_HALF, -39, -29);
+    // Colisión del arroyo (deja hueco para el puente en x = -53)
+    addBoxCollider(-MAP_HALF, -59, -60.5, -45.5);
+    addBoxCollider(-47, MAP_HALF, -60.5, -45.5);
 }
 
 // ============================================================
 // BOSQUE
 // ============================================================
 function buildForest() {
-    const treeCount = 560;
+    const treeCount = 1050;
     const dummy = new THREE.Object3D();
 
     const trunkGeo = new THREE.CylinderGeometry(0.5, 0.75, 1, 6);
@@ -2252,9 +2527,13 @@ function buildForest() {
 
 function buildBigTrees() {
     const spots = [
-        { x: 8, z: 30 }, { x: -11, z: 20 }, { x: 11, z: -6 }, { x: -13, z: -14 },
-        { x: 24, z: -46 }, { x: -47, z: -52 }, { x: 46, z: -34 }, { x: 62, z: 16 },
-        { x: -42, z: 46 }, { x: 22, z: 70 }, { x: -72, z: 2 }, { x: 70, z: -62 }
+        { x: 12, z: 47 }, { x: -17, z: 31 }, { x: 17, z: -9 }, { x: -20, z: -22 },
+        { x: 37, z: -71 }, { x: -73, z: -80 }, { x: 71, z: -53 }, { x: 96, z: 25 },
+        { x: -65, z: 71 }, { x: 34, z: 108 }, { x: -112, z: 3 }, { x: 108, z: -96 },
+        { x: 132, z: 118 }, { x: -138, z: 92 }, { x: 58, z: 142 }, { x: -82, z: 138 },
+        { x: 142, z: -18 }, { x: -142, z: -8 }, { x: 122, z: -122 }, { x: -126, z: -134 },
+        { x: 18, z: -150 }, { x: -22, z: 152 }, { x: 150, z: 62 }, { x: -150, z: 48 },
+        { x: 92, z: 148 }, { x: -102, z: -150 }
     ];
 
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x241c14, roughness: 1 });
@@ -2307,7 +2586,7 @@ function buildUndergrowth() {
     // Arbustos
     const bushGeo = new THREE.SphereGeometry(1, 7, 6);
     const bushMat = new THREE.MeshStandardMaterial({ color: 0x12241a, roughness: 1 });
-    const bushCount = 720;
+    const bushCount = 1250;
     const bushes = new THREE.InstancedMesh(bushGeo, bushMat, bushCount);
     bushes.frustumCulled = false;
     let bPlaced = 0;
@@ -2331,7 +2610,7 @@ function buildUndergrowth() {
     // Rocas
     const rockGeo = new THREE.DodecahedronGeometry(1, 0);
     const rockMat = new THREE.MeshStandardMaterial({ color: 0x232829, roughness: 0.95 });
-    const rockCount = 190;
+    const rockCount = 320;
     const rocks = new THREE.InstancedMesh(rockGeo, rockMat, rockCount);
     rocks.frustumCulled = false;
     let rPlaced = 0;
@@ -2356,7 +2635,7 @@ function buildUndergrowth() {
     const fernGeo = new THREE.ConeGeometry(0.45, 1.1, 4);
     fernGeo.translate(0, 0.55, 0);
     const fernMat = new THREE.MeshStandardMaterial({ color: 0x16281b, roughness: 1, side: THREE.DoubleSide });
-    const fernCount = 850;
+    const fernCount = 1450;
     const ferns = new THREE.InstancedMesh(fernGeo, fernMat, fernCount);
     ferns.frustumCulled = false;
     let fPlaced = 0;
@@ -2467,7 +2746,7 @@ function buildDustAndFireflies() {
 function registerInteractable(mesh, data) {
     data.mesh = mesh;
     data.id = data.id || ('it' + (++interactableSeq));
-    data.collectedBy = data.collectedBy || [false, false];
+    data.collectedBy = data.collectedBy || [false, false, false, false];
     mesh.traverse(obj => { obj.userData.interactable = data; });
     interactables.push(data);
     interactableById[data.id] = data;
@@ -2493,21 +2772,22 @@ function createDoor(width, height, thickness, mat, hingeLeft = true) {
 // TORRE ELÉCTRICA + CASETA
 // ============================================================
 function buildTower() {
+    const tz = PLACES.tower.z;
     const steel = new THREE.MeshStandardMaterial({ color: 0x3c4448, metalness: 0.85, roughness: 0.4 });
     const darkSteel = new THREE.MeshStandardMaterial({ color: 0x252b2e, metalness: 0.8, roughness: 0.5 });
     const concrete = new THREE.MeshStandardMaterial({ color: 0x2a2c2b, roughness: 0.95 });
 
     const base = new THREE.Mesh(new THREE.BoxGeometry(9, 0.5, 9), concrete);
-    base.position.set(0, 0.25, 60);
+    base.position.set(0, 0.25, tz);
     base.receiveShadow = true;
     scene.add(base);
-    addBoxCollider(-4.5, 4.5, 55.5, 64.5);
+    addBoxCollider(-4.5, 4.5, tz - 4.5, tz + 4.5);
 
     const H = 27;
     const legPositions = [[-3, -3], [3, -3], [-3, 3], [3, 3]];
     legPositions.forEach(([lx, lz]) => {
         const leg = new THREE.Mesh(new THREE.BoxGeometry(0.34, H, 0.34), steel);
-        leg.position.set(lx * 0.82, H / 2 + 0.4, 60 + lz * 0.82);
+        leg.position.set(lx * 0.82, H / 2 + 0.4, tz + lz * 0.82);
         leg.rotation.z = -lx * 0.012;
         leg.rotation.x = lz * 0.012;
         leg.castShadow = true;
@@ -2521,19 +2801,19 @@ function buildTower() {
         const sizes = [[spread * 2, 0.12, 0.12, 0, -spread], [spread * 2, 0.12, 0.12, 0, spread]];
         sizes.forEach(([w, h, d, ox, oz]) => {
             const bar = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), darkSteel);
-            bar.position.set(ox, y, 60 + oz);
+            bar.position.set(ox, y, tz + oz);
             scene.add(bar);
         });
         [-spread, spread].forEach(ox => {
             const bar = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, spread * 2), darkSteel);
-            bar.position.set(ox, y, 60);
+            bar.position.set(ox, y, tz);
             scene.add(bar);
         });
         // Diagonales
         for (let s = 0; s < 4; s++) {
             const diag = new THREE.Mesh(new THREE.BoxGeometry(0.09, 4.4, 0.09), darkSteel);
             const a = s * Math.PI / 2;
-            diag.position.set(Math.cos(a) * spread, y - 2.1, 60 + Math.sin(a) * spread);
+            diag.position.set(Math.cos(a) * spread, y - 2.1, tz + Math.sin(a) * spread);
             diag.rotation.z = 0.72;
             diag.rotation.y = a;
             scene.add(diag);
@@ -2542,41 +2822,41 @@ function buildTower() {
 
     // Plataforma y aisladores
     const platform = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.35, 5.4), steel);
-    platform.position.set(0, H + 0.5, 60);
+    platform.position.set(0, H + 0.5, tz);
     platform.castShadow = true;
     scene.add(platform);
 
     for (let i = -1; i <= 1; i++) {
         const insulator = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.2, 0.9, 8), new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.4 }));
-        insulator.position.set(i * 1.5, H + 1.1, 60);
+        insulator.position.set(i * 1.5, H + 1.1, tz);
         scene.add(insulator);
     }
 
     // Baliza roja
     const beaconMat = new THREE.MeshStandardMaterial({ color: 0xff2b2b, emissive: 0xff1a1a, emissiveIntensity: 2.2 });
     const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 10), beaconMat);
-    beacon.position.set(0, H + 2.1, 60);
+    beacon.position.set(0, H + 2.1, tz);
     scene.add(beacon);
 
     const beaconLight = new THREE.PointLight(0xff2020, 1.4, 26, 2);
-    beaconLight.position.set(0, H + 2, 60);
+    beaconLight.position.set(0, H + 2, tz);
     scene.add(beaconLight);
     towerLights.push({ light: beaconLight, base: 1.4, mat: beaconMat });
 
     // Focos de la torre
     const floodTarget = new THREE.Object3D();
-    floodTarget.position.set(0, 0, 60);
+    floodTarget.position.set(0, 0, tz);
     scene.add(floodTarget);
 
     const flood = new THREE.SpotLight(0xfff0d0, 2.6, 40, 1.0, 0.5, 1.2);
-    flood.position.set(3.4, 8.5, 62.6);
+    flood.position.set(3.4, 8.5, tz + 2.6);
     flood.target = floodTarget;
     flood.castShadow = false;
     scene.add(flood);
     towerLights.push({ light: flood, base: 2.6 });
 
     const flood2 = new THREE.SpotLight(0xffe9c8, 1.9, 32, 1.05, 0.6, 1.2);
-    flood2.position.set(-3.4, 8.5, 57.4);
+    flood2.position.set(-3.4, 8.5, tz - 2.6);
     flood2.target = floodTarget;
     scene.add(flood2);
     towerLights.push({ light: flood2, base: 1.9 });
@@ -2593,7 +2873,7 @@ function buildTower() {
         for (let i = 0; i <= 24; i++) {
             const p = i / 24;
             const x = THREE.MathUtils.lerp(0, t.x, p);
-            const z = THREE.MathUtils.lerp(60, t.z, p);
+            const z = THREE.MathUtils.lerp(tz, t.z, p);
             const y = THREE.MathUtils.lerp(H + 1.2, t.y, p) - Math.sin(p * Math.PI) * 3.2;
             pts.push(new THREE.Vector3(x, y, z));
         }
@@ -2604,15 +2884,15 @@ function buildTower() {
     const sign = makeTextSprite('TORRE 04', {
         color: '#d1d5db', border: 'rgba(107,114,128,0.8)', scale: 5, fontSize: 50
     });
-    sign.position.set(0, 7.2, 64.6);
+    sign.position.set(0, 7.2, tz + 4.6);
     scene.add(sign);
 
     // Puerta de la torre
     const doorMat = new THREE.MeshStandardMaterial({ color: 0x394043, metalness: 0.8, roughness: 0.45 });
     const { pivot, mesh } = createDoor(2.1, 2.9, 0.18, doorMat, true);
-    pivot.position.set(-1.05, 0.4, 64.52);
+    pivot.position.set(-1.05, 0.4, tz + 4.52);
     scene.add(pivot);
-    const towerDoorCollider = addBoxCollider(-1.1, 1.1, 64.3, 64.7);
+    const towerDoorCollider = addBoxCollider(-1.1, 1.1, tz + 4.3, tz + 4.7);
 
     registerInteractable(mesh, {
         type: 'towerDoor',
@@ -2626,7 +2906,7 @@ function buildTower() {
     // Detalle: escalera exterior
     for (let i = 0; i < 8; i++) {
         const step = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 0.3), darkSteel);
-        step.position.set(4.6, 0.8 + i * 0.55, 60);
+        step.position.set(4.6, 0.8 + i * 0.55, tz);
         scene.add(step);
     }
 }
@@ -2636,7 +2916,7 @@ function buildShed() {
     const roofMat = new THREE.MeshStandardMaterial({ color: 0x15191a, roughness: 0.85, metalness: 0.3 });
     const trimMat = new THREE.MeshStandardMaterial({ color: 0x3a3f3a, roughness: 0.8 });
 
-    const cx = 14, cz = 58;
+    const cx = PLACES.shed.x, cz = PLACES.shed.z;
     const w = 7, d = 5.4, h = 3.3;
 
     const back = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.2), wallMat);
@@ -3668,58 +3948,101 @@ function buildCreature() {
     const group = new THREE.Group();
 
     const bodyMat = new THREE.MeshStandardMaterial({
-        color: 0x050506, roughness: 0.85, metalness: 0.05, transparent: true, opacity: 1
+        color: 0x050506, roughness: 0.82, metalness: 0.08, transparent: true, opacity: 1
+    });
+    const boneMat = new THREE.MeshStandardMaterial({
+        color: 0x4a453c, roughness: 0.9, metalness: 0.02, transparent: true, opacity: 1
+    });
+    const clawMat = new THREE.MeshStandardMaterial({
+        color: 0x1b1916, roughness: 0.55, metalness: 0.25, transparent: true, opacity: 1
     });
     const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff2b2b, transparent: true, opacity: 1 });
 
-    // Piernas
-    for (const lx of [-0.22, 0.22]) {
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.06, 1.6, 6), bodyMat);
-        leg.position.set(lx, 0.8, 0);
-        group.add(leg);
+    function part(geo, mat, x, y, z, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) {
+        const m = new THREE.Mesh(geo, mat);
+        m.position.set(x, y, z);
+        m.rotation.set(rx, ry, rz);
+        m.scale.set(sx, sy, sz);
+        group.add(m);
+        return m;
     }
 
-    // Torso alargado
-    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.16, 1.7, 7), bodyMat);
-    torso.position.y = 2.25;
-    group.add(torso);
+    // Torso encorvado y alargado
+    part(new THREE.CylinderGeometry(0.34, 0.19, 2.15, 7), bodyMat, 0, 2.8, 0, -0.3);
+    const chest = part(new THREE.SphereGeometry(0.44, 10, 8), bodyMat, 0, 3.6, 0.2, -0.22);
+    chest.scale.set(1.3, 0.95, 0.82);
+    part(new THREE.SphereGeometry(0.3, 8, 8), bodyMat, 0, 1.95, -0.05, 0, 0, 0, 1.2, 0.8, 0.9);
 
-    // Hombros
-    const shoulders = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 8), bodyMat);
-    shoulders.scale.set(1.5, 0.55, 0.8);
-    shoulders.position.y = 3.02;
-    group.add(shoulders);
+    // Cuello y cabeza alargada
+    part(new THREE.CylinderGeometry(0.12, 0.19, 0.95, 7), bodyMat, 0, 4.18, 0.3, 0.3);
+    const head = part(new THREE.SphereGeometry(0.31, 10, 10), bodyMat, 0, 4.6, 0.5, 0.22);
+    head.scale.set(0.88, 1.15, 1.6);
 
-    // Cabeza alargada
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 10, 10), bodyMat);
-    head.scale.set(0.9, 1.35, 0.95);
-    head.position.y = 3.36;
-    group.add(head);
+    // Mandíbula y dientes
+    part(new THREE.ConeGeometry(0.22, 0.9, 6), bodyMat, 0, 4.32, 1.02, Math.PI / 2 + 0.08);
+    for (let i = 0; i < 7; i++) {
+        const tx = -0.18 + i * 0.06;
+        part(new THREE.ConeGeometry(0.022, 0.13, 4), boneMat, tx, 4.38, 0.9 + Math.abs(i - 3) * 0.01, Math.PI);
+        part(new THREE.ConeGeometry(0.022, 0.11, 4), boneMat, tx, 4.25, 0.9 + Math.abs(i - 3) * 0.01, 0);
+    }
 
-    // Ojos
-    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), eyeMat);
-    eyeL.position.set(-0.1, 3.42, 0.22);
-    group.add(eyeL);
-    const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), eyeMat);
-    eyeR.position.set(0.1, 3.42, 0.22);
-    group.add(eyeR);
+    // Seis ojos rojos
+    for (const [ex, ey, ez, r] of [
+        [-0.15, 4.7, 0.79, 0.05], [0.15, 4.7, 0.79, 0.05],
+        [-0.22, 4.58, 0.74, 0.032], [0.22, 4.58, 0.74, 0.032],
+        [-0.08, 4.82, 0.7, 0.028], [0.08, 4.82, 0.7, 0.028]
+    ]) {
+        part(new THREE.SphereGeometry(r, 7, 7), eyeMat, ex, ey, ez);
+    }
 
-    // Brazos largos
-    for (const ax of [-0.44, 0.44]) {
-        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 2.0, 6), bodyMat);
-        arm.position.set(ax, 2.2, 0.05);
-        arm.rotation.z = ax > 0 ? -0.12 : 0.12;
-        group.add(arm);
+    // Astas / ramas
+    for (const side of [-1, 1]) {
+        part(new THREE.CylinderGeometry(0.035, 0.06, 0.85, 5), boneMat,
+            side * 0.2, 4.95, 0.35, 0.15, 0, side * 0.55);
+        part(new THREE.CylinderGeometry(0.025, 0.04, 0.55, 5), boneMat,
+            side * 0.48, 5.35, 0.32, 0.2, 0, side * 0.9);
+        part(new THREE.CylinderGeometry(0.02, 0.035, 0.45, 5), boneMat,
+            side * 0.34, 5.25, 0.2, -0.5, 0, side * 0.45);
+    }
 
-        const hand = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.4, 5), bodyMat);
-        hand.position.set(ax * 1.1, 1.15, 0.08);
-        hand.rotation.x = Math.PI;
-        group.add(hand);
+    // Púas dorsales
+    for (let i = 0; i < 8; i++) {
+        const y = 2.15 + i * 0.26;
+        const s = 0.26 - i * 0.018;
+        part(new THREE.ConeGeometry(0.055, s, 4), boneMat, 0, y, -0.2 - i * 0.012, -0.35);
+    }
+
+    // Brazos largos y desproporcionados
+    for (const side of [-1, 1]) {
+        const shoulder = part(new THREE.SphereGeometry(0.19, 8, 8), bodyMat,
+            side * 0.45, 3.62, 0.08, 0, 0, 0, 1.1, 0.9, 0.9);
+        part(new THREE.CylinderGeometry(0.085, 0.06, 1.55, 6), bodyMat,
+            side * 0.58, 2.95, 0.1, 0.12, 0, side * 0.18);
+        part(new THREE.CylinderGeometry(0.06, 0.045, 1.5, 6), bodyMat,
+            side * 0.68, 1.85, 0.28, 0.55, 0, side * 0.1);
+        for (let c = 0; c < 3; c++) {
+            part(new THREE.ConeGeometry(0.035, 0.34, 4), clawMat,
+                side * (0.58 + c * 0.06), 1.02, 0.62 + c * 0.05, Math.PI - 0.35, 0, side * 0.12);
+        }
+    }
+
+    // Piernas digitígradas
+    for (const side of [-1, 1]) {
+        part(new THREE.CylinderGeometry(0.11, 0.08, 1.3, 6), bodyMat,
+            side * 0.24, 1.05, -0.05, 0.15, 0, side * 0.06);
+        part(new THREE.CylinderGeometry(0.08, 0.055, 1.15, 6), bodyMat,
+            side * 0.28, 0.42, 0.12, -0.28, 0, side * 0.04);
+        part(new THREE.BoxGeometry(0.16, 0.1, 0.42), clawMat,
+            side * 0.28, 0.06, 0.3);
+        for (let c = 0; c < 3; c++) {
+            part(new THREE.ConeGeometry(0.03, 0.24, 4), clawMat,
+                side * (0.22 + c * 0.055), 0.06, 0.52, Math.PI / 2, 0, 0);
+        }
     }
 
     // Aura roja tenue
-    const light = new THREE.PointLight(0xff1a1a, 0, 7, 2);
-    light.position.set(0, 2.4, 0.3);
+    const light = new THREE.PointLight(0xff1a1a, 0, 9, 2);
+    light.position.set(0, 2.8, 0.3);
     group.add(light);
 
     group.position.set(0, 0, -50);
@@ -3728,7 +4051,7 @@ function buildCreature() {
 
     creature = {
         group,
-        materials: [bodyMat, eyeMat],
+        materials: [bodyMat, boneMat, clawMat, eyeMat],
         eyeMat,
         light,
         state: 'hidden',
@@ -3767,7 +4090,8 @@ function buildStructures() {
 // CONTROLES
 // ============================================================
 function interactLabel(p) {
-    return (gameMode === MODE.LOCAL && p.index === 1) ? 'M' : 'E';
+    if (gameMode === MODE.LOCAL) return ['E', 'M', 'X', 'ENT'][p.index] || 'E';
+    return 'E';
 }
 
 function toggleFlashlight(p) {
@@ -3796,8 +4120,12 @@ function setupInput() {
         if (gameMode === MODE.LOCAL) {
             if (e.code === 'KeyF') toggleFlashlight(players[0]);
             if (e.code === 'KeyN') toggleFlashlight(players[1]);
+            if (e.code === 'KeyZ') toggleFlashlight(players[2]);
+            if (e.code === 'Numpad0') toggleFlashlight(players[3]);
             if (e.code === 'KeyE') handleInteractionFor(players[0]);
             if (e.code === 'KeyM') handleInteractionFor(players[1]);
+            if (e.code === 'KeyX') handleInteractionFor(players[2]);
+            if (e.code === 'NumpadEnter') handleInteractionFor(players[3]);
         } else {
             const lp = localPlayer();
             if (e.code === 'KeyF') toggleFlashlight(lp);
@@ -3846,14 +4174,26 @@ function setupInput() {
 function startGame(mode) {
     gameMode = mode || MODE.SOLO;
     netRole = gameMode === MODE.HOST ? 'host' : (gameMode === MODE.GUEST ? 'guest' : null);
-    localPlayerIndex = gameMode === MODE.GUEST ? 1 : 0;
-    activePlayerCount = gameMode === MODE.SOLO ? 1 : 2;
 
-    players[0].isRemote = gameMode === MODE.GUEST;
-    players[1].isRemote = gameMode === MODE.HOST;
+    if (gameMode === MODE.LOCAL) {
+        localPlayerIndex = 0;
+        setActiveIndices([0, 1, 2, 3]);
+    } else if (gameMode === MODE.SOLO) {
+        localPlayerIndex = 0;
+        setActiveIndices([0]);
+    } else if (gameMode === MODE.GUEST) {
+        if (!activeIndices.includes(localPlayerIndex)) {
+            setActiveIndices([0, localPlayerIndex]);
+        }
+    } else {
+        // Anfitrión: conserva la lista de invitados conectados.
+        if (!activeIndices.includes(0)) setActiveIndices([0]);
+    }
 
     players.forEach((p, i) => {
-        p.pos.set(i === 0 ? 0 : 2.6, PLAYER_HEIGHT, 76);
+        p.isRemote = gameMode === MODE.HOST ? i !== 0
+            : (gameMode === MODE.GUEST ? i !== localPlayerIndex : false);
+        p.pos.set(SPAWN_POINTS[i][0], PLAYER_HEIGHT, SPAWN_POINTS[i][1]);
         p.rotY = 0;
         p.rotX = 0;
         p.stamina = 100;
@@ -3889,7 +4229,7 @@ function startGame(mode) {
     story.time = 0;
     story.phaseTime = 0;
 
-    document.body.classList.toggle('split', gameMode === MODE.LOCAL);
+    document.body.classList.toggle('split4', gameMode === MODE.LOCAL);
     updateCameraAspects();
     document.getElementById('menu-overlay').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
@@ -3898,19 +4238,22 @@ function startGame(mode) {
     const hint = document.getElementById('controls-hint');
     if (gameMode === MODE.LOCAL) {
         hint.innerHTML =
-            '<div><span class="key-hint">J1</span> WASD + ratón · <span class="key-hint">SHIFT</span> correr · <span class="key-hint">F</span> linterna · <span class="key-hint">E</span> interactuar</div>' +
-            '<div><span class="key-hint">J2</span> Flechas · <span class="key-hint">IJKL</span> mirar · <span class="key-hint">N</span> linterna · <span class="key-hint">M</span> interactuar</div>' +
-            '<div><span class="key-hint">J2</span> <span class="key-hint">SHIFT DER</span> correr · <span class="key-hint">.</span> agacharse</div>';
+            '<div><span class="key-hint">J1</span> WASD + ratón · <span class="key-hint">SHIFT IZQ</span> correr · <span class="key-hint">F</span> linterna · <span class="key-hint">E</span> interactuar · <span class="key-hint">CTRL/C</span> agacharse</div>' +
+            '<div><span class="key-hint">J2</span> Flechas · <span class="key-hint">I/J/K/L</span> mirar · <span class="key-hint">N</span> linterna · <span class="key-hint">M</span> interactuar · <span class="key-hint">SHIFT DER</span> correr · <span class="key-hint">.</span> agacharse</div>' +
+            '<div><span class="key-hint">J3</span> T/G/F/H · <span class="key-hint">R/U</span> girar · <span class="key-hint">V/B</span> mirar · <span class="key-hint">Z</span> linterna · <span class="key-hint">X</span> interactuar · <span class="key-hint">Q</span> correr · <span class="key-hint">ESPACIO</span> agacharse</div>' +
+            '<div><span class="key-hint">J4</span> Numpad 8/5/4/6 · <span class="key-hint">7/9</span> girar · <span class="key-hint">/ *</span> mirar · <span class="key-hint">0</span> linterna · <span class="key-hint">ENT</span> interactuar · <span class="key-hint">+</span> correr · <span class="key-hint">-</span> agacharse</div>';
     } else if (gameMode === MODE.HOST || gameMode === MODE.GUEST) {
         hint.innerHTML =
             '<div><span class="key-hint">WASD</span> Moverse · <span class="key-hint">SHIFT</span> Correr</div>' +
             '<div><span class="key-hint">CTRL</span> Agacharse · <span class="key-hint">F</span> Linterna · <span class="key-hint">E</span> Interactuar</div>' +
-            '<div class="text-green-500/80">ONLINE · ' + (gameMode === MODE.HOST ? 'ANFITRIÓN' : 'INVITADO') + '</div>';
+            '<div class="text-green-500/80">ONLINE · ' + (gameMode === MODE.HOST ? 'ANFITRIÓN' : 'INVITADO') + ' · ' + activePlayerCount + '/4</div>';
     }
 
     setObjective('Revisa las instalaciones eléctricas del bosque. No te alejes demasiado de la torre.', PLACES.tower);
     updateInventoryHUD(players[0], '');
     updateInventoryHUD(players[1], '-p2');
+    updateInventoryHUD(players[2], '-p3');
+    updateInventoryHUD(players[3], '-p4');
     updateHUD();
 
     // Tarjeta de título
@@ -3935,7 +4278,7 @@ function startGame(mode) {
     if (netRole === 'guest') {
         showToast('Conectado a la partida del anfitrión', 'good');
     } else if (netRole === 'host') {
-        showToast('Jugador 2 conectado', 'good');
+        showToast('Sala online · ' + activePlayerCount + ' jugador(es)', 'good');
     }
 }
 
@@ -3943,7 +4286,7 @@ function startGame(mode) {
 // JUGADOR
 // ============================================================
 function isOnBridge(x, z) {
-    return x > -38 && x < -30 && z > -44 && z < -24;
+    return x > -56.5 && x < -49.5 && z > -62.5 && z < -43.5;
 }
 
 function shortestAngle(from, to) {
@@ -3964,6 +4307,26 @@ function getMoveInput(p) {
             pitch: (keysPressed['KeyI'] ? 1 : 0) - (keysPressed['KeyK'] ? 1 : 0)
         };
     }
+    if (gameMode === MODE.LOCAL && p.index === 2) {
+        return {
+            forward: (keysPressed['KeyT'] ? 1 : 0) - (keysPressed['KeyG'] ? 1 : 0),
+            strafe: (keysPressed['KeyY'] ? 1 : 0) - (keysPressed['KeyH'] ? 1 : 0),
+            sprint: !!keysPressed['KeyQ'],
+            crouch: !!keysPressed['Space'],
+            yaw: (keysPressed['KeyR'] ? 1 : 0) - (keysPressed['KeyU'] ? 1 : 0),
+            pitch: (keysPressed['KeyV'] ? 1 : 0) - (keysPressed['KeyB'] ? 1 : 0)
+        };
+    }
+    if (gameMode === MODE.LOCAL && p.index === 3) {
+        return {
+            forward: (keysPressed['Numpad8'] ? 1 : 0) - ((keysPressed['Numpad5'] || keysPressed['Numpad2']) ? 1 : 0),
+            strafe: (keysPressed['Numpad6'] ? 1 : 0) - (keysPressed['Numpad4'] ? 1 : 0),
+            sprint: !!keysPressed['NumpadAdd'],
+            crouch: !!keysPressed['NumpadSubtract'],
+            yaw: (keysPressed['Numpad7'] ? 1 : 0) - (keysPressed['Numpad9'] ? 1 : 0),
+            pitch: (keysPressed['NumpadDivide'] ? 1 : 0) - (keysPressed['NumpadMultiply'] ? 1 : 0)
+        };
+    }
     return {
         forward: (keysPressed['KeyW'] ? 1 : 0) - (keysPressed['KeyS'] ? 1 : 0),
         strafe: (keysPressed['KeyD'] ? 1 : 0) - (keysPressed['KeyA'] ? 1 : 0),
@@ -3979,7 +4342,7 @@ function updatePlayerState(p, delta) {
 
     const input = getMoveInput(p);
 
-    if (gameMode === MODE.LOCAL && p.index === 1) {
+    if (gameMode === MODE.LOCAL && p.index > 0) {
         p.rotY += input.yaw * 2.2 * delta;
         p.rotX = clamp(p.rotX + input.pitch * 1.7 * delta, -1.35, 1.35);
     }
@@ -4092,15 +4455,14 @@ function updateLocalPlayers(delta) {
     if (flashlightFlicker > 0) flashlightFlicker -= delta;
 
     if (gameMode === MODE.LOCAL) {
-        updatePlayerState(players[0], delta);
-        updatePlayerState(players[1], delta);
+        players.forEach(p => updatePlayerState(p, delta));
         players.forEach(p => updateAvatar(p));
     } else {
         updatePlayerState(localPlayer(), delta);
 
-        const rp = players[1 - localPlayerIndex];
-        if (rp) {
-            const blend = Math.min(1, delta * 14);
+        const blend = Math.min(1, delta * 14);
+        activePlayers().forEach(rp => {
+            if (!rp || rp.index === localPlayerIndex) return;
             rp.pos.lerp(rp.remoteTarget, blend);
             rp.rotY += shortestAngle(rp.rotY, rp.remoteRotY) * blend;
             rp.rotX += (rp.remoteRotX - rp.rotX) * blend;
@@ -4112,7 +4474,7 @@ function updateLocalPlayers(delta) {
             rp.camera.position.copy(rp.pos);
             rp.camera.rotation.set(rp.rotX, rp.rotY, 0);
             updateAvatar(rp);
-        }
+        });
     }
 }
 
@@ -4157,12 +4519,183 @@ function updateDangerFor(p, elId) {
     if (el) el.style.opacity = danger.toFixed(2);
 }
 
+function drawMinimap() {
+    const cv = document.getElementById('minimap');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const size = cv.width;
+    const pad = 14;
+    const scale = (size - pad * 2) / MAP_SIZE;
+    const mx = x => pad + (x + MAP_HALF) * scale;
+    const mz = z => pad + (z + MAP_HALF) * scale;
+
+    ctx.clearRect(0, 0, size, size);
+    ctx.fillStyle = 'rgba(3, 9, 5, 0.96)';
+    ctx.fillRect(0, 0, size, size);
+
+    // Retícula
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.08)';
+    ctx.lineWidth = 1;
+    for (let g = -MAP_HALF; g <= MAP_HALF; g += 40) {
+        ctx.beginPath();
+        ctx.moveTo(mx(g), pad);
+        ctx.lineTo(mx(g), size - pad);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pad, mz(g));
+        ctx.lineTo(size - pad, mz(g));
+        ctx.stroke();
+    }
+
+    // Caminos principales
+    const roads = [
+        [PLACES.tower, PLACES.shed], [PLACES.tower, PLACES.generator],
+        [PLACES.tower, PLACES.vehicle], [PLACES.tower, PLACES.bridge],
+        [PLACES.bridge, PLACES.antenna], [PLACES.bridge, PLACES.house],
+        [PLACES.vehicle, PLACES.camp], [PLACES.camp, PLACES.house]
+    ];
+    ctx.strokeStyle = 'rgba(180, 150, 90, 0.22)';
+    ctx.lineWidth = 3;
+    roads.forEach(([a, b]) => {
+        ctx.beginPath();
+        ctx.moveTo(mx(a.x), mz(a.z));
+        ctx.lineTo(mx(b.x), mz(b.z));
+        ctx.stroke();
+    });
+
+    // Puntos de interés
+    const pois = [
+        { p: PLACES.tower, label: 'TORRE', color: '#4ade80' },
+        { p: PLACES.shed, label: 'CASETA', color: '#a3e635' },
+        { p: PLACES.generator, label: 'GEN', color: '#fbbf24' },
+        { p: PLACES.vehicle, label: 'COCHE', color: '#38bdf8' },
+        { p: PLACES.camp, label: 'CAMP', color: '#fb923c' },
+        { p: PLACES.bridge, label: 'PUENTE', color: '#c084fc' },
+        { p: PLACES.antenna, label: 'ANTENA', color: '#22d3ee' },
+        { p: PLACES.house, label: 'CASA', color: '#f87171' }
+    ];
+    ctx.font = 'bold 14px monospace';
+    ctx.textAlign = 'center';
+    pois.forEach(o => {
+        const x = mx(o.p.x), z = mz(o.p.z);
+        ctx.fillStyle = o.color;
+        ctx.beginPath();
+        ctx.arc(x, z, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(220, 240, 225, 0.82)';
+        ctx.fillText(o.label, x, z - 10);
+    });
+
+    // Objetivo actual
+    if (currentObjectiveTarget) {
+        const x = mx(currentObjectiveTarget.x), z = mz(currentObjectiveTarget.z);
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(x, z, 11, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x - 15, z); ctx.lineTo(x + 15, z);
+        ctx.moveTo(x, z - 15); ctx.lineTo(x, z + 15);
+        ctx.stroke();
+    }
+
+    // Jugadores
+    const colors = ['#4ade80', '#38bdf8', '#fbbf24', '#f472b6'];
+    activePlayers().forEach(p => {
+        if (p.isDead || p.hasEscaped) return;
+        const x = mx(p.pos.x), z = mz(p.pos.z);
+        const isLocal = gameMode === MODE.LOCAL || p.index === localPlayerIndex;
+        ctx.fillStyle = colors[p.index] || '#e5e7eb';
+        ctx.beginPath();
+        ctx.arc(x, z, isLocal ? 7 : 5.5, 0, Math.PI * 2);
+        ctx.fill();
+        if (isLocal) {
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, z, 11, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        const fx = Math.sin(p.rotY), fz = -Math.cos(p.rotY);
+        ctx.strokeStyle = colors[p.index] || '#e5e7eb';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, z);
+        ctx.lineTo(x + fx * 13, z + fz * 13);
+        ctx.stroke();
+    });
+
+    // Criatura y dirección de aproximación
+    const label = document.getElementById('minimap-label');
+    const lp = localPlayer();
+    if (creature && creature.group.visible && creature.state !== 'hidden') {
+        const cx = creature.group.position.x;
+        const cz = creature.group.position.z;
+        const x = mx(cx), z = mz(cz);
+        const dist = Math.round(dist2D(lp.pos.x, lp.pos.z, cx, cz));
+
+        ctx.strokeStyle = 'rgba(248, 113, 113, 0.65)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([7, 6]);
+        ctx.beginPath();
+        ctx.moveTo(mx(lp.pos.x), mz(lp.pos.z));
+        ctx.lineTo(x, z);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const crRot = creature.group.rotation.y;
+        const fx = Math.sin(crRot), fz = Math.cos(crRot);
+        const ang = Math.atan2(fz, fx);
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(x + Math.cos(ang) * 14, z + Math.sin(ang) * 14);
+        ctx.lineTo(x + Math.cos(ang + 2.5) * 10, z + Math.sin(ang + 2.5) * 10);
+        ctx.lineTo(x + Math.cos(ang - 2.5) * 10, z + Math.sin(ang - 2.5) * 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowColor = '#ef4444';
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(x, z, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        if (label) {
+            label.innerText = creature.state === 'chase'
+                ? `¡CRIATURA A ${dist} m!`
+                : `Criatura a ${dist} m · acercándose`;
+            label.style.color = '#fca5a5';
+        }
+    } else if (label) {
+        label.innerText = 'Mapa · puntos de interés';
+        label.style.color = '#86efac';
+    }
+
+    // Norte
+    ctx.fillStyle = 'rgba(134, 239, 172, 0.7)';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('N', size / 2, 13);
+
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.35)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, size - 2, size - 2);
+}
+
 function updateHUD() {
     if (gameMode === MODE.LOCAL) {
         updateHUDFor(players[0], '');
         updateHUDFor(players[1], '-p2');
+        updateHUDFor(players[2], '-p3');
+        updateHUDFor(players[3], '-p4');
         updateDangerFor(players[0], 'danger-vignette');
         updateDangerFor(players[1], 'danger-vignette-p2');
+        updateDangerFor(players[2], 'danger-vignette-p3');
+        updateDangerFor(players[3], 'danger-vignette-p4');
     } else {
         const lp = localPlayer();
         updateHUDFor(lp, '');
@@ -4176,16 +4709,19 @@ function updateHUD() {
     } else {
         objectiveDistEl.innerText = '';
     }
+
+    drawMinimap();
 }
 
 // ============================================================
 // INTERACCIÓN
 // ============================================================
 function promptElementsFor(p) {
-    if (gameMode === MODE.LOCAL && p.index === 1) {
+    if (gameMode === MODE.LOCAL && p.index > 0) {
+        const suffix = playerSuffix(p);
         return {
-            prompt: document.getElementById('prompt-p2'),
-            crosshair: document.getElementById('crosshair-p2')
+            prompt: document.getElementById('prompt' + suffix),
+            crosshair: document.getElementById('crosshair' + suffix)
         };
     }
     return { prompt: promptEl, crosshair };
@@ -4312,7 +4848,7 @@ function removeInteractableObject(item, withLight = true) {
 }
 
 function markCollected(item, p) {
-    if (!item.collectedBy) item.collectedBy = [false, false];
+    if (!item.collectedBy) item.collectedBy = [false, false, false, false];
     item.collectedBy[p.index] = true;
     const allCollected = activePlayers().every(pl => item.collectedBy[pl.index]);
     if (allCollected) removeInteractableObject(item);
@@ -4324,10 +4860,10 @@ function checkAllItems(p) {
     if (!hasAll) return;
 
     if (activePlayerCount > 1) {
-        const bothReady = activePlayers().every(pl => pl.items.key && pl.items.fuse && pl.items.genBattery);
-        if (!bothReady) {
-            showToast('Tienes todo. Tu compañero aún debe reunir su equipo.', 'warn');
-            setObjective('Espera a que tu compañero reúna su <span class="text-amber-300">llave</span>, <span class="text-amber-300">fusible</span> y <span class="text-amber-300">batería</span>.', PLACES.generator);
+        const allReady = activePlayers().every(pl => pl.items.key && pl.items.fuse && pl.items.genBattery);
+        if (!allReady) {
+            showToast('Tienes todo. Los demás aún deben reunir su equipo.', 'warn');
+            setObjective('Espera a que el resto reúna su <span class="text-amber-300">llave</span>, <span class="text-amber-300">fusible</span> y <span class="text-amber-300">batería</span>.', PLACES.generator);
             return;
         }
     }
@@ -4345,7 +4881,7 @@ function collectKey(item, p) {
         showToast('Llave de la caja eléctrica obtenida', 'good');
         radioSay('La llave de la caja eléctrica. Bien hecho, Unidad 7.', 'voice');
     }
-    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    updateInventoryHUD(p, playerSuffix(p));
     checkAllItems(p);
 }
 
@@ -4357,7 +4893,7 @@ function collectFuse(item, p) {
         showToast('Fusible de alto voltaje obtenido', 'good');
         radioSay('Ese fusible debería aguantar la carga. Continúa.', 'voice');
     }
-    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    updateInventoryHUD(p, playerSuffix(p));
     checkAllItems(p);
 }
 
@@ -4369,7 +4905,7 @@ function collectGenBattery(item, p) {
         showToast('Batería del generador obtenida', 'good');
         radioSay('La batería del generador. Ya casi está.', 'voice');
     }
-    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    updateInventoryHUD(p, playerSuffix(p));
     checkAllItems(p);
 }
 
@@ -4381,7 +4917,7 @@ function collectPila(item, p) {
     if (p.index === localPlayerIndex || gameMode === MODE.LOCAL) {
         showToast(`Pilas encontradas (+35% linterna)`, 'good');
     }
-    updateInventoryHUD(p, p.index === 1 ? '-p2' : '');
+    updateInventoryHUD(p, playerSuffix(p));
 }
 
 function readCampNote() {
@@ -4449,15 +4985,17 @@ function useGenerator(item, p) {
     }
 
     if (activePlayerCount > 1) {
-        const partner = players[1 - p.index];
         const partnerMissing = [];
-        if (!partner.items.key) partnerMissing.push('llave');
-        if (!partner.items.fuse) partnerMissing.push('fusible');
-        if (!partner.items.genBattery) partnerMissing.push('batería');
+        activePlayers().forEach(other => {
+            if (other.index === p.index) return;
+            if (!other.items.key && !partnerMissing.includes('llave')) partnerMissing.push('llave');
+            if (!other.items.fuse && !partnerMissing.includes('fusible')) partnerMissing.push('fusible');
+            if (!other.items.genBattery && !partnerMissing.includes('batería')) partnerMissing.push('batería');
+        });
         if (partnerMissing.length > 0) {
             audio.playLocked();
-            showToast(`Tu compañero aún necesita: ${partnerMissing.join(', ')}`, 'warn');
-            radioSay('El generador necesita las dos dotaciones completas. Espera a tu compañero.', 'voice');
+            showToast(`El equipo aún necesita: ${partnerMissing.join(', ')}`, 'warn');
+            radioSay('El generador necesita todas las dotaciones completas. Espera al equipo.', 'voice');
             return;
         }
     }
@@ -4491,9 +5029,11 @@ function useTowerDoor(item, p) {
 // ============================================================
 function hideOverlayFor(p) {
     if (gameMode === MODE.LOCAL) {
-        return p.index === 1
-            ? { overlay: document.getElementById('hidden-overlay-p2'), badge: document.getElementById('hide-badge-p2') }
-            : { overlay: document.getElementById('hidden-overlay'), badge: document.getElementById('hide-badge') };
+        const suffix = playerSuffix(p);
+        return {
+            overlay: document.getElementById('hidden-overlay' + suffix),
+            badge: document.getElementById('hide-badge' + suffix)
+        };
     }
     if (p.index !== localPlayerIndex) return { overlay: null, badge: null };
     return {
@@ -4597,7 +5137,7 @@ function spawnCreatureAt(x, z, state = 'observe', timer = 8) {
 }
 
 function chooseCreatureSpawn(minD, maxD, inFront = false) {
-    const ref = nearestPlayerTo(player.pos.x, player.pos.z) || player;
+    const ref = anyVisiblePlayer() || player;
     const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), ref.rotY);
 
     for (let i = 0; i < 40; i++) {
@@ -5411,14 +5951,16 @@ function retryFromCheckpoint() {
         p.remoteFlashlight = true;
     });
 
-    document.getElementById('hidden-overlay').classList.remove('show');
-    document.getElementById('hidden-overlay-p2').classList.remove('show');
-    document.getElementById('hide-badge').style.display = 'none';
-    document.getElementById('hide-badge-p2').style.display = 'none';
-    promptEl.classList.add('hidden');
-    document.getElementById('prompt-p2').classList.add('hidden');
-    crosshair.classList.remove('active');
-    document.getElementById('crosshair-p2').classList.remove('active');
+    ['', '-p2', '-p3', '-p4'].forEach(suffix => {
+        const overlay = document.getElementById('hidden-overlay' + suffix);
+        const badge = document.getElementById('hide-badge' + suffix);
+        const prompt = document.getElementById('prompt' + suffix);
+        const cross = document.getElementById('crosshair' + suffix);
+        if (overlay) overlay.classList.remove('show');
+        if (badge) badge.style.display = 'none';
+        if (prompt) prompt.classList.add('hidden');
+        if (cross) cross.classList.remove('active');
+    });
 
     if (creature) {
         hideCreature();
@@ -5433,8 +5975,7 @@ function retryFromCheckpoint() {
         setObjective('Regresa a la torre eléctrica.', PLACES.tower);
     }
 
-    updateInventoryHUD(players[0], '');
-    updateInventoryHUD(players[1], '-p2');
+    updateAllInventoryHUD();
     updateHUD();
 
     if (netRole !== 'guest') canvas.requestPointerLock();
@@ -5478,31 +6019,78 @@ function showOnlinePanel(mode) {
 
 function closeOnlinePanel() {
     document.getElementById('online-panel').classList.add('hidden');
-    if (!netConnected) {
+    if (!netConnected && !gameStarted) {
         if (netConn) { try { netConn.close(); } catch (e) {} }
+        netConns.forEach(c => { if (c) { try { c.close(); } catch (e) {} } });
         if (netPeer) { try { netPeer.destroy(); } catch (e) {} }
         netConn = null;
+        netConns = [null, null, null, null];
         netPeer = null;
     }
 }
 
-function sendNet(data) {
-    if (netConn && netConn.open) {
-        try {
-            netConn.send(data);
-            netSendCount++;
-        } catch (e) {}
-    }
+function sendToConn(conn, data) {
+    if (!conn || !conn.open) return;
+    try {
+        conn.send(data);
+        netSendCount++;
+    } catch (e) {}
 }
 
-function beginHost() {
+function sendNet(data, exceptIndex = -1) {
+    if (netRole === 'host') {
+        for (let i = 1; i < netConns.length; i++) {
+            if (i === exceptIndex) continue;
+            sendToConn(netConns[i], data);
+        }
+        return;
+    }
+    sendToConn(netConn, data);
+}
+
+function hostRoster() {
+    const list = [0];
+    for (let i = 1; i < netConns.length; i++) {
+        if (netConns[i] && netConns[i].open) list.push(i);
+    }
+    setActiveIndices(list);
+    netConnected = activeIndices.length > 1;
+    return activeIndices;
+}
+
+function resetPlayerSlot(slot) {
+    const sp = players[slot];
+    if (!sp) return;
+    sp.pos.set(SPAWN_POINTS[slot][0], PLAYER_HEIGHT, SPAWN_POINTS[slot][1]);
+    sp.rotY = 0;
+    sp.rotX = 0;
+    sp.stamina = 100;
+    sp.battery = 100;
+    sp.flashlightOn = true;
+    sp.isCrouching = false;
+    sp.isSprinting = false;
+    sp.isHidden = false;
+    sp.hideSpot = null;
+    sp.isDead = false;
+    sp.hasEscaped = false;
+    sp.items = { key: false, fuse: false, genBattery: false };
+    sp.spareBatteries = 0;
+    sp.remoteTarget.copy(sp.pos);
+    sp.remoteRotY = 0;
+    sp.remoteRotX = 0;
+    sp.remoteFlashlight = true;
+}
+
+function beginHost(retry = 0) {
     if (typeof Peer === 'undefined') {
         showToast('No se pudo cargar PeerJS. Comprueba tu conexión.', 'bad');
         return;
     }
     if (netPeer) { try { netPeer.destroy(); } catch (e) {} }
     netConn = null;
+    netConns = [null, null, null, null];
     netConnected = false;
+    hostRetryCount = retry;
 
     showOnlinePanel('host');
     const code = randomRoomCode();
@@ -5513,33 +6101,77 @@ function beginHost() {
     netPeer = peer;
 
     peer.on('open', () => {
-        setOnlineStatus('Sala creada. Comparte el código y espera.');
+        setOnlineStatus('Sala creada. Comparte el código y espera (hasta 3 jugadores).');
     });
 
     peer.on('connection', (conn) => {
-        if (netConn) { try { conn.close(); } catch (e) {} return; }
-        netConn = conn;
+        let slot = -1;
+        for (let i = 1; i < netConns.length; i++) {
+            if (!netConns[i]) { slot = i; break; }
+        }
+        if (slot < 0) {
+            try { conn.close(); } catch (e) {}
+            return;
+        }
+        netConns[slot] = conn;
+        conn._playerIndex = slot;
+        resetPlayerSlot(slot);
 
         conn.on('open', () => {
-            netConnected = true;
-            setOnlineStatus('Compañero conectado. Iniciando partida…');
-            startGame(MODE.HOST);
-            setTimeout(sendWorld, 600);
+            hostRoster();
+            sendToConn(conn, { t: 'welcome', i: slot, act: activeIndices });
+            if (!gameStarted) {
+                setOnlineStatus('Jugador conectado. Iniciando partida…');
+                startGame(MODE.HOST);
+            } else {
+                showToast('Jugador ' + (slot + 1) + ' conectado', 'good');
+                updateAllInventoryHUD();
+                updateHUD();
+                sendNet({ t: 'roster', act: activeIndices });
+            }
+            setTimeout(() => { sendWorld(); sendPlayerState(players[0], 0); }, 350);
         });
-        conn.on('data', handleNetData);
-        conn.on('close', onNetClose);
-        conn.on('error', onNetClose);
+        conn.on('data', (data) => handleNetData(data, conn));
+        conn.on('close', () => hostDrop(slot));
+        conn.on('error', () => hostDrop(slot));
     });
 
     peer.on('error', (err) => {
-        if (err && err.type === 'unavailable-id' && !netConnected) {
+        if (err && err.type === 'unavailable-id' && !netConnected && hostRetryCount < 3) {
             try { peer.destroy(); } catch (e) {}
-            beginHost();
+            beginHost(hostRetryCount + 1);
             return;
         }
         setOnlineStatus('Error de conexión: ' + (err ? err.type : 'desconocido'));
         showToast('No se pudo crear la sala. Inténtalo de nuevo.', 'bad');
     });
+}
+
+function hostDrop(index) {
+    if (!netConns[index]) return;
+    const conn = netConns[index];
+    netConns[index] = null;
+    try { conn.close(); } catch (e) {}
+
+    const p = players[index];
+    if (p) {
+        p.isHidden = false;
+        p.isDead = false;
+        p.flashlightOn = false;
+        if (p.flashlight) p.flashlight.visible = false;
+        if (p.beam) p.beam.visible = false;
+    }
+
+    hostRoster();
+    if (gameStarted) {
+        sendNet({ t: 'roster', act: activeIndices });
+        sendWorld();
+        updateAllInventoryHUD();
+        updateHUD();
+        showToast('Jugador ' + (index + 1) + ' desconectado', 'warn');
+    } else {
+        setOnlineStatus('Comparte el código. Jugadores: ' + Math.max(0, activeIndices.length - 1) + '/3');
+    }
 }
 
 function beginGuest(code) {
@@ -5568,8 +6200,7 @@ function beginGuest(code) {
 
         conn.on('open', () => {
             netConnected = true;
-            setOnlineStatus('Conectado. Iniciando partida…');
-            startGame(MODE.GUEST);
+            setOnlineStatus('Conectado. Esperando al anfitrión…');
             sendNet({ t: 'hello' });
         });
         conn.on('data', handleNetData);
@@ -5584,6 +6215,7 @@ function beginGuest(code) {
 }
 
 function onNetClose() {
+    if (netRole === 'host') return;
     if (!gameStarted) {
         setOnlineStatus('Conexión cerrada.');
         return;
@@ -5596,20 +6228,25 @@ function onNetClose() {
     try { if (netPeer) netPeer.destroy(); } catch (e) {}
 }
 
-function handleNetData(data) {
+function handleNetData(data, conn) {
     if (!data || typeof data !== 'object') return;
     netRecvCount++;
 
     if (netRole === 'host') {
+        const index = conn && conn._playerIndex;
+        if (!index) return;
         switch (data.t) {
             case 'state':
-                applyRemoteState(data, 1);
+                data.i = index;
+                applyRemoteState(data, index);
+                sendNet(data, index);
                 break;
             case 'iact': {
+                const p = players[index];
                 const item = data.id ? interactableById[data.id] : null;
                 const spot = (typeof data.spot === 'number' && data.spot >= 0 && data.spot < hideSpots.length)
                     ? hideSpots[data.spot] : null;
-                if (players[1].isHidden || item || spot) performInteraction(players[1], item, spot);
+                if (p && (p.isHidden || item || spot)) performInteraction(p, item, spot);
                 break;
             }
             case 'retry':
@@ -5617,6 +6254,7 @@ function handleNetData(data) {
                 sendNet({ t: 'retryNow' });
                 break;
             case 'hello':
+                sendToConn(conn, { t: 'welcome', i: index, act: activeIndices });
                 sendWorld();
                 sendPlayerState(players[0], 0);
                 break;
@@ -5626,8 +6264,19 @@ function handleNetData(data) {
 
     if (netRole === 'guest') {
         switch (data.t) {
+            case 'welcome':
+                localPlayerIndex = typeof data.i === 'number' ? data.i : 1;
+                setActiveIndices(data.act || [0, localPlayerIndex]);
+                if (!gameStarted) startGame(MODE.GUEST);
+                sendNet({ t: 'hello' });
+                break;
+            case 'roster':
+                setActiveIndices(data.act || activeIndices);
+                updateAllInventoryHUD();
+                updateHUD();
+                break;
             case 'world': applyWorldSnapshot(data); break;
-            case 'state': applyRemoteState(data, 0); break;
+            case 'state': applyRemoteState(data, data.i); break;
             case 'fx': applyFx(data); break;
             case 'door': applyDoorState(data.id, data.open); break;
             case 'hide': applyRemoteHide(data); break;
@@ -5673,19 +6322,20 @@ function applyRemoteState(d, index) {
     p.remoteRotY = d.ry || 0;
     p.remoteRotX = d.rx || 0;
     p.remoteFlashlight = !!d.fl;
-    p.isHidden = !!d.hid;
     p.isCrouching = !!d.crouch;
     p.isSprinting = !!d.sprint;
     p.stamina = typeof d.sta === 'number' ? d.sta : p.stamina;
     p.battery = typeof d.bat === 'number' ? d.bat : p.battery;
-    if (d.items) {
-        if (!(netRole === 'host' && index === 1)) {
-            p.items = { key: !!d.items.key, fuse: !!d.items.fuse, genBattery: !!d.items.genBattery };
-        }
+
+    // El anfitrión manda sobre el mundo: los paquetes del invitado solo
+    // actualizan movimiento, rotación, linterna, agacharse/correr y batería.
+    if (netRole !== 'host') {
+        p.isHidden = !!d.hid;
+        if (d.items) p.items = { key: !!d.items.key, fuse: !!d.items.fuse, genBattery: !!d.items.genBattery };
+        p.spareBatteries = d.spare || 0;
+        p.isDead = !!d.dead;
+        p.hasEscaped = !!d.escaped;
     }
-    if (!(netRole === 'host' && index === 1)) p.spareBatteries = d.spare || 0;
-    p.isDead = !!d.dead;
-    p.hasEscaped = !!d.escaped;
 
     if (p.isHidden) {
         p.flashlight.visible = false;
@@ -5812,8 +6462,13 @@ function applyWorldSnapshot(d) {
     }
 
     applyEnvironmentState(!!d.bo, !!d.gen);
-    applyPlayerSnapshot(players[0], d.p0);
-    applyPlayerSnapshot(players[1], d.p1);
+    if (Array.isArray(d.act)) setActiveIndices(d.act);
+    if (Array.isArray(d.ps)) {
+        d.ps.forEach(s => {
+            const p = players[s.i];
+            if (p) applyPlayerSnapshot(p, s);
+        });
+    }
 
     if (Array.isArray(d.doors)) d.doors.forEach(o => applyDoorState(o.id, o.open));
     applyCreatureSnapshot(d.cr);
@@ -5832,8 +6487,7 @@ function applyWorldSnapshot(d) {
     lastAppliedPhase = d.ph;
 
     if (gameMode === MODE.LOCAL) {
-        updateInventoryHUD(players[0], '');
-        updateInventoryHUD(players[1], '-p2');
+        updateAllInventoryHUD();
     } else {
         updateInventoryHUD(localPlayer(), '');
     }
@@ -5875,6 +6529,12 @@ function sendWorld() {
         .filter(i => i.type === 'shedDoor' || i.type === 'houseDoor')
         .map(i => ({ id: i.id, open: !!i.open }));
 
+    const ps = activePlayers().map(p => ({
+        i: p.index,
+        k: p.items.key, f: p.items.fuse, b: p.items.genBattery,
+        s: p.spareBatteries, dead: p.isDead, esc: p.hasEscaped, hid: p.isHidden
+    }));
+
     sendNet({
         t: 'world',
         ph: story.phase,
@@ -5888,14 +6548,8 @@ function sendWorld() {
         obj: objectiveEl.innerHTML,
         objx: currentObjectiveTarget ? currentObjectiveTarget.x : null,
         objz: currentObjectiveTarget ? currentObjectiveTarget.z : null,
-        p0: {
-            k: players[0].items.key, f: players[0].items.fuse, b: players[0].items.genBattery,
-            s: players[0].spareBatteries, dead: players[0].isDead, esc: players[0].hasEscaped, hid: players[0].isHidden
-        },
-        p1: {
-            k: players[1].items.key, f: players[1].items.fuse, b: players[1].items.genBattery,
-            s: players[1].spareBatteries, dead: players[1].isDead, esc: players[1].hasEscaped, hid: players[1].isHidden
-        },
+        act: activeIndices.slice(),
+        ps,
         doors,
         cr: creature ? {
             vis: creature.group.visible,
@@ -5968,7 +6622,7 @@ function updateAnimated(delta, now) {
 function updateCameraAspects() {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const aspect = gameMode === MODE.LOCAL ? (w / 2) / h : w / h;
+    const aspect = w / h;
     players.forEach(p => {
         if (!p.camera) return;
         p.camera.aspect = aspect;
@@ -5989,19 +6643,24 @@ function renderViews() {
     const h = window.innerHeight;
 
     if (gameMode === MODE.LOCAL) {
-        const half = Math.floor(w / 2);
+        const halfW = Math.floor(w / 2);
+        const halfH = Math.floor(h / 2);
+        const rightW = w - halfW;
+        const topH = h - halfH;
+        const rects = [
+            [0, halfH, halfW, topH],
+            [halfW, halfH, rightW, topH],
+            [0, 0, halfW, halfH],
+            [halfW, 0, rightW, halfH]
+        ];
         renderer.setScissorTest(true);
-
-        applyViewVisibility(0);
-        renderer.setViewport(0, 0, half, h);
-        renderer.setScissor(0, 0, half, h);
-        renderer.render(scene, players[0].camera);
-
-        applyViewVisibility(1);
-        renderer.setViewport(half, 0, w - half, h);
-        renderer.setScissor(half, 0, w - half, h);
-        renderer.render(scene, players[1].camera);
-
+        for (let i = 0; i < 4; i++) {
+            const r = rects[i];
+            applyViewVisibility(i);
+            renderer.setViewport(r[0], r[1], r[2], r[3]);
+            renderer.setScissor(r[0], r[1], r[2], r[3]);
+            renderer.render(scene, players[i].camera);
+        }
         renderer.setScissorTest(false);
         renderer.setViewport(0, 0, w, h);
     } else {
@@ -6040,7 +6699,7 @@ function animate(now) {
             if (netStateTimer >= 0.05) {
                 netStateTimer = 0;
                 if (netRole === 'host') sendPlayerState(players[0], 0);
-                else if (netRole === 'guest') sendPlayerState(players[1], 1);
+                else if (netRole === 'guest') sendPlayerState(localPlayer(), localPlayerIndex);
             }
 
             if (netRole === 'host') {
@@ -6060,8 +6719,7 @@ function animate(now) {
 window.onload = () => {
     initEngine();
     updateCameraAspects();
-    updateInventoryHUD(players[0], '');
-    updateInventoryHUD(players[1], '-p2');
+    updateAllInventoryHUD();
     setObjective('Revisa las instalaciones eléctricas del bosque. No te alejes demasiado de la torre.', PLACES.tower);
     updateHUD();
     requestAnimationFrame(animate);
