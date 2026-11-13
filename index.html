@@ -735,6 +735,59 @@
         body.split4 #minimap { width: 138px; height: 138px; }
         body.split4 #minimap-label { font-size: 8px; }
 
+        /* ===== 2 JUGADORES · pantalla dividida vertical ===== */
+        body.split #minimap-wrap { width: 148px; padding: 5px; }
+        body.split #minimap { width: 138px; height: 138px; }
+        body.split #minimap-label { font-size: 8px; }
+
+        /* ===== 3 JUGADORES · dos arriba + uno abajo a pantalla completa ===== */
+        body.split3 #crosshair { left: 25%; top: 25%; }
+        body.split3 #crosshair-p2 { display: block; left: 75%; top: 25%; }
+        body.split3 #crosshair-p3 {
+            display: block; position: absolute; left: 50%; top: 75%;
+            width: 6px; height: 6px; background: rgba(220,235,220,0.45); border-radius: 50%;
+            transform: translate(-50%,-50%); pointer-events: none; z-index: 20;
+            box-shadow: 0 0 6px rgba(0,0,0,0.9);
+        }
+        body.split3 #crosshair-p3.active {
+            background: #fbbf24; transform: translate(-50%,-50%) scale(2);
+            box-shadow: 0 0 12px rgba(251,191,36,0.8);
+        }
+        body.split3 #prompt { left: 25%; bottom: 54%; max-width: 40vw; white-space: normal; text-align: center; }
+        body.split3 #prompt-p2 { display: block; left: 75%; bottom: 54%; max-width: 40vw; white-space: normal; text-align: center; }
+        body.split3 #prompt-p3 { display: block; left: 50%; bottom: 6%; max-width: 40vw; white-space: normal; text-align: center; }
+
+        body.split3 #danger-vignette { top: 0; left: 0; width: 50%; height: 50%; }
+        body.split3 #danger-vignette-p2 { display: block; top: 0; left: 50%; width: 50%; height: 50%; }
+        body.split3 #danger-vignette-p3 { display: block; top: 50%; left: 0; width: 100%; height: 50%; }
+
+        body.split3 #hidden-overlay { top: 0; left: 0; width: 50%; height: 50%; }
+        body.split3 #hidden-overlay-p2 { display: block; top: 0; left: 50%; width: 50%; height: 50%; }
+        body.split3 #hidden-overlay-p3 { display: block; top: 50%; left: 0; width: 100%; height: 50%; }
+
+        body.split3 #hide-badge { left: 25%; bottom: 46%; }
+        body.split3 #hide-badge-p2 { display: block; left: 75%; bottom: 46%; }
+        body.split3 #hide-badge-p3 { display: block; left: 50%; bottom: 3%; }
+
+        body.split3 #stats-p1 { position: absolute; left: 25%; top: 8px; transform: translateX(-50%); width: 13rem; }
+        body.split3 #stats-p2 { display: block; position: absolute; left: 75%; top: 8px; transform: translateX(-50%); width: 13rem; }
+        body.split3 #stats-p3 { display: block; position: absolute; left: 50%; top: calc(50% + 8px); transform: translateX(-50%); width: 13rem; }
+
+        body.split3 #objective-panel { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 24rem; max-width: 34vw; }
+        body.split3 #radio-panel { display: none; }
+        body.split3 #controls-hint { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); max-width: 66vw; width: auto; }
+        body.split3 #player-tag-1 { display: block; left: 8px; top: 8px; }
+        body.split3 #player-tag-2 { display: block; left: calc(50% + 8px); top: 8px; }
+        body.split3 #player-tag-3 { display: block; left: 8px; top: calc(50% + 8px); }
+        body.split3 #split-h, body.split3 #split-v { display: block; }
+        body.split3 #split-v { bottom: 50%; }
+
+        body.split3 #minimap-wrap {
+            top: 50%; right: 8px; transform: translateY(-50%); width: 148px; padding: 5px;
+        }
+        body.split3 #minimap { width: 138px; height: 138px; }
+        body.split3 #minimap-label { font-size: 8px; }
+
         /* ================= MENÚ PROFESIONAL ================= */
         .menu-sub { display: none; }
         .menu-sub.active { display: block; animation: menuFade 0.28s ease; }
@@ -789,6 +842,19 @@
             background: rgba(12,16,14,0.8); color: #94a3b8; font-size: 9px; letter-spacing: .12em; cursor: pointer;
         }
         .quality-btn.active { border-color: #4ade80; color: #bbf7d0; background: rgba(22,101,52,0.5); }
+
+        /* ================= SELECTOR DE JUGADORES ================= */
+        .players-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+        .players-btn {
+            padding: 7px 4px 6px; border-radius: 8px; border: 1px solid rgba(148,163,184,0.2);
+            background: rgba(12,16,14,0.8); color: #94a3b8; font-size: 8px; letter-spacing: .14em;
+            cursor: pointer; transition: all .15s ease; line-height: 1.15;
+        }
+        .players-btn b { display: block; font-size: 17px; color: #e2e8f0; letter-spacing: 0; }
+        .players-btn span { display: block; font-size: 8px; letter-spacing: .16em; opacity: .7; margin-top: 2px; }
+        .players-btn:hover { border-color: rgba(74,222,128,0.5); color: #bbf7d0; }
+        .players-btn.active { border-color: #4ade80; color: #bbf7d0; background: rgba(22,101,52,0.5); }
+        .players-btn.active b { color: #86efac; }
 
         /* ================= PANTALLA DE CARGA ================= */
         #loading-overlay {
@@ -1153,6 +1219,12 @@
                         <button id="platform-pc" class="platform-btn active"><i class="fa-solid fa-desktop"></i>MODO PC<span class="block text-[8px] opacity-60 mt-1">Teclado y ratón</span></button>
                         <button id="platform-mobile" class="platform-btn"><i class="fa-solid fa-mobile-screen-button"></i>MODO MÓVIL<span class="block text-[8px] opacity-60 mt-1">Controles táctiles</span></button>
                     </div>
+                    <div class="text-[9px] tracking-[0.3em] text-gray-500 uppercase mb-2 mt-3">Jugadores en co-op local</div>
+                    <div class="players-grid mb-3" id="local-players">
+                        <button class="players-btn" data-players="2"><b>2</b><span>JUGADORES</span></button>
+                        <button class="players-btn" data-players="3"><b>3</b><span>JUGADORES</span></button>
+                        <button class="players-btn active" data-players="4"><b>4</b><span>JUGADORES</span></button>
+                    </div>
                     <div class="menu-nav">
                         <button id="start-btn" class="btn-menu wide"><i class="fa-solid fa-satellite-dish mr-2"></i> JUGAR SOLO</button>
                         <button id="local-btn" class="btn-menu"><i class="fa-solid fa-people-group mr-2"></i> CO-OP LOCAL · 4P</button>
@@ -1165,6 +1237,13 @@
             <!-- MULTIJUGADOR -->
             <div id="menu-multi" class="menu-sub">
                 <div class="menu-card rounded-xl p-4 mb-3">
+                    <div class="text-[9px] tracking-[0.3em] text-gray-500 uppercase mb-2">Jugadores en la partida</div>
+                    <div class="players-grid mb-2" id="online-players">
+                        <button class="players-btn" data-players="2"><b>2</b><span>JUGADORES</span></button>
+                        <button class="players-btn" data-players="3"><b>3</b><span>JUGADORES</span></button>
+                        <button class="players-btn active" data-players="4"><b>4</b><span>JUGADORES</span></button>
+                    </div>
+                    <div id="online-limit-note" class="text-[10px] text-gray-500 text-center mb-3">Sala para 4 jugadores: tú + 3 compañeros</div>
                     <div class="menu-nav">
                         <button id="host-btn" class="btn-menu"><i class="fa-solid fa-tower-broadcast mr-2"></i> CREAR SALA</button>
                         <button id="join-btn" class="btn-menu secondary"><i class="fa-solid fa-link mr-2"></i> UNIRSE A SALA</button>
@@ -1174,7 +1253,7 @@
                         <div id="host-info" class="hidden text-center mt-2">
                             <div class="text-[9px] tracking-[0.3em] text-gray-500 uppercase">Código de sala</div>
                             <div id="room-code">-----</div>
-                            <div class="text-[10px] text-gray-500">Comparte este código (hasta 3 compañeros)</div>
+                            <div id="host-limit-note" class="text-[10px] text-gray-500">Comparte este código (hasta 3 compañeros)</div>
                         </div>
                         <div id="join-info" class="hidden flex gap-2 justify-center mt-2">
                             <input id="join-code" maxlength="5" placeholder="CÓDIGO" autocomplete="off" spellcheck="false">
@@ -1184,7 +1263,7 @@
                     </div>
                     <button id="reconnect-btn" class="menu-back hidden"><i class="fa-solid fa-rotate-right mr-1"></i> RECONECTAR A LA ÚLTIMA SALA</button>
                 </div>
-                <p class="text-center text-[10px] text-gray-500 leading-relaxed mb-2">PC y móviles pueden jugar juntos en la misma sala.<br>Comparte el código de 5 caracteres con tus amigos.</p>
+                <p class="text-center text-[10px] text-gray-500 leading-relaxed mb-2">PC y móviles pueden jugar juntos en la misma sala.<br>El anfitrión decide el tamaño de la partida; comparte el código de 5 caracteres.</p>
                 <button class="menu-back" data-back>VOLVER</button>
             </div>
 
@@ -2185,6 +2264,12 @@ let netSendCount = 0;
 let netRecvCount = 0;
 let hostRetryCount = 0;
 
+// Tamaño de partida elegido en los menús (2, 3 o 4 jugadores).
+let localPlayerLimit = 4;      // co-op local
+let onlinePlayerLimit = 4;     // sala online (lo decide el anfitrión)
+let hostPlayerLimit = 4;       // límite fijado al crear la sala
+let netPlayerLimit = 4;        // límite anunciado por el anfitrión
+
 function createPlayerState(index, x, z) {
     return {
         index,
@@ -2247,6 +2332,42 @@ function setActiveIndices(list) {
     refreshActiveCount();
 }
 refreshActiveCount();
+
+function isActiveIndex(i) {
+    return activeIndices.includes(i);
+}
+function clampPlayerCount(n) {
+    n = parseInt(n, 10);
+    if (!Number.isFinite(n)) n = 4;
+    return Math.max(2, Math.min(4, n));
+}
+function playerCountLabel(n) {
+    return n + (n === 1 ? ' jugador' : ' jugadores');
+}
+function updatePlayerLimitUI() {
+    document.querySelectorAll('#local-players .players-btn').forEach(btn => {
+        btn.classList.toggle('active', clampPlayerCount(btn.dataset.players) === localPlayerLimit);
+    });
+    document.querySelectorAll('#online-players .players-btn').forEach(btn => {
+        btn.classList.toggle('active', clampPlayerCount(btn.dataset.players) === onlinePlayerLimit);
+    });
+    const localBtn = document.getElementById('local-btn');
+    if (localBtn) {
+        localBtn.innerHTML = '<i class="fa-solid fa-people-group mr-2"></i> CO-OP LOCAL · ' + localPlayerLimit + 'P';
+    }
+    const onlineNote = document.getElementById('online-limit-note');
+    if (onlineNote) {
+        onlineNote.innerText = onlinePlayerLimit === 2
+            ? 'Sala para 2 jugadores: tú + 1 compañero'
+            : 'Sala para ' + onlinePlayerLimit + ' jugadores: tú + ' + (onlinePlayerLimit - 1) + ' compañeros';
+    }
+    const hostNote = document.getElementById('host-limit-note');
+    if (hostNote) {
+        hostNote.innerText = hostPlayerLimit === 2
+            ? 'Comparte este código (1 compañero)'
+            : 'Comparte este código (hasta ' + (hostPlayerLimit - 1) + ' compañeros)';
+    }
+}
 function isWorldAuthority() {
     return netRole !== 'guest';
 }
@@ -3219,7 +3340,18 @@ function failLoading(err) {
     if (window.showFatalError) window.showFatalError(err && err.message ? err.message : err);
 }
 
+function lockPointer() {
+    if (mobileMode || !canvas) return;
+    try {
+        const req = canvas.requestPointerLock();
+        if (req && typeof req.catch === 'function') req.catch(() => {});
+    } catch (e) {}
+}
+
 function launchGame(mode) {
+    // Pedimos el bloqueo del ratón dentro del gesto del usuario; si se pide
+    // más tarde (tras la pantalla de carga) el navegador puede rechazarlo.
+    if (mode !== MODE.GUEST && !mobileMode) lockPointer();
     try { audio.init(); } catch (e) { console.warn('Audio no disponible:', e); }
     startLoading(() => startGame(mode));
 }
@@ -5681,14 +5813,14 @@ function setupInput() {
         if (!gameStarted) return;
 
         if (gameMode === MODE.LOCAL) {
-            if (e.code === 'KeyF') toggleFlashlight(players[0]);
-            if (e.code === 'KeyN') toggleFlashlight(players[1]);
-            if (e.code === 'KeyZ') toggleFlashlight(players[2]);
-            if (e.code === 'Numpad0') toggleFlashlight(players[3]);
-            if (e.code === 'KeyE') handleInteractionFor(players[0]);
-            if (e.code === 'KeyM') handleInteractionFor(players[1]);
-            if (e.code === 'KeyX') handleInteractionFor(players[2]);
-            if (e.code === 'NumpadEnter') handleInteractionFor(players[3]);
+            if (e.code === 'KeyF' && isActiveIndex(0)) toggleFlashlight(players[0]);
+            if (e.code === 'KeyN' && isActiveIndex(1)) toggleFlashlight(players[1]);
+            if (e.code === 'KeyZ' && isActiveIndex(2)) toggleFlashlight(players[2]);
+            if (e.code === 'Numpad0' && isActiveIndex(3)) toggleFlashlight(players[3]);
+            if (e.code === 'KeyE' && isActiveIndex(0)) handleInteractionFor(players[0]);
+            if (e.code === 'KeyM' && isActiveIndex(1)) handleInteractionFor(players[1]);
+            if (e.code === 'KeyX' && isActiveIndex(2)) handleInteractionFor(players[2]);
+            if (e.code === 'NumpadEnter' && isActiveIndex(3)) handleInteractionFor(players[3]);
         } else {
             const lp = localPlayer();
             if (e.code === 'KeyF') toggleFlashlight(lp);
@@ -5709,7 +5841,7 @@ function setupInput() {
     canvas.addEventListener('click', () => {
         if (mobileMode) return;
         if (!isPointerLocked && gameStarted && !localPlayer().isDead && !localPlayer().hasEscaped) {
-            canvas.requestPointerLock();
+            lockPointer();
         }
     });
 
@@ -5733,6 +5865,29 @@ function setupInput() {
     document.getElementById('local-btn').addEventListener('click', () => launchGame(MODE.LOCAL));
     document.getElementById('host-btn').addEventListener('click', beginHost);
     document.getElementById('join-btn').addEventListener('click', () => showOnlinePanel('join'));
+
+    document.querySelectorAll('#local-players .players-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            localPlayerLimit = clampPlayerCount(btn.dataset.players);
+            updatePlayerLimitUI();
+        });
+    });
+    document.querySelectorAll('#online-players .players-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            onlinePlayerLimit = clampPlayerCount(btn.dataset.players);
+            // Si la sala ya está creada pero la partida no ha empezado,
+            // el nuevo tamaño se aplica al momento.
+            if (netRole === 'host' && !gameStarted) {
+                hostPlayerLimit = onlinePlayerLimit;
+                updatePlayerLimitUI();
+                enforceHostLimit();
+                setOnlineStatus('Sala para ' + playerCountLabel(hostPlayerLimit) + '. Comparte el código.');
+            } else {
+                updatePlayerLimitUI();
+            }
+        });
+    });
+    updatePlayerLimitUI();
     document.getElementById('join-connect-btn').addEventListener('click', () => {
         const code = (document.getElementById('join-code').value || '').trim().toUpperCase();
         beginGuest(code);
@@ -5749,7 +5904,7 @@ function startGame(mode) {
 
     if (gameMode === MODE.LOCAL) {
         localPlayerIndex = 0;
-        setActiveIndices([0, 1, 2, 3]);
+        setActiveIndices(Array.from({ length: localPlayerLimit }, (_, i) => i));
     } else if (gameMode === MODE.SOLO) {
         localPlayerIndex = 0;
         setActiveIndices([0]);
@@ -5816,7 +5971,10 @@ function startGame(mode) {
     story.time = 0;
     story.phaseTime = 0;
 
-    document.body.classList.toggle('split4', gameMode === MODE.LOCAL);
+    document.body.classList.remove('split', 'split3', 'split4');
+    if (gameMode === MODE.LOCAL) {
+        document.body.classList.add(localPlayerLimit === 2 ? 'split' : (localPlayerLimit === 3 ? 'split3' : 'split4'));
+    }
     updateCameraAspects();
     document.getElementById('menu-overlay').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
@@ -5824,16 +5982,19 @@ function startGame(mode) {
 
     const hint = document.getElementById('controls-hint');
     if (gameMode === MODE.LOCAL) {
-        hint.innerHTML =
-            '<div><span class="key-hint">J1</span> WASD + ratón · <span class="key-hint">SHIFT IZQ</span> correr · <span class="key-hint">F</span> linterna · <span class="key-hint">E</span> interactuar · <span class="key-hint">CTRL/C</span> agacharse</div>' +
-            '<div><span class="key-hint">J2</span> Flechas · <span class="key-hint">I/J/K/L</span> mirar · <span class="key-hint">N</span> linterna · <span class="key-hint">M</span> interactuar · <span class="key-hint">SHIFT DER</span> correr · <span class="key-hint">.</span> agacharse</div>' +
-            '<div><span class="key-hint">J3</span> T/G/F/H · <span class="key-hint">R/U</span> girar · <span class="key-hint">V/B</span> mirar · <span class="key-hint">Z</span> linterna · <span class="key-hint">X</span> interactuar · <span class="key-hint">Q</span> correr · <span class="key-hint">ESPACIO</span> agacharse</div>' +
-            '<div><span class="key-hint">J4</span> Numpad 8/5/4/6 · <span class="key-hint">7/9</span> girar · <span class="key-hint">/ *</span> mirar · <span class="key-hint">0</span> linterna · <span class="key-hint">ENT</span> interactuar · <span class="key-hint">+</span> correr · <span class="key-hint">-</span> agacharse</div>';
+        const hints = [
+            '<div><span class="key-hint">J1</span> WASD + ratón · <span class="key-hint">SHIFT IZQ</span> correr · <span class="key-hint">F</span> linterna · <span class="key-hint">E</span> interactuar · <span class="key-hint">CTRL/C</span> agacharse</div>',
+            '<div><span class="key-hint">J2</span> Flechas · <span class="key-hint">I/J/K/L</span> mirar · <span class="key-hint">N</span> linterna · <span class="key-hint">M</span> interactuar · <span class="key-hint">SHIFT DER</span> correr · <span class="key-hint">.</span> agacharse</div>',
+            '<div><span class="key-hint">J3</span> T/G/F/H · <span class="key-hint">R/U</span> girar · <span class="key-hint">V/B</span> mirar · <span class="key-hint">Z</span> linterna · <span class="key-hint">X</span> interactuar · <span class="key-hint">Q</span> correr · <span class="key-hint">ESPACIO</span> agacharse</div>',
+            '<div><span class="key-hint">J4</span> Numpad 8/5/4/6 · <span class="key-hint">7/9</span> girar · <span class="key-hint">/ *</span> mirar · <span class="key-hint">0</span> linterna · <span class="key-hint">ENT</span> interactuar · <span class="key-hint">+</span> correr · <span class="key-hint">-</span> agacharse</div>'
+        ];
+        hint.innerHTML = hints.slice(0, activePlayerCount).join('');
     } else if (gameMode === MODE.HOST || gameMode === MODE.GUEST) {
+        const limit = gameMode === MODE.HOST ? hostPlayerLimit : netPlayerLimit;
         hint.innerHTML =
             '<div><span class="key-hint">WASD</span> Moverse · <span class="key-hint">SHIFT</span> Correr</div>' +
             '<div><span class="key-hint">CTRL</span> Agacharse · <span class="key-hint">F</span> Linterna · <span class="key-hint">E</span> Interactuar</div>' +
-            '<div class="text-green-500/80">ONLINE · ' + (gameMode === MODE.HOST ? 'ANFITRIÓN' : 'INVITADO') + ' · ' + activePlayerCount + '/4</div>';
+            '<div class="text-green-500/80">ONLINE · ' + (gameMode === MODE.HOST ? 'ANFITRIÓN' : 'INVITADO') + ' · ' + activePlayerCount + '/' + limit + '</div>';
     }
 
     setObjective('Revisa las instalaciones eléctricas del bosque. No te alejes demasiado de la torre.', PLACES.tower);
@@ -5848,7 +6009,7 @@ function startGame(mode) {
     card.classList.add('show');
     setTimeout(() => card.classList.remove('show'), 5200);
 
-    if (gameMode !== MODE.GUEST && !mobileMode) canvas.requestPointerLock();
+    if (gameMode !== MODE.GUEST && !mobileMode) lockPointer();
 
     if (isWorldAuthority()) {
         setTimeout(() => {
@@ -5865,7 +6026,7 @@ function startGame(mode) {
     if (netRole === 'guest') {
         showToast('Conectado a la partida del anfitrión', 'good');
     } else if (netRole === 'host') {
-        showToast('Sala online · ' + activePlayerCount + ' jugador(es)', 'good');
+        showToast('Sala online · ' + activePlayerCount + '/' + hostPlayerLimit + ' jugadores', 'good');
     }
 }
 
@@ -5941,7 +6102,7 @@ function getMoveInput(p) {
 }
 
 function updatePlayerState(p, delta) {
-    if (!gameStarted || p.isDead || p.hasEscaped) return;
+    if (!gameStarted || p.isDead || p.hasEscaped || !isActiveIndex(p.index)) return;
 
     const input = getMoveInput(p);
 
@@ -6137,7 +6298,7 @@ function updateLocalPlayers(delta) {
 
 function updateAvatar(p, delta = 0.016) {
     if (!p.avatar) return;
-    p.avatar.visible = activePlayerCount > 1 && !p.isDead && !p.hasEscaped && !p.isHidden;
+    p.avatar.visible = activePlayerCount > 1 && isActiveIndex(p.index) && !p.isDead && !p.hasEscaped && !p.isHidden;
     p.avatar.position.set(p.pos.x, 0, p.pos.z);
     p.avatar.rotation.y = p.rotY;
 
@@ -6504,6 +6665,7 @@ function nearestHideSpotFor(p) {
 
 function handleInteractionFor(p) {
     if (!p || !gameStarted || p.isDead || p.hasEscaped) return;
+    if (!isActiveIndex(p.index)) return;
     if (p.isRemote) return;
 
     const item = p.currentTarget || null;
@@ -7854,7 +8016,7 @@ function retryFromCheckpoint() {
     updateAllInventoryHUD();
     updateHUD();
 
-    if (netRole !== 'guest') canvas.requestPointerLock();
+    if (netRole !== 'guest') lockPointer();
     showToast('Habéis vuelto al último punto seguro', '');
     radioSay('Unidad 7, os perdimos unos segundos. Seguid con la misión.', 'voice');
 }
@@ -7934,6 +8096,18 @@ function hostRoster() {
     return activeIndices;
 }
 
+function enforceHostLimit() {
+    if (netRole !== 'host' || gameStarted) return;
+    for (let i = hostPlayerLimit; i < netConns.length; i++) {
+        const c = netConns[i];
+        if (!c) continue;
+        sendToConn(c, { t: 'full', max: hostPlayerLimit });
+        netConns[i] = null;
+        setTimeout(() => { try { c.close(); } catch (e) {} }, 400);
+    }
+    hostRoster();
+}
+
 function resetPlayerSlot(slot) {
     const sp = players[slot];
     if (!sp) return;
@@ -7975,27 +8149,34 @@ function beginHost(retry = 0) {
     netConns = [null, null, null, null];
     netConnected = false;
     hostRetryCount = retry;
+    hostPlayerLimit = onlinePlayerLimit;
+    netPlayerLimit = hostPlayerLimit;
 
     showOnlinePanel('host');
     const code = randomRoomCode();
     try { localStorage.setItem('bosque_last_room', code); } catch (e) {}
     document.getElementById('room-code').innerText = code;
     document.getElementById('host-info').classList.remove('hidden');
+    updatePlayerLimitUI();
 
     const peer = new Peer(ROOM_PREFIX + code, { debug: 0 });
     netPeer = peer;
 
     peer.on('open', () => {
-        setOnlineStatus('Sala creada. Comparte el código y espera (hasta 3 jugadores).');
+        setOnlineStatus('Sala para ' + playerCountLabel(hostPlayerLimit) + ' creada. Comparte el código y espera.');
     });
 
     peer.on('connection', (conn) => {
         let slot = -1;
-        for (let i = 1; i < netConns.length; i++) {
+        for (let i = 1; i < hostPlayerLimit; i++) {
             if (!netConns[i]) { slot = i; break; }
         }
         if (slot < 0) {
-            try { conn.close(); } catch (e) {}
+            // Sala completa: avisamos al invitado antes de cerrar la conexión.
+            conn.on('open', () => {
+                sendToConn(conn, { t: 'full', max: hostPlayerLimit });
+                setTimeout(() => { try { conn.close(); } catch (e) {} }, 500);
+            });
             return;
         }
         netConns[slot] = conn;
@@ -8004,7 +8185,7 @@ function beginHost(retry = 0) {
 
         conn.on('open', () => {
             hostRoster();
-            sendToConn(conn, { t: 'welcome', i: slot, act: activeIndices });
+            sendToConn(conn, { t: 'welcome', i: slot, act: activeIndices, max: hostPlayerLimit });
             if (!gameStarted) {
                 setOnlineStatus('Jugador conectado. Iniciando partida…');
                 startGame(MODE.HOST);
@@ -8012,7 +8193,7 @@ function beginHost(retry = 0) {
                 showToast('Jugador ' + (slot + 1) + ' conectado', 'good');
                 updateAllInventoryHUD();
                 updateHUD();
-                sendNet({ t: 'roster', act: activeIndices });
+                sendNet({ t: 'roster', act: activeIndices, max: hostPlayerLimit });
             }
             setTimeout(() => { sendWorld(); sendPlayerState(players[0], 0); }, 350);
         });
@@ -8049,13 +8230,13 @@ function hostDrop(index) {
 
     hostRoster();
     if (gameStarted) {
-        sendNet({ t: 'roster', act: activeIndices });
+        sendNet({ t: 'roster', act: activeIndices, max: hostPlayerLimit });
         sendWorld();
         updateAllInventoryHUD();
         updateHUD();
         showToast('Jugador ' + (index + 1) + ' desconectado', 'warn');
     } else {
-        setOnlineStatus('Comparte el código. Jugadores: ' + Math.max(0, activeIndices.length - 1) + '/3');
+        setOnlineStatus('Comparte el código. Jugadores: ' + activeIndices.length + '/' + hostPlayerLimit);
     }
 }
 
@@ -8140,7 +8321,7 @@ function handleNetData(data, conn) {
                 sendNet({ t: 'retryNow' });
                 break;
             case 'hello':
-                sendToConn(conn, { t: 'welcome', i: index, act: activeIndices });
+                sendToConn(conn, { t: 'welcome', i: index, act: activeIndices, max: hostPlayerLimit });
                 sendWorld();
                 sendPlayerState(players[0], 0);
                 break;
@@ -8152,14 +8333,25 @@ function handleNetData(data, conn) {
         switch (data.t) {
             case 'welcome':
                 localPlayerIndex = typeof data.i === 'number' ? data.i : 1;
+                if (typeof data.max === 'number') netPlayerLimit = clampPlayerCount(data.max);
                 setActiveIndices(data.act || [0, localPlayerIndex]);
                 if (!gameStarted) startGame(MODE.GUEST);
+                setOnlineStatus('Conectado · Jugadores: ' + activeIndices.length + '/' + netPlayerLimit);
                 sendNet({ t: 'hello' });
                 break;
             case 'roster':
+                if (typeof data.max === 'number') netPlayerLimit = clampPlayerCount(data.max);
                 setActiveIndices(data.act || activeIndices);
                 updateAllInventoryHUD();
                 updateHUD();
+                break;
+            case 'full':
+                netPlayerLimit = clampPlayerCount(data.max || 4);
+                netConnected = false;
+                setOnlineStatus('Sala completa (' + playerCountLabel(netPlayerLimit) + '). Pide otro código o crea tu propia sala.');
+                showToast('La sala está completa: ' + playerCountLabel(netPlayerLimit) + '.', 'bad');
+                try { if (netConn) netConn.close(); } catch (e) {}
+                try { if (netPeer) netPeer.destroy(); } catch (e) {}
                 break;
             case 'world': applyWorldSnapshot(data); break;
             case 'state': applyRemoteState(data, data.i); break;
@@ -8352,6 +8544,7 @@ function applyWorldSnapshot(d) {
     }
 
     applyEnvironmentState(!!d.bo, !!d.gen);
+    if (typeof d.max === 'number') netPlayerLimit = clampPlayerCount(d.max);
     if (Array.isArray(d.act)) setActiveIndices(d.act);
     if (Array.isArray(d.ps)) {
         d.ps.forEach(s => {
@@ -8466,6 +8659,7 @@ function sendWorld() {
         objx: currentObjectiveTarget ? currentObjectiveTarget.x : null,
         objz: currentObjectiveTarget ? currentObjectiveTarget.z : null,
         act: activeIndices.slice(),
+        max: hostPlayerLimit,
         ps,
         doors,
         gone: interactables.filter(i => i.hiddenByEvent).map(i => i.id),
@@ -8568,7 +8762,7 @@ function updateCameraAspects() {
 function applyViewVisibility(viewIndex) {
     players.forEach((p, i) => {
         if (!p.avatar) return;
-        p.avatar.visible = activePlayerCount > 1 && i !== viewIndex &&
+        p.avatar.visible = activePlayerCount > 1 && isActiveIndex(i) && i !== viewIndex &&
             !p.isDead && !p.hasEscaped && !p.isHidden;
     });
 }
@@ -8582,14 +8776,31 @@ function renderViews() {
         const halfH = Math.floor(h / 2);
         const rightW = w - halfW;
         const topH = h - halfH;
-        const rects = [
-            [0, halfH, halfW, topH],
-            [halfW, halfH, rightW, topH],
-            [0, 0, halfW, halfH],
-            [halfW, 0, rightW, halfH]
-        ];
+        let rects;
+        if (activePlayerCount <= 2) {
+            // 2 jugadores: mitad izquierda / mitad derecha.
+            rects = [
+                [0, 0, halfW, h],
+                [halfW, 0, rightW, h]
+            ];
+        } else if (activePlayerCount === 3) {
+            // 3 jugadores: dos arriba y uno abajo a pantalla completa.
+            rects = [
+                [0, halfH, halfW, topH],
+                [halfW, halfH, rightW, topH],
+                [0, 0, w, halfH]
+            ];
+        } else {
+            // 4 jugadores: cuatro cuadrantes.
+            rects = [
+                [0, halfH, halfW, topH],
+                [halfW, halfH, rightW, topH],
+                [0, 0, halfW, halfH],
+                [halfW, 0, rightW, halfH]
+            ];
+        }
         renderer.setScissorTest(true);
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < rects.length; i++) {
             const r = rects[i];
             applyViewVisibility(i);
             renderer.setViewport(r[0], r[1], r[2], r[3]);
