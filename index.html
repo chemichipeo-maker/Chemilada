@@ -366,9 +366,239 @@
             inset: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 55;
+            z-index: 65;
             display: none;
             pointer-events: none;
+        }
+
+        /* ================= TERROR EXTREMO · EFECTOS ================= */
+        #horror-fx {
+            position: absolute;
+            inset: 0;
+            z-index: 12;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        #fx-red {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.25s linear;
+            background: radial-gradient(ellipse at center, rgba(90,0,0,0) 30%, rgba(130,0,0,0.55) 70%, rgba(50,0,0,0.95) 100%);
+            mix-blend-mode: screen;
+        }
+        #horror-fx.pulse #fx-red { animation: fxPulse 1.4s ease-in-out infinite; }
+        @keyframes fxPulse {
+            0%, 100% { opacity: 0.32; }
+            50% { opacity: 0.82; }
+        }
+        #fx-scan {
+            position: absolute;
+            inset: -10%;
+            opacity: 0;
+            transition: opacity 0.4s;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.4) 0 2px, rgba(0,0,0,0) 2px 5px);
+            animation: scanMove 5s linear infinite;
+        }
+        @keyframes scanMove { from { transform: translateY(0); } to { transform: translateY(5px); } }
+        #fx-glitch {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            mix-blend-mode: screen;
+            background: linear-gradient(90deg, rgba(255,0,0,0.20), transparent 32%, rgba(0,255,255,0.10) 62%, transparent);
+            filter: blur(1px);
+        }
+        #horror-fx.glitch #fx-glitch { opacity: 1; animation: glitchShift 0.18s steps(2) infinite; }
+        @keyframes glitchShift {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(-6px, 2px); }
+            100% { transform: translate(5px, -3px); }
+        }
+        #fx-static {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.35) 0.5px, transparent 0.5px);
+            background-size: 3px 3px;
+        }
+        #horror-fx.glitch #fx-static { opacity: 0.18; }
+        body.danger-high #fx-scan { opacity: 0.38; }
+        body.danger-high #fx-red { background: radial-gradient(ellipse at center, rgba(120,0,0,0) 24%, rgba(170,0,0,0.6) 64%, rgba(60,0,0,0.98) 100%); }
+
+        #scare-flash {
+            position: absolute;
+            inset: 0;
+            z-index: 64;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(circle at 50% 45%, rgba(255,30,30,0.92), rgba(140,0,0,0.75) 45%, rgba(0,0,0,0.96) 100%);
+        }
+        #scare-flash.on { animation: scareFlash 0.55s steps(2) 2; }
+        @keyframes scareFlash {
+            0% { opacity: 0; }
+            15% { opacity: 0.95; }
+            40% { opacity: 0.15; }
+            55% { opacity: 0.85; }
+            100% { opacity: 0; }
+        }
+        body.reduce-flash #scare-flash.on { animation: scareFlashSoft 0.5s ease 1; }
+        @keyframes scareFlashSoft {
+            0% { opacity: 0; }
+            30% { opacity: 0.32; }
+            100% { opacity: 0; }
+        }
+        body.reduce-flash #horror-fx.pulse #fx-red { animation: none; opacity: 0.3; }
+        body.reduce-flash #horror-fx.glitch #fx-glitch { animation: none; opacity: 0.25; }
+        body.jumpscare-active #game-canvas { filter: contrast(1.35) saturate(1.5) hue-rotate(-10deg); }
+        body.reduce-flash.jumpscare-active #game-canvas { filter: none; }
+
+        /* ================= INTRO CINEMATOGRÁFICA ================= */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #intro-overlay.hidden { display: none !important; }
+        #intro-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #intro-bars { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+        #intro-bars::before, #intro-bars::after {
+            content: '';
+            position: absolute; left: 0; right: 0; height: 7vh;
+            background: #000; z-index: 3;
+        }
+        #intro-bars::before { top: 0; box-shadow: 0 6px 28px #000; }
+        #intro-bars::after { bottom: 0; box-shadow: 0 -6px 28px #000; }
+        #intro-subtitle {
+            position: absolute;
+            bottom: 10.5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(880px, 86vw);
+            text-align: center;
+            color: #ece7da;
+            font-size: clamp(13px, 1.55vw, 20px);
+            line-height: 1.5;
+            letter-spacing: 0.02em;
+            text-shadow: 0 2px 14px #000, 0 0 3px #000, 0 0 22px rgba(0,0,0,0.9);
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        #intro-subtitle.show { opacity: 1; }
+        #intro-subtitle .who {
+            display: block;
+            font-size: 0.66em;
+            letter-spacing: 0.34em;
+            color: #ef4444;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+            text-shadow: 0 0 16px rgba(239,68,68,0.55);
+        }
+        #intro-subtitle .who.radio { color: #86efac; text-shadow: 0 0 16px rgba(74,222,128,0.4); }
+        #intro-subtitle .who.unknown { color: #fca5a5; letter-spacing: 0.5em; }
+        #intro-skip {
+            position: absolute;
+            top: calc(7vh + 14px);
+            right: 20px;
+            z-index: 8;
+            padding: 9px 17px;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        #intro-skip:hover { color: #fca5a5; border-color: rgba(239,68,68,0.5); background: rgba(30,0,0,0.6); }
+        #intro-skip.hidden { display: none !important; }
+        #intro-gate, #intro-end {
+            position: absolute;
+            inset: 0;
+            z-index: 9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 26px;
+            background: radial-gradient(ellipse at 50% 44%, rgba(14,4,4,0.72), rgba(0,0,0,0.975) 72%);
+        }
+        #intro-gate.hidden, #intro-end.hidden { display: none !important; }
+        #intro-gate::before, #intro-end::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(0deg, rgba(255,255,255,0.022) 0 1px, transparent 1px 3px),
+                radial-gradient(ellipse at 50% 100%, rgba(120,0,0,0.28), transparent 62%);
+            pointer-events: none;
+        }
+        #intro-gate > *, #intro-end > * { position: relative; z-index: 1; }
+        .intro-btn {
+            min-width: min(320px, 78vw);
+            padding: 14px 26px;
+            border-radius: 8px;
+            border: 1px solid rgba(239,68,68,0.45);
+            background: linear-gradient(180deg, rgba(127,29,29,0.75), rgba(45,7,7,0.9));
+            color: #fee2e2;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 34px rgba(120,0,0,0.35), inset 0 0 22px rgba(0,0,0,0.55);
+        }
+        .intro-btn:hover {
+            border-color: #f87171;
+            color: #fff;
+            background: linear-gradient(180deg, rgba(153,27,27,0.9), rgba(60,10,10,0.95));
+            box-shadow: 0 0 46px rgba(190,0,0,0.5), inset 0 0 22px rgba(0,0,0,0.5);
+            transform: translateY(-1px);
+        }
+        .intro-btn:active { transform: translateY(1px); }
+        .intro-btn.ghost {
+            background: rgba(8,10,9,0.7);
+            border-color: rgba(148,163,184,0.22);
+            color: #9ca3af;
+            font-weight: 500;
+            box-shadow: none;
+        }
+        .intro-btn.ghost:hover { color: #e5e7eb; border-color: rgba(148,163,184,0.5); background: rgba(18,22,20,0.85); }
+        #intro-end .intro-title-main {
+            text-shadow: 0 0 60px rgba(239,68,68,0.35), 0 0 8px rgba(0,0,0,0.9);
+            animation: introTitleIn 2.4s ease both;
+        }
+        @keyframes introTitleIn {
+            0% { opacity: 0; letter-spacing: 0.7em; filter: blur(10px); }
+            100% { opacity: 1; letter-spacing: 0.08em; filter: blur(0); }
+        }
+        .setting-row input[type="checkbox"] {
+            width: 17px; height: 17px; accent-color: #dc2626; cursor: pointer;
+            filter: drop-shadow(0 0 4px rgba(220,38,38,0.4));
+        }
+        @media (max-width: 640px) {
+            #intro-skip { top: calc(7vh + 10px); right: 12px; padding: 7px 12px; font-size: 9px; }
+            #intro-subtitle { bottom: 9vh; width: 90vw; }
+            #intro-gate, #intro-end { padding: 18px; }
+            .intro-btn { padding: 13px 20px; font-size: 11px; }
         }
 
         .red-flash { animation: flashRed 0.14s infinite alternate; }
@@ -1204,6 +1434,7 @@
                     <button id="resume-btn" class="btn-menu wide hidden"><i class="fa-solid fa-play mr-2"></i> REANUDAR PARTIDA</button>
                     <button class="btn-menu wide" data-sub="play"><i class="fa-solid fa-play mr-2"></i> JUGAR</button>
                     <button class="btn-menu wide secondary" data-sub="multi"><i class="fa-solid fa-tower-broadcast mr-2"></i> MULTIJUGADOR</button>
+                    <button class="btn-menu wide secondary" id="menu-intro-btn"><i class="fa-solid fa-film mr-2"></i> VER INTRODUCCIÓN</button>
                     <button class="btn-menu" data-sub="settings"><i class="fa-solid fa-sliders mr-2"></i> CONFIGURACIÓN</button>
                     <button class="btn-menu" data-sub="controls"><i class="fa-solid fa-gamepad mr-2"></i> CONTROLES</button>
                     <button class="btn-menu wide secondary" id="exit-btn"><i class="fa-solid fa-power-off mr-2"></i> SALIR</button>
@@ -1297,9 +1528,17 @@
                         <label>Tu nombre</label>
                         <input id="player-name" type="text" maxlength="14" value="TÉCNICO">
                     </div>
-                    <div class="setting-row" style="border-bottom:none">
+                    <div class="setting-row">
                         <label>Vibración de cámara</label>
                         <input id="set-shake" type="range" min="0" max="100" value="70">
+                    </div>
+                    <div class="setting-row">
+                        <label>Reducir destellos</label>
+                        <input id="set-reduce-flash" type="checkbox">
+                    </div>
+                    <div class="setting-row" style="border-bottom:none">
+                        <label>Subtítulos</label>
+                        <input id="set-subtitles" type="checkbox" checked>
                     </div>
                 </div>
                 <button class="menu-back" data-back>VOLVER</button>
@@ -1391,6 +1630,45 @@
         <button id="disconnect-menu-btn" class="px-8 py-3 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold rounded-lg tracking-widest text-xs border border-gray-700 transition">
             <i class="fa-solid fa-rotate-right mr-2"></i> VOLVER AL MENÚ
         </button>
+    </div>
+
+    <!-- ================= EFECTOS DE TERROR EXTREMO ================= -->
+    <div id="horror-fx" aria-hidden="true">
+        <div id="fx-red"></div>
+        <div id="fx-scan"></div>
+        <div id="fx-glitch"></div>
+        <div id="fx-static"></div>
+    </div>
+    <div id="scare-flash" aria-hidden="true"></div>
+
+    <!-- ================= INTRO CINEMATOGRÁFICA ================= -->
+    <div id="intro-overlay" class="hidden">
+        <canvas id="intro-canvas"></canvas>
+        <div id="intro-bars"></div>
+        <div id="intro-subtitle"></div>
+        <button id="intro-skip" class="hidden"><i class="fa-solid fa-forward mr-2"></i>SALTAR INTRO</button>
+
+        <div id="intro-gate">
+            <div class="text-[10px] tracking-[0.5em] text-red-700/80 uppercase mb-3">Bosque de Vallmorta · Sector 04</div>
+            <h1 class="font-horror text-4xl md:text-6xl text-red-100/90 tracking-wider mb-3" style="text-shadow:0 0 50px rgba(239,68,68,.3)">LA ÚLTIMA SEÑAL</h1>
+            <p class="text-[12px] text-gray-400 max-w-md mb-7 leading-relaxed">
+                Una noche. Una torre sin energía. Algo que aprendió a moverse entre los árboles.<br>
+                <span class="text-red-500/90">Se recomienda usar auriculares y jugar con la luz apagada.</span>
+            </p>
+            <button id="intro-start-btn" class="intro-btn"><i class="fa-solid fa-play mr-2"></i> VER INTRODUCCIÓN</button>
+            <button id="intro-gate-skip" class="intro-btn ghost mt-3">IR DIRECTO A LA PARTIDA</button>
+            <div class="text-[9px] tracking-[0.3em] text-gray-600 uppercase mt-6">Duración aproximada · 2 minutos</div>
+        </div>
+
+        <div id="intro-end" class="hidden">
+            <div class="text-[10px] tracking-[0.55em] text-gray-500 uppercase mb-4">Capítulo 1</div>
+            <h1 class="font-horror text-5xl md:text-7xl text-red-100 tracking-wider mb-3 intro-title-main">LA ÚLTIMA SEÑAL</h1>
+            <div class="text-sm md:text-lg tracking-[0.4em] text-red-600/90 uppercase mb-9">EL BOSQUE NO ESTÁ VACÍO</div>
+            <button id="intro-play-btn" class="intro-btn"><i class="fa-solid fa-satellite-dish mr-2"></i> COMENZAR PARTIDA</button>
+            <button id="intro-replay-btn2" class="intro-btn ghost mt-3"><i class="fa-solid fa-rotate-left mr-2"></i> REPETIR INTRODUCCIÓN</button>
+            <button id="intro-back-btn" class="intro-btn ghost mt-2" style="min-width:min(320px,78vw);padding:10px 22px;font-size:10px;letter-spacing:.18em">VOLVER AL MENÚ</button>
+            <div class="text-[9px] tracking-[0.3em] text-gray-600 uppercase mt-6">La señal sigue activa</div>
+        </div>
     </div>
 
     <canvas id="jumpscare-canvas"></canvas>
@@ -2164,6 +2442,340 @@ class SoundEngine {
     playRadioInterference() {
         this.playRadioStatic(1.4, 0.05);
     }
+
+    // ============================================================
+    // CRIATURAS ORIGINALES · AUDIO ESPACIAL
+    // ============================================================
+    playWatcherBreath(pos = null) {
+        if (!this.initialized) return;
+        const t = this.now();
+        const out = this.panOut(this.spatialPan(pos));
+        for (let i = 0; i < 2; i++) {
+            const noise = this.ctx.createBufferSource();
+            noise.buffer = this.makeNoiseBuffer(1.6);
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 250 + i * 70;
+            filter.Q.value = 2.4;
+            const g = this.ctx.createGain();
+            const start = t + i * 1.1;
+            g.gain.setValueAtTime(0.0001, start);
+            g.gain.exponentialRampToValueAtTime(0.07, start + 0.5);
+            g.gain.exponentialRampToValueAtTime(0.0001, start + 1.1);
+            noise.connect(filter);
+            filter.connect(g);
+            g.connect(out);
+            noise.start(start);
+            noise.stop(start + 1.2);
+        }
+    }
+
+    playWatcherWhisper(pos = null) {
+        if (!this.initialized) return;
+        const t = this.now();
+        const out = this.panOut(this.spatialPan(pos));
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(820, t);
+        osc.frequency.exponentialRampToValueAtTime(1280, t + 0.55);
+        osc.frequency.exponentialRampToValueAtTime(540, t + 1.5);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.045, t + 0.3);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.55);
+        osc.connect(g);
+        g.connect(out);
+        osc.start(t);
+        osc.stop(t + 1.6);
+    }
+
+    playDisfiguredGrowl(pos = null, distance = 24) {
+        if (!this.initialized) return;
+        const t = this.now();
+        const vol = Math.max(0.04, Math.min(0.34, 1.9 / Math.max(4, distance)));
+        const out = this.panOut(this.spatialPan(pos));
+        const osc = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 560;
+        filter.Q.value = 7;
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(96, t);
+        osc.frequency.linearRampToValueAtTime(46, t + 1.3);
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(48, t);
+        osc2.frequency.linearRampToValueAtTime(30, t + 1.3);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol, t + 0.12);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.45);
+        osc.connect(filter);
+        osc2.connect(filter);
+        filter.connect(g);
+        g.connect(out);
+        osc.start(t); osc2.start(t);
+        osc.stop(t + 1.5); osc2.stop(t + 1.5);
+    }
+
+    playDisfiguredCharge(pos = null) {
+        if (!this.initialized) return;
+        const t = this.now();
+        const out = this.panOut(this.spatialPan(pos));
+        for (let i = 0; i < 3; i++) {
+            const osc = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(170 + i * 95, t);
+            osc.frequency.exponentialRampToValueAtTime(860 + i * 280, t + 0.42);
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.13, t + 0.05);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + 0.58);
+            osc.connect(g);
+            g.connect(out);
+            osc.start(t);
+            osc.stop(t + 0.62);
+        }
+    }
+
+    playShadowWhisper(pos = null) {
+        if (!this.initialized) return;
+        const t = this.now();
+        const out = this.panOut(this.spatialPan(pos));
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = this.makeNoiseBuffer(2);
+        const bp = this.ctx.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.setValueAtTime(2400, t);
+        bp.frequency.exponentialRampToValueAtTime(420, t + 1.8);
+        bp.Q.value = 4;
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.05, t + 0.35);
+        g.gain.linearRampToValueAtTime(0.0001, t + 1.9);
+        noise.connect(bp);
+        bp.connect(g);
+        g.connect(out);
+        noise.start(t);
+        noise.stop(t + 1.95);
+    }
+
+    playShadowGlitch(pos = null) {
+        if (!this.initialized) return;
+        const t = this.now();
+        const out = this.panOut(this.spatialPan(pos));
+        for (let i = 0; i < 6; i++) {
+            const osc = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            osc.type = 'square';
+            const start = t + i * 0.07;
+            osc.frequency.setValueAtTime(rand(600, 3200), start);
+            g.gain.setValueAtTime(0.0001, start);
+            g.gain.exponentialRampToValueAtTime(0.055, start + 0.012);
+            g.gain.exponentialRampToValueAtTime(0.0001, start + 0.06);
+            osc.connect(g);
+            g.connect(out);
+            osc.start(start);
+            osc.stop(start + 0.07);
+        }
+        this.playRadioStatic(0.7, 0.05);
+    }
+
+    playJumpscareFor(kind = 'disfigured') {
+        if (!this.initialized) return;
+        this.playJumpscare();
+        const t = this.now();
+        if (kind === 'watcher') {
+            // Chillido vertical + coro disonante
+            const osc = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(2400, t);
+            osc.frequency.exponentialRampToValueAtTime(420, t + 0.9);
+            g.gain.setValueAtTime(0.16, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.95);
+            osc.connect(g);
+            g.connect(this.master);
+            osc.start(t); osc.stop(t + 1);
+            [742, 811, 934].forEach((f, i) => {
+                const o = this.ctx.createOscillator();
+                const og = this.ctx.createGain();
+                o.type = 'sawtooth';
+                o.frequency.setValueAtTime(f, t);
+                o.frequency.linearRampToValueAtTime(f * 1.35, t + 1.1);
+                og.gain.setValueAtTime(0.05, t + i * 0.02);
+                og.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+                o.connect(og);
+                og.connect(this.master);
+                o.start(t); o.stop(t + 1.25);
+            });
+        } else if (kind === 'shadow') {
+            // Ráfaga de estática y glitches
+            const noise = this.ctx.createBufferSource();
+            noise.buffer = this.makeNoiseBuffer(1.2);
+            const hp = this.ctx.createBiquadFilter();
+            hp.type = 'highpass';
+            hp.frequency.value = 1200;
+            const ng = this.ctx.createGain();
+            ng.gain.setValueAtTime(0.22, t);
+            ng.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
+            noise.connect(hp); hp.connect(ng); ng.connect(this.master);
+            noise.start(t); noise.stop(t + 1.15);
+            for (let i = 0; i < 10; i++) {
+                const o = this.ctx.createOscillator();
+                const og = this.ctx.createGain();
+                o.type = 'square';
+                const s = t + i * 0.055;
+                o.frequency.setValueAtTime(rand(220, 2600), s);
+                og.gain.setValueAtTime(0.07, s);
+                og.gain.exponentialRampToValueAtTime(0.001, s + 0.05);
+                o.connect(og); og.connect(this.master);
+                o.start(s); o.stop(s + 0.06);
+            }
+        } else {
+            // El Desfigurado: impacto grave y desgarro
+            const sub = this.ctx.createOscillator();
+            const sg = this.ctx.createGain();
+            sub.type = 'sine';
+            sub.frequency.setValueAtTime(160, t);
+            sub.frequency.exponentialRampToValueAtTime(24, t + 1.2);
+            sg.gain.setValueAtTime(0.85, t);
+            sg.gain.exponentialRampToValueAtTime(0.001, t + 1.25);
+            sub.connect(sg); sg.connect(this.master);
+            sub.start(t); sub.stop(t + 1.3);
+            const noise = this.ctx.createBufferSource();
+            noise.buffer = this.makeNoiseBuffer(0.8);
+            const lp = this.ctx.createBiquadFilter();
+            lp.type = 'lowpass';
+            lp.frequency.setValueAtTime(2400, t);
+            lp.frequency.exponentialRampToValueAtTime(180, t + 0.7);
+            const ng = this.ctx.createGain();
+            ng.gain.setValueAtTime(0.32, t);
+            ng.gain.exponentialRampToValueAtTime(0.001, t + 0.75);
+            noise.connect(lp); lp.connect(ng); ng.connect(this.master);
+            noise.start(t); noise.stop(t + 0.8);
+        }
+    }
+
+    setTension(v) {
+        if (!this.initialized) return;
+        const t = this.now();
+        if (!this.tensionGain) {
+            this.tensionGain = this.ctx.createGain();
+            this.tensionGain.gain.value = 0;
+            this.tensionGain.connect(this.master);
+            const osc = this.ctx.createOscillator();
+            const osc2 = this.ctx.createOscillator();
+            const lp = this.ctx.createBiquadFilter();
+            lp.type = 'lowpass';
+            lp.frequency.value = 170;
+            osc.type = 'sawtooth';
+            osc.frequency.value = 41;
+            osc2.type = 'sine';
+            osc2.frequency.value = 27;
+            osc.connect(lp); osc2.connect(lp);
+            lp.connect(this.tensionGain);
+            osc.start(); osc2.start();
+            this.tensionOsc = [osc, osc2];
+        }
+        this.tensionGain.gain.setTargetAtTime(clamp(v, 0, 1) * 0.055, t, 0.45);
+    }
+
+    // ============================================================
+    // INTRO CINEMATOGRÁFICA · AUDIO
+    // ============================================================
+    startIntroAmbience() {
+        if (!this.initialized) return;
+        this.startRain();
+        this.setRainIntensity(0.95);
+        if (this.introDrone) return;
+        const t = this.now();
+        this.introDrone = this.ctx.createGain();
+        this.introDrone.gain.value = 0.0001;
+        this.introDrone.connect(this.master);
+        const osc = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const lp = this.ctx.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.value = 150;
+        osc.type = 'sawtooth';
+        osc.frequency.value = 33;
+        osc2.type = 'sine';
+        osc2.frequency.value = 21;
+        osc.connect(lp); osc2.connect(lp);
+        lp.connect(this.introDrone);
+        osc.start(); osc2.start();
+        this.introDroneOsc = [osc, osc2];
+        this.introDrone.gain.linearRampToValueAtTime(0.07, t + 2.5);
+    }
+
+    stopIntroAmbience() {
+        if (!this.initialized) return;
+        const t = this.now();
+        if (this.introDrone) {
+            this.introDrone.gain.cancelScheduledValues(t);
+            this.introDrone.gain.setTargetAtTime(0.0001, t, 0.45);
+            const oscs = this.introDroneOsc || [];
+            setTimeout(() => {
+                oscs.forEach(o => { try { o.stop(); } catch (e) {} });
+                try { this.introDrone && this.introDrone.disconnect(); } catch (e) {}
+            }, 2200);
+            this.introDrone = null;
+            this.introDroneOsc = null;
+        }
+        if (this.rainStarted) this.setRainIntensity(0.3);
+    }
+
+    playIntroEngine() {
+        if (!this.initialized) return;
+        const t = this.now();
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        const lp = this.ctx.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.value = 240;
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(54, t);
+        osc.frequency.linearRampToValueAtTime(34, t + 3.4);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.075, t + 0.4);
+        g.gain.linearRampToValueAtTime(0.0001, t + 3.6);
+        osc.connect(lp); lp.connect(g); g.connect(this.master);
+        osc.start(t); osc.stop(t + 3.7);
+    }
+
+    playIntroStinger() {
+        if (!this.initialized) return;
+        const t = this.now();
+        [58, 87, 116].forEach((f, i) => {
+            const o = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            o.type = 'sawtooth';
+            o.frequency.setValueAtTime(f, t);
+            o.frequency.exponentialRampToValueAtTime(f * 0.55, t + 1.8);
+            g.gain.setValueAtTime(0.0001, t + i * 0.03);
+            g.gain.exponentialRampToValueAtTime(0.11, t + 0.1 + i * 0.03);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + 1.9);
+            o.connect(g); g.connect(this.master);
+            o.start(t); o.stop(t + 2);
+        });
+        this.playRadioStatic(0.6, 0.05);
+    }
+
+    playSafeScareSting() {
+        if (!this.initialized) return;
+        const t = this.now();
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(180, t);
+        o.frequency.exponentialRampToValueAtTime(1500, t + 1.4);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.09, t + 1.2);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
+        o.connect(g); g.connect(this.master);
+        o.start(t); o.stop(t + 1.6);
+    }
 }
 
 const audio = new SoundEngine();
@@ -2193,7 +2805,8 @@ const QUALITY = {
 };
 const DEFAULT_SETTINGS = {
     quality: 'ULTRA', volume: 90, sensitivity: 100, fov: 72,
-    renderScale: 100, shake: 70, platform: 'pc', name: 'TÉCNICO'
+    renderScale: 100, shake: 70, platform: 'pc', name: 'TÉCNICO',
+    reduceFlash: false, subtitles: true, introSeen: false
 };
 let settings = Object.assign({}, DEFAULT_SETTINGS);
 try {
@@ -3010,6 +3623,11 @@ function updateQualityButtons() {
     if (scale) scale.value = settings.renderScale;
     const shake = document.getElementById('set-shake');
     if (shake) shake.value = settings.shake;
+    const reduceFlash = document.getElementById('set-reduce-flash');
+    if (reduceFlash) reduceFlash.checked = !!settings.reduceFlash;
+    const subtitles = document.getElementById('set-subtitles');
+    if (subtitles) subtitles.checked = settings.subtitles !== false;
+    document.body.classList.toggle('reduce-flash', !!settings.reduceFlash);
 }
 
 // ---------- CLIMA DINÁMICO ----------
@@ -3187,6 +3805,28 @@ function setupMenuUI() {
     bind('set-fov', 'fov');
     bind('set-scale', 'renderScale');
     bind('set-shake', 'shake');
+
+    const reduceFlashEl = document.getElementById('set-reduce-flash');
+    if (reduceFlashEl) {
+        reduceFlashEl.addEventListener('change', () => {
+            settings.reduceFlash = reduceFlashEl.checked;
+            document.body.classList.toggle('reduce-flash', !!settings.reduceFlash);
+            saveSettings();
+        });
+    }
+    const subtitlesEl = document.getElementById('set-subtitles');
+    if (subtitlesEl) {
+        subtitlesEl.addEventListener('change', () => {
+            settings.subtitles = subtitlesEl.checked;
+            if (!settings.subtitles) {
+                const sub = document.getElementById('intro-subtitle');
+                if (sub) sub.classList.remove('show');
+            }
+            saveSettings();
+        });
+    }
+    const menuIntroBtn = document.getElementById('menu-intro-btn');
+    if (menuIntroBtn) menuIntroBtn.addEventListener('click', () => startIntro(MODE.SOLO));
     const nameEl = document.getElementById('player-name');
     if (nameEl) {
         nameEl.addEventListener('input', () => {
@@ -5596,163 +6236,37 @@ function buildExtraPlaces() {
 // ============================================================
 // CRIATURA
 // ============================================================
-function buildCreature() {
-    const group = new THREE.Group();
+// ============================================================
+// CRIATURAS · TRES MODELOS 3D ORIGINALES
+// ============================================================
+const creatures = [];
+let lastCreatureKind = '';
 
-    const bodyMat = new THREE.MeshStandardMaterial({
-        color: 0x050506, roughness: 0.82, metalness: 0.08, transparent: true, opacity: 1
-    });
-    const boneMat = new THREE.MeshStandardMaterial({
-        color: 0x4a453c, roughness: 0.9, metalness: 0.02, transparent: true, opacity: 1
-    });
-    const clawMat = new THREE.MeshStandardMaterial({
-        color: 0x1b1916, roughness: 0.55, metalness: 0.25, transparent: true, opacity: 1
-    });
-    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff2b2b, transparent: true, opacity: 1 });
+function creaturePart(group, geo, mat, x, y, z, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    m.rotation.set(rx, ry, rz);
+    m.scale.set(sx, sy, sz);
+    m.castShadow = true;
+    group.add(m);
+    return m;
+}
 
-    function part(geo, mat, x, y, z, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) {
-        const m = new THREE.Mesh(geo, mat);
-        m.position.set(x, y, z);
-        m.rotation.set(rx, ry, rz);
-        m.scale.set(sx, sy, sz);
-        group.add(m);
-        return m;
-    }
-
-    // Torso encorvado y alargado
-    part(new THREE.CylinderGeometry(0.34, 0.19, 2.15, 7), bodyMat, 0, 2.8, 0, -0.3);
-    const chest = part(new THREE.SphereGeometry(0.44, 10, 8), bodyMat, 0, 3.6, 0.2, -0.22);
-    chest.scale.set(1.3, 0.95, 0.82);
-    part(new THREE.SphereGeometry(0.3, 8, 8), bodyMat, 0, 1.95, -0.05, 0, 0, 0, 1.2, 0.8, 0.9);
-
-    // Cuello y cabeza alargada
-    part(new THREE.CylinderGeometry(0.12, 0.19, 0.95, 7), bodyMat, 0, 4.18, 0.3, 0.3);
-    const head = part(new THREE.SphereGeometry(0.31, 10, 10), bodyMat, 0, 4.6, 0.5, 0.22);
-    head.scale.set(0.88, 1.15, 1.6);
-
-    // Mandíbula y dientes
-    part(new THREE.ConeGeometry(0.22, 0.9, 6), bodyMat, 0, 4.32, 1.02, Math.PI / 2 + 0.08);
-    for (let i = 0; i < 7; i++) {
-        const tx = -0.18 + i * 0.06;
-        part(new THREE.ConeGeometry(0.022, 0.13, 4), boneMat, tx, 4.38, 0.9 + Math.abs(i - 3) * 0.01, Math.PI);
-        part(new THREE.ConeGeometry(0.022, 0.11, 4), boneMat, tx, 4.25, 0.9 + Math.abs(i - 3) * 0.01, 0);
-    }
-
-    // Seis ojos rojos
-    for (const [ex, ey, ez, r] of [
-        [-0.15, 4.7, 0.79, 0.05], [0.15, 4.7, 0.79, 0.05],
-        [-0.22, 4.58, 0.74, 0.032], [0.22, 4.58, 0.74, 0.032],
-        [-0.08, 4.82, 0.7, 0.028], [0.08, 4.82, 0.7, 0.028]
-    ]) {
-        part(new THREE.SphereGeometry(r, 7, 7), eyeMat, ex, ey, ez);
-    }
-
-    // Astas / ramas
-    for (const side of [-1, 1]) {
-        part(new THREE.CylinderGeometry(0.035, 0.06, 0.85, 5), boneMat,
-            side * 0.2, 4.95, 0.35, 0.15, 0, side * 0.55);
-        part(new THREE.CylinderGeometry(0.025, 0.04, 0.55, 5), boneMat,
-            side * 0.48, 5.35, 0.32, 0.2, 0, side * 0.9);
-        part(new THREE.CylinderGeometry(0.02, 0.035, 0.45, 5), boneMat,
-            side * 0.34, 5.25, 0.2, -0.5, 0, side * 0.45);
-    }
-
-    // Púas dorsales
-    for (let i = 0; i < 8; i++) {
-        const y = 2.15 + i * 0.26;
-        const s = 0.26 - i * 0.018;
-        part(new THREE.ConeGeometry(0.055, s, 4), boneMat, 0, y, -0.2 - i * 0.012, -0.35);
-    }
-
-    // Brazos largos y desproporcionados
-    for (const side of [-1, 1]) {
-        const shoulder = part(new THREE.SphereGeometry(0.19, 8, 8), bodyMat,
-            side * 0.45, 3.62, 0.08, 0, 0, 0, 1.1, 0.9, 0.9);
-        part(new THREE.CylinderGeometry(0.085, 0.06, 1.55, 6), bodyMat,
-            side * 0.58, 2.95, 0.1, 0.12, 0, side * 0.18);
-        part(new THREE.CylinderGeometry(0.06, 0.045, 1.5, 6), bodyMat,
-            side * 0.68, 1.85, 0.28, 0.55, 0, side * 0.1);
-        for (let c = 0; c < 3; c++) {
-            part(new THREE.ConeGeometry(0.035, 0.34, 4), clawMat,
-                side * (0.58 + c * 0.06), 1.02, 0.62 + c * 0.05, Math.PI - 0.35, 0, side * 0.12);
-        }
-    }
-
-    // Piernas digitígradas
-    for (const side of [-1, 1]) {
-        part(new THREE.CylinderGeometry(0.11, 0.08, 1.3, 6), bodyMat,
-            side * 0.24, 1.05, -0.05, 0.15, 0, side * 0.06);
-        part(new THREE.CylinderGeometry(0.08, 0.055, 1.15, 6), bodyMat,
-            side * 0.28, 0.42, 0.12, -0.28, 0, side * 0.04);
-        part(new THREE.BoxGeometry(0.16, 0.1, 0.42), clawMat,
-            side * 0.28, 0.06, 0.3);
-        for (let c = 0; c < 3; c++) {
-            part(new THREE.ConeGeometry(0.03, 0.24, 4), clawMat,
-                side * (0.22 + c * 0.055), 0.06, 0.52, Math.PI / 2, 0, 0);
-        }
-    }
-
-    // Costillas expuestas
-    for (let i = 0; i < 6; i++) {
-        const rib = part(new THREE.TorusGeometry(0.38 - i * 0.018, 0.035, 5, 10), boneMat,
-            0, 2.45 + i * 0.21, 0.06, Math.PI / 2, 0, 0);
-        rib.scale.set(1.25, 0.85, 1);
-    }
-
-    // Tentáculos dorsales
-    for (let i = 0; i < 6; i++) {
-        const side = i % 2 === 0 ? -1 : 1;
-        part(new THREE.CylinderGeometry(0.018, 0.045, rand(0.9, 1.7), 4), bodyMat,
-            side * rand(0.25, 0.55), rand(2.6, 4.0), -0.35,
-            rand(-0.5, 0.5), 0, side * rand(0.6, 1.1));
-    }
-
-    // Brazos secundarios
-    for (const side of [-1, 1]) {
-        part(new THREE.CylinderGeometry(0.05, 0.035, 1.1, 5), bodyMat,
-            side * 0.72, 3.0, -0.12, -0.45, 0, side * 0.65);
-        for (let c = 0; c < 3; c++) {
-            part(new THREE.ConeGeometry(0.028, 0.3, 4), clawMat,
-                side * (0.86 + c * 0.04), 2.5, -0.5 + c * 0.1, Math.PI - 0.6, 0, side * 0.2);
-        }
-    }
-
-    // Aura roja tenue
-    const light = new THREE.PointLight(0xff1a1a, 0, 9, 2);
-    light.position.set(0, 2.8, 0.3);
-    group.add(light);
-
-    const eyeGlow = new THREE.PointLight(0xff0000, 0.9, 8, 2);
-    eyeGlow.position.set(0, 4.7, 0.95);
-    group.add(eyeGlow);
-
-    const mouthGlow = new THREE.PointLight(0xff3300, 0.35, 5, 2);
-    mouthGlow.position.set(0, 4.25, 1.0);
-    group.add(mouthGlow);
-
-    group.scale.setScalar(1.55);
-    group.position.set(0, 0, -50);
-    group.visible = false;
-    scene.add(group);
-
-    creature = {
-        group,
-        materials: [bodyMat, boneMat, clawMat, eyeMat],
-        eyeMat,
-        light,
-        eyeGlow,
-        mouthGlow,
+function creatureState(kind, group, parts, materials, eyeMat, light, eyeGlow, mouthGlow, opts = {}) {
+    return {
+        kind, group, parts, materials, eyeMat, light, eyeGlow, mouthGlow,
         state: 'hidden',
         timer: 0,
         speed: 0,
         target: new THREE.Vector3(),
-        spawnCooldown: 6,
+        spawnCooldown: rand(12, 22),
         growlTimer: 0,
         breathTimer: 0,
         chaseTimer: 0,
         loseTimer: 0,
         fade: 1,
         opacity: 1,
+        baseOpacity: opts.baseOpacity != null ? opts.baseOpacity : 1,
         phase: Math.random() * 10,
         catchCooldown: 0,
         lastSpawnSide: 0,
@@ -5761,8 +6275,282 @@ function buildCreature() {
         lastKnown: new THREE.Vector3(),
         hasLastKnown: false,
         searchAngle: 0,
-        searchTimer: 0
+        searchTimer: 0,
+        noiseCooldown: 0,
+        alertLevel: 0,
+        height: opts.height || 4,
+        eyeColor: opts.eyeColor || 0xff2b2b,
+        litTimer: 0,
+        teleportTimer: 0,
+        glitchTimer: 0,
+        lastScareAt: -999
     };
+}
+
+// ---------- CRIATURA 1 · EL VIGILANTE ----------
+function buildWatcherCreature() {
+    const group = new THREE.Group();
+    const skin = new THREE.MeshStandardMaterial({ color: 0x303036, roughness: 0.96, metalness: 0.04, transparent: true, opacity: 1 });
+    const bone = new THREE.MeshStandardMaterial({ color: 0x7a7160, roughness: 0.92, metalness: 0.02, transparent: true, opacity: 1 });
+    const dark = new THREE.MeshStandardMaterial({ color: 0x0a0a0c, roughness: 0.8, metalness: 0.1, transparent: true, opacity: 1 });
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 1 });
+
+    // Torso alargado y estrecho
+    creaturePart(group, new THREE.CylinderGeometry(0.26, 0.15, 2.5, 7), skin, 0, 3.4, 0, -0.16);
+    creaturePart(group, new THREE.SphereGeometry(0.36, 10, 8), skin, 0, 4.45, 0.08, -0.12, 0, 0, 1.25, 0.85, 0.72);
+    creaturePart(group, new THREE.SphereGeometry(0.24, 8, 8), skin, 0, 2.15, -0.02, 0, 0, 0, 1.15, 0.8, 0.85);
+
+    // Costillas marcadas
+    for (let i = 0; i < 7; i++) {
+        const rib = creaturePart(group, new THREE.TorusGeometry(0.26 - i * 0.012, 0.022, 5, 10), bone,
+            0, 2.6 + i * 0.24, 0.03, Math.PI / 2, 0, 0);
+        rib.scale.set(1.2, 0.82, 1);
+    }
+
+    // Cuello y cabeza estrecha
+    const neck = creaturePart(group, new THREE.CylinderGeometry(0.09, 0.13, 1.05, 7), skin, 0, 4.95, 0.12, 0.12);
+    const head = creaturePart(group, new THREE.SphereGeometry(0.27, 12, 12), skin, 0, 5.55, 0.2, 0.18);
+    head.scale.set(0.82, 1.25, 1.05);
+    const jaw = creaturePart(group, new THREE.ConeGeometry(0.15, 0.5, 6), skin, 0, 5.32, 0.42, Math.PI / 2 + 0.05);
+    jaw.scale.set(1.1, 1, 0.75);
+
+    // Ojos brillantes (dos principales y cuatro auxiliares)
+    const eyes = [];
+    for (const [ex, ey, ez, r] of [
+        [-0.11, 5.62, 0.42, 0.062], [0.11, 5.62, 0.42, 0.062],
+        [-0.17, 5.5, 0.38, 0.03], [0.17, 5.5, 0.38, 0.03],
+        [-0.06, 5.72, 0.36, 0.024], [0.06, 5.72, 0.36, 0.024]
+    ]) {
+        eyes.push(creaturePart(group, new THREE.SphereGeometry(r, 8, 8), eyeMat, ex, ey, ez));
+    }
+
+    // Ramas / astas
+    for (const side of [-1, 1]) {
+        creaturePart(group, new THREE.CylinderGeometry(0.028, 0.05, 0.9, 5), bone, side * 0.17, 5.9, 0.14, 0.2, 0, side * 0.6);
+        creaturePart(group, new THREE.CylinderGeometry(0.02, 0.032, 0.6, 5), bone, side * 0.46, 6.28, 0.1, 0.3, 0, side * 1.0);
+        creaturePart(group, new THREE.CylinderGeometry(0.016, 0.028, 0.5, 5), bone, side * 0.28, 6.2, -0.02, -0.5, 0, side * 0.5);
+    }
+
+    // Brazos extremadamente largos
+    const arms = {};
+    for (const side of [-1, 1]) {
+        const shoulder = creaturePart(group, new THREE.SphereGeometry(0.15, 8, 8), skin, side * 0.38, 4.4, 0.02, 0, 0, 0, 1.1, 0.9, 0.9);
+        const upper = creaturePart(group, new THREE.CylinderGeometry(0.06, 0.045, 1.7, 6), skin, side * 0.5, 3.55, 0.06, 0.06, 0, side * 0.12);
+        const fore = creaturePart(group, new THREE.CylinderGeometry(0.045, 0.032, 1.8, 6), skin, side * 0.57, 1.85, 0.18, 0.2, 0, side * 0.06);
+        const hand = creaturePart(group, new THREE.SphereGeometry(0.09, 7, 7), dark, side * 0.6, 0.95, 0.28);
+        for (let c = 0; c < 4; c++) {
+            creaturePart(group, new THREE.ConeGeometry(0.022, 0.5, 4), bone,
+                side * (0.52 + c * 0.055), 0.62, 0.3 + c * 0.02, Math.PI - 0.15, 0, side * 0.1);
+        }
+        arms[side < 0 ? 'armL' : 'armR'] = { shoulder, upper, fore, hand };
+    }
+
+    // Piernas finas y digitígradas
+    const legs = {};
+    for (const side of [-1, 1]) {
+        const thigh = creaturePart(group, new THREE.CylinderGeometry(0.085, 0.06, 1.5, 6), skin, side * 0.19, 1.5, -0.04, 0.1, 0, side * 0.05);
+        const shin = creaturePart(group, new THREE.CylinderGeometry(0.06, 0.04, 1.45, 6), skin, side * 0.23, 0.42, 0.1, -0.25, 0, side * 0.03);
+        creaturePart(group, new THREE.BoxGeometry(0.13, 0.08, 0.38), dark, side * 0.23, 0.05, 0.26);
+        for (let c = 0; c < 3; c++) {
+            creaturePart(group, new THREE.ConeGeometry(0.024, 0.3, 4), bone, side * (0.18 + c * 0.045), 0.05, 0.48, Math.PI / 2, 0, 0);
+        }
+        legs[side < 0 ? 'legL' : 'legR'] = { thigh, shin };
+    }
+
+    // Púas dorsales
+    for (let i = 0; i < 9; i++) {
+        creaturePart(group, new THREE.ConeGeometry(0.04, 0.3 - i * 0.015, 4), bone, 0, 2.7 + i * 0.25, -0.16 - i * 0.008, -0.4);
+    }
+
+    const light = new THREE.PointLight(0xffb347, 0, 10, 2);
+    light.position.set(0, 4.4, 0.4);
+    group.add(light);
+    const eyeGlow = new THREE.PointLight(0xffcf6b, 1.1, 7, 2);
+    eyeGlow.position.set(0, 5.6, 0.55);
+    group.add(eyeGlow);
+    const mouthGlow = new THREE.PointLight(0xff5533, 0, 4, 2);
+    mouthGlow.position.set(0, 5.3, 0.5);
+    group.add(mouthGlow);
+
+    group.scale.setScalar(1.0);
+    group.position.set(0, 0, -50);
+    group.visible = false;
+    scene.add(group);
+
+    const c = creatureState('watcher', group, { neck, head, jaw, eyes, arms, legs, torso: null }, [skin, bone, dark, eyeMat], eyeMat, light, eyeGlow, mouthGlow, { height: 5.9, eyeColor: 0xffd27a });
+    return c;
+}
+
+// ---------- CRIATURA 2 · EL DESFIGURADO ----------
+function buildDisfiguredCreature() {
+    const group = new THREE.Group();
+    const flesh = new THREE.MeshStandardMaterial({ color: 0x241417, roughness: 0.88, metalness: 0.04, transparent: true, opacity: 1 });
+    const fleshDark = new THREE.MeshStandardMaterial({ color: 0x120a0c, roughness: 0.95, metalness: 0.02, transparent: true, opacity: 1 });
+    const bone = new THREE.MeshStandardMaterial({ color: 0xcfc4a8, roughness: 0.7, metalness: 0.02, transparent: true, opacity: 1 });
+    const gum = new THREE.MeshStandardMaterial({ color: 0x3d0a0a, roughness: 0.6, metalness: 0.05, transparent: true, opacity: 1 });
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff1f1f, transparent: true, opacity: 1 });
+
+    // Torso encorvado y masivo
+    creaturePart(group, new THREE.CylinderGeometry(0.62, 0.34, 2.0, 8), flesh, 0, 2.6, 0, -0.28);
+    creaturePart(group, new THREE.SphereGeometry(0.72, 12, 10), flesh, 0, 3.55, 0.12, -0.2, 0, 0, 1.25, 1.0, 0.9);
+    creaturePart(group, new THREE.SphereGeometry(0.42, 9, 9), fleshDark, 0, 1.8, -0.08, 0, 0, 0, 1.25, 0.85, 0.95);
+
+    // Joroba y púas
+    creaturePart(group, new THREE.SphereGeometry(0.55, 9, 8), fleshDark, 0, 4.0, -0.42, -0.3, 0, 0, 1.2, 0.75, 0.9);
+    for (let i = 0; i < 7; i++) {
+        creaturePart(group, new THREE.ConeGeometry(0.09, 0.42 - i * 0.02, 5), bone, 0, 2.5 + i * 0.28, -0.5 - i * 0.01, -0.55);
+    }
+
+    // Cabeza enorme
+    const head = creaturePart(group, new THREE.SphereGeometry(0.62, 14, 12), flesh, 0, 4.55, 0.42, 0.1);
+    head.scale.set(1.35, 1.0, 1.1);
+    creaturePart(group, new THREE.SphereGeometry(0.3, 8, 8), fleshDark, 0, 4.25, 0.95, 0, 0, 0, 1.25, 0.55, 0.6);
+
+    // Boca gigante
+    const mouth = creaturePart(group, new THREE.SphereGeometry(0.42, 12, 10), gum, 0, 4.22, 0.98, 0, 0, 0, 1.25, 0.75, 0.55);
+    const jaw = creaturePart(group, new THREE.BoxGeometry(1.05, 0.34, 0.5), flesh, 0, 3.95, 1.02, 0.08);
+    for (let i = 0; i < 12; i++) {
+        const tx = -0.46 + i * 0.084;
+        const tall = 0.2 + Math.abs(Math.sin(i * 1.7)) * 0.18;
+        creaturePart(group, new THREE.ConeGeometry(0.035, tall, 4), bone, tx, 4.3, 1.18, Math.PI);
+        creaturePart(group, new THREE.ConeGeometry(0.032, tall * 0.85, 4), bone, tx, 4.1, 1.18, 0);
+    }
+    // Dientes rotos laterales
+    for (const side of [-1, 1]) {
+        creaturePart(group, new THREE.ConeGeometry(0.05, 0.45, 4), bone, side * 0.56, 4.22, 0.95, Math.PI / 2, 0, side * 0.4);
+    }
+
+    // Ojos rojos asimétricos
+    const eyeL = creaturePart(group, new THREE.SphereGeometry(0.11, 9, 9), eyeMat, -0.24, 4.72, 0.95);
+    const eyeR = creaturePart(group, new THREE.SphereGeometry(0.085, 9, 9), eyeMat, 0.26, 4.8, 0.92);
+    const eyes = [eyeL, eyeR];
+
+    // Brazos largos y gruesos
+    const arms = {};
+    for (const side of [-1, 1]) {
+        const shoulder = creaturePart(group, new THREE.SphereGeometry(0.28, 8, 8), flesh, side * 0.72, 3.75, 0.06, 0, 0, 0, 1.1, 0.95, 0.95);
+        const upper = creaturePart(group, new THREE.CylinderGeometry(0.14, 0.1, 1.65, 7), flesh, side * 0.9, 2.95, 0.12, 0.1, 0, side * 0.2);
+        const fore = creaturePart(group, new THREE.CylinderGeometry(0.1, 0.07, 1.6, 7), flesh, side * 1.02, 1.42, 0.34, 0.35, 0, side * 0.08);
+        for (let c = 0; c < 4; c++) {
+            creaturePart(group, new THREE.ConeGeometry(0.045, 0.45, 4), bone,
+                side * (0.92 + c * 0.07), 0.7, 0.55 + c * 0.04, Math.PI - 0.2, 0, side * 0.15);
+        }
+        arms[side < 0 ? 'armL' : 'armR'] = { shoulder, upper, fore };
+    }
+
+    // Piernas cortas y potentes
+    const legs = {};
+    for (const side of [-1, 1]) {
+        const thigh = creaturePart(group, new THREE.CylinderGeometry(0.18, 0.13, 1.1, 7), flesh, side * 0.3, 1.0, -0.05, 0.12, 0, side * 0.06);
+        const shin = creaturePart(group, new THREE.CylinderGeometry(0.13, 0.09, 0.95, 7), flesh, side * 0.34, 0.25, 0.12, -0.3, 0, side * 0.04);
+        creaturePart(group, new THREE.BoxGeometry(0.24, 0.13, 0.5), fleshDark, side * 0.34, 0.04, 0.3);
+        legs[side < 0 ? 'legL' : 'legR'] = { thigh, shin };
+    }
+
+    const light = new THREE.PointLight(0xff1a1a, 0, 12, 2);
+    light.position.set(0, 3.2, 0.4);
+    group.add(light);
+    const eyeGlow = new THREE.PointLight(0xff0000, 1.3, 9, 2);
+    eyeGlow.position.set(0, 4.7, 1.1);
+    group.add(eyeGlow);
+    const mouthGlow = new THREE.PointLight(0xff3300, 0.6, 6, 2);
+    mouthGlow.position.set(0, 4.2, 1.25);
+    group.add(mouthGlow);
+
+    group.scale.setScalar(1.18);
+    group.position.set(0, 0, -50);
+    group.visible = false;
+    scene.add(group);
+
+    return creatureState('disfigured', group, { head, jaw, mouth, eyes, arms, legs, torso: null }, [flesh, fleshDark, bone, gum, eyeMat], eyeMat, light, eyeGlow, mouthGlow, { height: 5.6, eyeColor: 0xff1f1f });
+}
+
+// ---------- CRIATURA 3 · LA SOMBRA ----------
+function buildShadowCreature() {
+    const group = new THREE.Group();
+    const mist = new THREE.MeshStandardMaterial({ color: 0x050508, roughness: 1, metalness: 0, transparent: true, opacity: 0.94 });
+    const darker = new THREE.MeshStandardMaterial({ color: 0x010103, roughness: 1, metalness: 0, transparent: true, opacity: 0.98 });
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 1 });
+
+    // Cuerpo de niebla solidificada, sin piernas definidas
+    const body = creaturePart(group, new THREE.ConeGeometry(0.62, 3.6, 12), mist, 0, 2.1, 0, 0, 0, 0, 1, 1, 0.7);
+    body.castShadow = false;
+    const chest = creaturePart(group, new THREE.SphereGeometry(0.5, 10, 10), darker, 0, 3.7, 0.05, 0, 0, 0, 1.1, 1.25, 0.8);
+    const head = creaturePart(group, new THREE.SphereGeometry(0.34, 12, 12), darker, 0, 4.55, 0.12, 0.08);
+    head.scale.set(0.95, 1.3, 1.0);
+    const hood = creaturePart(group, new THREE.SphereGeometry(0.46, 10, 10), mist, 0, 4.62, -0.02, 0, 0, 0, 1.0, 1.25, 0.9);
+
+    // Ojos rojos intensos
+    const eyeL = creaturePart(group, new THREE.SphereGeometry(0.075, 9, 9), eyeMat, -0.13, 4.62, 0.36);
+    const eyeR = creaturePart(group, new THREE.SphereGeometry(0.075, 9, 9), eyeMat, 0.13, 4.62, 0.36);
+    const eyes = [eyeL, eyeR];
+
+    // Tentáculos / jirones
+    const tendrils = [];
+    for (let i = 0; i < 10; i++) {
+        const side = i % 2 === 0 ? -1 : 1;
+        const t = creaturePart(group, new THREE.CylinderGeometry(0.012, 0.05, rand(1.0, 2.2), 4), mist,
+            side * rand(0.2, 0.55), rand(2.2, 4.1), rand(-0.5, -0.15),
+            rand(-0.7, 0.2), 0, side * rand(0.5, 1.2));
+        t.castShadow = false;
+        tendrils.push(t);
+    }
+
+    // Brazos de humo
+    const arms = {};
+    for (const side of [-1, 1]) {
+        const upper = creaturePart(group, new THREE.CylinderGeometry(0.055, 0.03, 1.5, 5), mist, side * 0.5, 3.3, 0.06, 0.1, 0, side * 0.55);
+        const fore = creaturePart(group, new THREE.CylinderGeometry(0.03, 0.012, 1.4, 5), mist, side * 0.78, 2.15, 0.2, 0.35, 0, side * 0.35);
+        arms[side < 0 ? 'armL' : 'armR'] = { upper, fore };
+    }
+
+    const light = new THREE.PointLight(0xff0000, 0, 11, 2);
+    light.position.set(0, 3.4, 0.3);
+    group.add(light);
+    const eyeGlow = new THREE.PointLight(0xff0000, 1.6, 10, 2);
+    eyeGlow.position.set(0, 4.62, 0.5);
+    group.add(eyeGlow);
+    const mouthGlow = new THREE.PointLight(0xff0000, 0, 4, 2);
+    mouthGlow.position.set(0, 4.2, 0.4);
+    group.add(mouthGlow);
+
+    group.scale.setScalar(1.35);
+    group.position.set(0, 0, -50);
+    group.visible = false;
+    scene.add(group);
+
+    return creatureState('shadow', group, { head, hood, body, chest, eyes, arms, tendrils, torso: null }, [mist, darker, eyeMat], eyeMat, light, eyeGlow, mouthGlow, { height: 6.1, baseOpacity: 0.94, eyeColor: 0xff0000 });
+}
+
+function buildCreature() {
+    creatures.length = 0;
+    creatures.push(buildWatcherCreature(), buildDisfiguredCreature(), buildShadowCreature());
+    creature = creatures[0];
+}
+
+function creatureByKind(kind) {
+    return creatures.find(c => c.kind === kind) || null;
+}
+
+function visibleCreatures() {
+    return creatures.filter(c => c.group.visible && c.state !== 'hidden' && c.state !== 'vanish');
+}
+
+function resetCreatures() {
+    creatures.forEach(c => {
+        c.state = 'hidden';
+        c.group.visible = false;
+        c.opacity = 0;
+        c.spawnCooldown = rand(14, 30);
+        c.timer = 0;
+        c.chaseTimer = 0;
+        c.loseTimer = 0;
+        c.alertLevel = 0;
+        c.litTimer = 0;
+        c.teleportTimer = 0;
+        applyCreatureOpacity(0, c);
+    });
+    creature = creatures[0] || null;
 }
 
 // ============================================================
@@ -6231,10 +7019,12 @@ function updatePlayerState(p, delta) {
     const targetShake = danger * shakeSetting;
     p.camShake = (p.camShake || 0) + (targetShake - (p.camShake || 0)) * Math.min(1, delta * 3.2);
     const now = clockTime;
-    const shakePitch = (Math.sin(now * 37.1) * 0.008 + Math.sin(now * 61.7) * 0.004) * p.camShake;
-    const shakeYaw = Math.cos(now * 29.3) * 0.009 * p.camShake;
+    const shakePitch = (Math.sin(now * 37.1) * 0.008 + Math.sin(now * 61.7) * 0.004) * p.camShake +
+        Math.sin(now * 71.3) * 0.055 * jumpscareShake;
+    const shakeYaw = Math.cos(now * 29.3) * 0.009 * p.camShake +
+        Math.cos(now * 63.7) * 0.06 * jumpscareShake;
     const roll = Math.sin(p.bob * 0.5) * 0.012 + Math.sin(now * 0.9) * 0.004 +
-        Math.sin(now * 43.7) * 0.012 * p.camShake;
+        Math.sin(now * 43.7) * 0.012 * p.camShake + Math.sin(now * 51.1) * 0.05 * jumpscareShake;
 
     p.camera.position.copy(p.pos);
     p.camera.position.y += (p.jumpOffset || 0) +
@@ -6346,22 +7136,87 @@ function updateHUDFor(p, suffix = '') {
 }
 
 function dangerLevelFor(p) {
-    if (!creature || !creature.group.visible) return 0;
-    if (creature.state === 'hidden' || creature.state === 'vanish') return 0;
-    const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
-    if (creature.state === 'chase') return clamp(1 - d / 30, 0.15, 1);
-    return clamp((26 - d) / 46, 0, 0.45);
+    let danger = 0;
+    for (const c of visibleCreatures()) {
+        const d = dist2D(p.pos.x, p.pos.z, c.group.position.x, c.group.position.z);
+        const mult = c.kind === 'disfigured' ? 1 : (c.kind === 'shadow' ? 0.8 : 0.58);
+        const v = c.state === 'chase'
+            ? clamp(1 - d / 30, 0.15, 1)
+            : clamp((28 - d) / 48, 0, 0.5);
+        danger = Math.max(danger, v * mult);
+    }
+    return danger;
 }
 
 function updateDangerFor(p, elId) {
     let danger = 0;
-    if (creature && creature.state !== 'hidden' && creature.group.visible) {
-        const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
-        if (creature.state === 'chase') danger = clamp(1 - d / 26, 0.15, 0.8);
-        else if (d < 22) danger = clamp((22 - d) / 40, 0, 0.4);
+    for (const c of visibleCreatures()) {
+        const d = dist2D(p.pos.x, p.pos.z, c.group.position.x, c.group.position.z);
+        const mult = c.kind === 'disfigured' ? 1 : (c.kind === 'shadow' ? 0.8 : 0.6);
+        let v = 0;
+        if (c.state === 'chase') v = clamp(1 - d / 26, 0.15, 0.85);
+        else if (d < 24) v = clamp((24 - d) / 42, 0, 0.42);
+        danger = Math.max(danger, v * mult);
     }
     const el = document.getElementById(elId);
     if (el) el.style.opacity = danger.toFixed(2);
+}
+
+// ============================================================
+// EFECTOS DE TERROR EN TIEMPO REAL
+// ============================================================
+function updateHorrorFX(delta) {
+    const fx = document.getElementById('horror-fx');
+    if (!fx) return;
+
+    const lp = localPlayer();
+    if (!lp || !gameStarted || lp.isDead || lp.hasEscaped) {
+        fx.classList.remove('pulse', 'glitch', 'danger');
+        document.body.classList.remove('danger-high');
+        audio.setTension(0);
+        return;
+    }
+
+    const danger = dangerLevelFor(lp);
+    const high = danger > 0.52;
+
+    radioStaticTimer -= delta;
+
+    // Viñeta roja y pulso: solo cuando hay peligro real.
+    fx.style.setProperty('--fx-danger', danger.toFixed(3));
+    fx.classList.toggle('pulse', high);
+    fx.classList.toggle('danger', danger > 0.12);
+    fx.classList.toggle('glitch', scareGlitch > 0.05 || jumpscareActive);
+    document.body.classList.toggle('danger-high', high);
+
+    const red = document.getElementById('fx-red');
+    if (red) red.style.opacity = clamp(0.12 + danger * 0.72, 0, 0.9).toFixed(2);
+    const scan = document.getElementById('fx-scan');
+    if (scan) scan.style.opacity = clamp(0.04 + danger * 0.2, 0, 0.3).toFixed(2);
+    const stat = document.getElementById('fx-static');
+    if (stat) stat.style.opacity = clamp(scareGlitch * 0.45 + danger * 0.12, 0, 0.4).toFixed(2);
+
+    // La radio pierde la señal cuando la criatura está cerca.
+    if (danger > 0.45 && radioStaticTimer <= 0) {
+        radioStaticTimer = rand(6, 14);
+        audio.playRadioInterference();
+        if (Math.random() < 0.5) {
+            const lines = [
+                '--- ... --- no --- señal ---',
+                '--- ¿unidad 7? --- no os oigo ---',
+                '--- está --- demasiado cerca ---'
+            ];
+            radioSay(lines[randInt(0, lines.length - 1)], 'err');
+        }
+    }
+
+    // La linterna parpadea si la Sombra está actuando.
+    if (danger > 0.62 && Math.random() < delta * 1.4) {
+        flashlightFlicker = Math.max(flashlightFlicker, 0.55);
+    }
+
+    // La música de suspense sube y baja con la amenaza.
+    audio.setTension(clamp(danger * 0.95 + (jumpscareActive ? 0.4 : 0), 0, 1));
 }
 
 function drawMinimap() {
@@ -6486,15 +7341,23 @@ function drawMinimap() {
         ctx.fillText((p.name || ('J' + (p.index + 1))).slice(0, 10), x, z + 22);
     });
 
-    // Criatura: posición exacta solo en persecución cercana; si no, peligro difuminado.
+    // Criaturas: posición exacta solo en persecución cercana; si no, peligro difuminado.
     const label = document.getElementById('minimap-label');
     const lp = localPlayer();
-    if (creature && creature.group.visible && creature.state !== 'hidden' && creature.state !== 'vanish') {
-        const cx = creature.group.position.x;
-        const cz = creature.group.position.z;
+    const now = clockTime || 0;
+    const vis = visibleCreatures();
+    let nearestDist = Infinity;
+    let nearestKind = '';
+    let anyClose = false;
+
+    vis.forEach(c => {
+        const cx = c.group.position.x;
+        const cz = c.group.position.z;
         const dist = Math.round(dist2D(lp.pos.x, lp.pos.z, cx, cz));
-        const exact = creature.state === 'chase' && dist < 18;
-        const now = clockTime || 0;
+        if (dist < nearestDist) { nearestDist = dist; nearestKind = c.kind; }
+        const exact = c.state === 'chase' && dist < 18;
+        if (exact) anyClose = true;
+        const col = c.kind === 'watcher' ? '#fbbf24' : (c.kind === 'shadow' ? '#dc2626' : '#ef4444');
 
         if (exact) {
             const x = mx(cx), z = mz(cz);
@@ -6506,8 +7369,8 @@ function drawMinimap() {
             ctx.lineTo(x, z);
             ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillStyle = '#ef4444';
-            ctx.shadowColor = '#ef4444';
+            ctx.fillStyle = col;
+            ctx.shadowColor = col;
             ctx.shadowBlur = 18;
             ctx.beginPath();
             ctx.arc(x, z, 8, 0, Math.PI * 2);
@@ -6529,7 +7392,7 @@ function drawMinimap() {
             const gx = mx(ax), gz = mz(az);
             const rad = Math.max(16, Math.min(48, 14 + dist * 0.32));
             const grad = ctx.createRadialGradient(gx, gz, 2, gx, gz, rad);
-            grad.addColorStop(0, 'rgba(239, 68, 68, 0.42)');
+            grad.addColorStop(0, c.kind === 'watcher' ? 'rgba(251, 191, 36, 0.35)' : 'rgba(239, 68, 68, 0.42)');
             grad.addColorStop(0.55, 'rgba(239, 68, 68, 0.16)');
             grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
             ctx.fillStyle = grad;
@@ -6537,16 +7400,20 @@ function drawMinimap() {
             ctx.arc(gx, gz, rad, 0, Math.PI * 2);
             ctx.fill();
         }
+    });
 
-        if (label) {
-            label.innerText = exact
-                ? `¡CRIATURA A ${dist} m!`
-                : `Peligro aproximado · ~${dist} m`;
+    if (label) {
+        if (vis.length) {
+            const names = { watcher: 'EL VIGILANTE', disfigured: 'EL DESFIGURADO', shadow: 'LA SOMBRA' };
+            const who = names[nearestKind] || 'CRIATURA';
+            label.innerText = anyClose
+                ? `¡${who} A ${nearestDist} m!`
+                : `Peligro · ${who} ~${nearestDist} m`;
             label.style.color = '#fca5a5';
+        } else {
+            label.innerText = 'Mapa · puntos de interés';
+            label.style.color = '#86efac';
         }
-    } else if (label) {
-        label.innerText = 'Mapa · puntos de interés';
-        label.style.color = '#86efac';
     }
 
     // Norte
@@ -6987,37 +7854,67 @@ function exitHide(p) {
 }
 
 // ============================================================
-// CRIATURA · IA
+// CRIATURAS · IA Y COMPORTAMIENTO
 // ============================================================
-function applyCreatureOpacity(op) {
-    creature.materials.forEach(m => { m.opacity = op; });
-    creature.light.intensity = op * 0.55;
+let creatureSpawnTimer = rand(10, 18);
+let scareCooldown = rand(18, 28);
+let pendingSafeScare = 0;
+let lastScareKind = '';
+let scareGlitch = 0;
+let jumpscareShake = 0;
+
+function applyCreatureOpacity(op, c) {
+    c = c || creature;
+    if (!c) return;
+    const base = c.kind === 'shadow' ? 0.94 : 1;
+    c.materials.forEach(m => {
+        if (m === c.eyeMat) {
+            m.opacity = Math.min(1, op * 1.5);
+        } else {
+            m.opacity = clamp(op * base, 0, 1);
+        }
+    });
+    if (c.light) c.light.intensity = op * 0.55;
+    if (c.eyeGlow) c.eyeGlow.intensity = op * (c.kind === 'shadow' ? 2.1 : 1.15);
+    if (c.mouthGlow) c.mouthGlow.intensity = op * (c.kind === 'disfigured' ? 0.85 : 0.3);
+    c.opacity = op;
 }
 
-function hideCreature() {
-    if (!creature) return;
-    creature.state = 'hidden';
-    creature.group.visible = false;
-    creature.opacity = 0;
-    applyCreatureOpacity(0);
-    creature.spawnCooldown = rand(22, 45);
-    creature.noiseCooldown = 0;
-    creature.alertLevel = 0;
+function hideCreature(c) {
+    c = c || creature;
+    if (!c) return;
+    c.state = 'hidden';
+    c.group.visible = false;
+    c.group.position.y = 0;
+    c.opacity = 0;
+    applyCreatureOpacity(0, c);
+    c.spawnCooldown = rand(18, 40);
+    c.noiseCooldown = 0;
+    c.alertLevel = 0;
+    c.hasLastKnown = false;
+    c.litTimer = 0;
+    if (creature === c) {
+        const next = visibleCreatures()[0];
+        creature = next || creatures[0] || null;
+    }
 }
 
-function vanishCreature() {
-    if (!creature) return;
-    creature.state = 'vanish';
-    creature.timer = 1.3;
+function vanishCreature(c) {
+    c = c || creature;
+    if (!c) return;
+    c.state = 'vanish';
+    c.timer = c.kind === 'shadow' ? 0.55 : 1.15;
 }
 
-function creatureTarget() {
+function creatureTarget(c) {
+    c = c || creature;
+    if (!c) return null;
     let best = null;
     let bestD = Infinity;
     for (const p of activePlayers()) {
         if (p.isDead || p.hasEscaped) continue;
         if (p.isHidden) continue;
-        const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
+        const d = dist2D(p.pos.x, p.pos.z, c.group.position.x, c.group.position.z);
         if (d < bestD) { best = p; bestD = d; }
     }
     return best;
@@ -7027,33 +7924,47 @@ function anyVisiblePlayer() {
     return activePlayers().find(p => !p.isDead && !p.hasEscaped && !p.isHidden) || null;
 }
 
-function spawnCreatureAt(x, z, state = 'observe', timer = 8) {
-    if (!creature) return;
-    creature.group.position.set(x, 0, z);
-    creature.group.visible = true;
+function spawnCreatureAt(kind, x, z, state = 'observe', timer = 8) {
+    if (typeof kind !== 'string') {
+        timer = arguments[3];
+        state = arguments[2];
+        z = arguments[1];
+        x = arguments[0];
+        kind = 'disfigured';
+    }
+    const c = creatureByKind(kind) || creature;
+    if (!c) return null;
+    c.group.position.set(x, 0, z);
+    c.group.visible = true;
     const ref = nearestPlayerTo(x, z) || player;
-    creature.group.lookAt(ref.pos.x, 0, ref.pos.z);
-    creature.state = state;
-    creature.timer = timer;
-    creature.opacity = 0;
-    creature.fade = 1;
-    creature.loseTimer = 0;
-    creature.chaseTimer = 0;
-    creature.growlTimer = rand(1.5, 4);
-    creature.breathTimer = rand(1, 3);
-    creature.alertLevel = 0;
-    applyCreatureOpacity(0);
+    c.group.lookAt(ref.pos.x, 0, ref.pos.z);
+    c.state = state;
+    c.timer = timer;
+    c.opacity = 0;
+    c.fade = 1;
+    c.loseTimer = 0;
+    c.chaseTimer = 0;
+    c.growlTimer = rand(1.2, 3.6);
+    c.breathTimer = rand(0.8, 2.4);
+    c.alertLevel = 0;
+    c.litTimer = 0;
+    c.teleportTimer = 0;
+    c.lastKnown.set(ref.pos.x, 0, ref.pos.z);
+    c.hasLastKnown = true;
+    applyCreatureOpacity(0, c);
+    creature = c;
+    return c;
 }
 
 function chooseCreatureSpawn(minD, maxD, inFront = false) {
     const ref = anyVisiblePlayer() || player;
     const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), ref.rotY);
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 44; i++) {
         let dx, dz;
         const dist = rand(minD, maxD);
         if (inFront) {
-            const a = Math.atan2(forward.x, forward.z) + rand(-0.8, 0.8);
+            const a = Math.atan2(forward.x, forward.z) + rand(-0.75, 0.75);
             dx = Math.sin(a) * dist;
             dz = Math.cos(a) * dist;
         } else {
@@ -7075,273 +7986,452 @@ function chooseCreatureSpawn(minD, maxD, inFront = false) {
     );
 }
 
-function startCreatureChase() {
-    if (!creature || !isWorldAuthority()) return;
-    if (!anyVisiblePlayer()) return;
-    if (creature.state === 'chase') return;
-
-    const pos = chooseCreatureSpawn(20, 32, false);
-    spawnCreatureAt(pos.x, pos.z, 'chase', 40);
-    creature.opacity = 0.55;
-    applyCreatureOpacity(0.55);
-    creature.chaseTimer = 0;
-    creature.spawnCooldown = 45;
-    audio.playCreatureScreech();
-    showToast('¡ALGO TE ESTÁ PERSIGUIENDO!', 'bad');
-    radioSay('¡Unidad 7, corre! ¡No mires atrás!', 'err');
-    if (netRole === 'host') sendNet({ t: 'fx', k: 'chase' });
+function chooseCreatureKind() {
+    const pool = story.phase === 'search'
+        ? ['watcher', 'watcher', 'shadow', 'disfigured']
+        : ['disfigured', 'disfigured', 'shadow', 'watcher', 'watcher', 'disfigured'];
+    let kind = pool[randInt(0, pool.length - 1)] || 'disfigured';
+    if (kind === lastCreatureKind && Math.random() < 0.7) {
+        const alt = pool.filter(k => k !== lastCreatureKind);
+        if (alt.length) kind = alt[randInt(0, alt.length - 1)];
+    }
+    lastCreatureKind = kind;
+    return kind;
 }
 
-function isCreatureLit() {
-    if (!creature || !creature.group.visible) return false;
-    const target = creature.group.position.clone();
-    target.y = 2.0;
+function startCreatureChase(kind) {
+    if (!isWorldAuthority()) return;
+    if (!anyVisiblePlayer()) return;
+    const c = creatureByKind(kind || 'disfigured') || creature;
+    if (!c) return;
+    if (c.state === 'chase') return;
+
+    const pos = chooseCreatureSpawn(20, 32, false);
+    spawnCreatureAt(c.kind, pos.x, pos.z, 'chase', 40);
+    c.opacity = 0.62;
+    applyCreatureOpacity(0.62, c);
+    c.chaseTimer = 0;
+    c.spawnCooldown = 45;
+    if (c.kind === 'disfigured') audio.playDisfiguredCharge(c.group.position);
+    else audio.playCreatureScreech();
+    showToast('¡ALGO TE ESTÁ PERSIGUIENDO!', 'bad');
+    radioSay('¡Unidad 7, corre! ¡No mires atrás!', 'err');
+    if (netRole === 'host') sendNet({ t: 'fx', k: 'chase', kind: c.kind });
+}
+
+function isCreatureLit(c) {
+    c = c || creature;
+    if (!c || !c.group.visible) return false;
+    const target = c.group.position.clone();
+    target.y = c.kind === 'watcher' ? 4.4 : 2.2;
 
     for (const p of activePlayers()) {
         if (!p.flashlightOn || p.isHidden || p.isDead || p.hasEscaped || !p.camera) continue;
         const toC = target.clone().sub(p.camera.position);
         const dist = toC.length();
-        if (dist > 42) continue;
+        if (dist > 46) continue;
         toC.normalize();
         const fwd = new THREE.Vector3(0, 0, -1).applyEuler(p.camera.rotation);
-        if (fwd.dot(toC) > 0.9) return true;
+        if (fwd.dot(toC) > 0.88) return true;
     }
     return false;
 }
 
-function moveCreatureToward(target, speed, delta) {
-    const dx = target.x - creature.group.position.x;
-    const dz = target.z - creature.group.position.z;
+function moveCreatureToward(c, target, speed, delta) {
+    if (!c) return;
+    const dx = target.x - c.group.position.x;
+    const dz = target.z - c.group.position.z;
     const len = Math.hypot(dx, dz) || 1;
     const step = speed * delta;
 
-    const nx = creature.group.position.x + (dx / len) * step;
-    const nz = creature.group.position.z + (dz / len) * step;
+    const nx = c.group.position.x + (dx / len) * step;
+    const nz = c.group.position.z + (dz / len) * step;
 
-    if (!isBlocked(nx, creature.group.position.z, 0.5)) creature.group.position.x = nx;
-    if (!isBlocked(creature.group.position.x, nz, 0.5)) creature.group.position.z = nz;
+    if (!isBlocked(nx, c.group.position.z, 0.5)) c.group.position.x = nx;
+    if (!isBlocked(c.group.position.x, nz, 0.5)) c.group.position.z = nz;
 }
 
 function makeNoise(p, radius) {
     if (!isWorldAuthority()) return;
-    if (!creature || creature.state === 'hidden' || creature.state === 'vanish') return;
     if (!p || p.isHidden || p.isDead || p.hasEscaped) return;
-    if (creature.state === 'chase') return;
-    if ((creature.noiseCooldown || 0) > 0) return;
+    for (const c of visibleCreatures()) {
+        if (c.state === 'chase' || c.state === 'vanish') continue;
+        if ((c.noiseCooldown || 0) > 0) continue;
+        const d = dist2D(p.pos.x, p.pos.z, c.group.position.x, c.group.position.z);
+        if (d > radius) continue;
 
-    const d = dist2D(p.pos.x, p.pos.z, creature.group.position.x, creature.group.position.z);
-    if (d > radius) return;
+        c.noiseCooldown = 2.6;
+        c.alertLevel = (c.alertLevel || 0) + 1;
+        c.lastKnown.set(p.pos.x, 0, p.pos.z);
+        c.hasLastKnown = true;
 
-    creature.noiseCooldown = 2.6;
-    creature.alertLevel = (creature.alertLevel || 0) + 1;
-    creature.lastKnown.set(p.pos.x, 0, p.pos.z);
-    creature.hasLastKnown = true;
-
-    if (creature.alertLevel >= 3) {
-        startCreatureChase();
-    } else if (creature.state === 'chase') {
-        return;
-    } else {
-        // Investiga el ruido: se dirige al último punto donde lo oyó.
-        creature.state = 'investigate';
-        creature.timer = 13;
-        creature.searchAngle = Math.random() * Math.PI * 2;
-        creature.targetIndex = p.index;
-        audio.playCreatureGrowl(d, creature.group.position);
+        if (c.kind === 'disfigured') {
+            if (c.alertLevel >= 3 && Math.random() < 0.7) {
+                startCreatureChase('disfigured');
+            } else {
+                c.state = 'stalk';
+                c.timer = Math.max(c.timer, 12);
+                audio.playDisfiguredGrowl(c.group.position, d);
+            }
+        } else if (c.kind === 'shadow') {
+            c.state = 'haunt';
+            c.teleportTimer = 0;
+            audio.playShadowGlitch(c.group.position);
+        } else if (c.kind === 'watcher') {
+            c.litTimer = Math.max(0, c.litTimer - 0.5);
+        }
     }
 }
 
 function creatureFootstep(c, delta) {
     c.stepTimer = (c.stepTimer || 0) - delta;
     if (c.stepTimer > 0) return;
-    const heavy = c.state === 'chase';
-    audio.playCreatureStep(c.group.position, heavy);
-    c.stepTimer = heavy ? 0.42 : 0.85;
+    if (c.kind === 'disfigured') {
+        const heavy = c.state === 'chase';
+        audio.playCreatureStep(c.group.position, heavy);
+        c.stepTimer = heavy ? 0.38 : 0.72;
+    } else if (c.kind === 'watcher') {
+        audio.playCreatureStep(c.group.position, false);
+        c.stepTimer = 1.05;
+    } else {
+        // La Sombra no hace ruido de pasos: solo susurros.
+        audio.playShadowWhisper(c.group.position);
+        c.stepTimer = rand(2.4, 4.2);
+    }
 }
 
-function updateCreature(delta) {
-    if (!creature || !gameStarted) return;
-    if (!isWorldAuthority()) return;
-    if (!activePlayers().some(p => !p.isDead && !p.hasEscaped)) return;
-    const c = creature;
+function animateCreature(c, delta, moving) {
+    c.animTime += delta * (c.state === 'chase' ? 2.4 : 1);
+    const t = c.animTime;
+    const p = c.parts || {};
+    const speed = moving ? 1 : 0.16;
 
-    c.spawnCooldown -= delta;
-    c.noiseCooldown = Math.max(0, (c.noiseCooldown || 0) - delta);
-    c.growlTimer -= delta;
-    c.breathTimer -= delta;
+    if (p.legs) {
+        if (p.legs.legL) p.legs.legL.thigh.rotation.x = Math.sin(t * 4) * 0.42 * speed;
+        if (p.legs.legR) p.legs.legR.thigh.rotation.x = -Math.sin(t * 4) * 0.42 * speed;
+        if (p.legs.legL && p.legs.legL.shin) p.legs.legL.shin.rotation.x = -0.25 + Math.max(0, Math.sin(t * 4)) * 0.3 * speed;
+        if (p.legs.legR && p.legs.legR.shin) p.legs.legR.shin.rotation.x = -0.25 + Math.max(0, -Math.sin(t * 4)) * 0.3 * speed;
+    }
 
-    if (c.state === 'hidden') {
-        if (story.phase === 'intro' || story.phase === 'blackout' || story.phase === 'ending') return;
-        if (c.spawnCooldown <= 0) {
-            const mode = chooseAppearanceMode();
-            if (mode === 'observe') {
-                const pos = chooseCreatureSpawn(24, 42, Math.random() < 0.6);
-                spawnCreatureAt(pos.x, pos.z, 'observe', rand(4, 8));
-                c.spawnCooldown = rand(28, 55);
-                audio.playCreatureGrowl(34, c.group.position);
-            } else if (mode === 'stalk') {
-                const pos = chooseCreatureSpawn(22, 36, false);
-                spawnCreatureAt(pos.x, pos.z, 'stalk', rand(14, 22));
-                c.spawnCooldown = rand(40, 70);
-                audio.playCreatureGrowl(30, c.group.position);
-            } else if (mode === 'chase') {
-                startCreatureChase();
+    if (p.arms) {
+        if (p.arms.armL && p.arms.armL.upper) p.arms.armL.upper.rotation.x = -Math.sin(t * 4) * 0.3 * speed;
+        if (p.arms.armR && p.arms.armR.upper) p.arms.armR.upper.rotation.x = Math.sin(t * 4) * 0.3 * speed;
+    }
+
+    if (c.kind === 'watcher') {
+        if (p.head) p.head.rotation.z = Math.sin(t * 0.7) * 0.09;
+        if (p.jaw) p.jaw.rotation.x = Math.PI / 2 + 0.05 + Math.abs(Math.sin(t * 1.1)) * 0.08;
+    } else if (c.kind === 'disfigured') {
+        if (p.jaw) p.jaw.position.y = 3.95 - Math.abs(Math.sin(t * 5.5)) * 0.09;
+        if (p.head) p.head.rotation.x = 0.1 + Math.sin(t * 2.2) * 0.07;
+        if (p.eyes && p.eyes.length) {
+            p.eyes[0].scale.setScalar(1 + Math.sin(t * 3) * 0.08);
+            p.eyes[1].scale.setScalar(1 + Math.cos(t * 3) * 0.08);
+        }
+    } else {
+        c.group.position.y = Math.sin(t * 1.4) * 0.07;
+        if (p.tendrils) p.tendrils.forEach((tr, i) => { tr.rotation.z = Math.sin(t * 1.2 + i * 0.7) * 0.2; });
+        if (p.arms) {
+            if (p.arms.armL && p.arms.armL.fore) p.arms.armL.fore.rotation.x = 0.35 + Math.sin(t * 1.1) * 0.12;
+            if (p.arms.armR && p.arms.armR.fore) p.arms.armR.fore.rotation.x = 0.35 + Math.cos(t * 1.1) * 0.12;
+        }
+    }
+}
+
+function triggerCreatureScare(kind, c) {
+    if (scareCooldown > 0) return false;
+    scareCooldown = rand(38, 72);
+    lastScareKind = kind;
+    if (c) c.lastScareAt = clockTime;
+    runJumpscare(kind, false, '');
+    if (netRole === 'host') sendNet({ t: 'fx', k: 'scare', kind });
+    return true;
+}
+
+function updateWatcher(c, delta, target, d) {
+    c.litTimer = Math.max(0, (c.litTimer || 0) - delta);
+
+    if (c.state === 'observe') {
+        c.timer -= delta;
+        if (target) {
+            c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
+            if (!isCreatureLit(c)) {
+                moveCreatureToward(c, target.pos, 0.75, delta);
             }
         }
+        if (isCreatureLit(c)) {
+            c.litTimer += delta;
+            if (c.litTimer > 0.65) {
+                audio.playWatcherWhisper(c.group.position);
+                vanishCreature(c);
+                if (Math.random() < 0.35) radioSay('...te vio...', 'err');
+                return;
+            }
+        }
+        if (c.breathTimer <= 0) {
+            audio.playWatcherBreath(c.group.position);
+            c.breathTimer = rand(3.2, 6);
+        }
+        if (target && d < 12) {
+            audio.playWatcherWhisper(c.group.position);
+            vanishCreature(c);
+            return;
+        }
+        if (c.timer <= 0) vanishCreature(c);
         return;
     }
 
     if (c.state === 'vanish') {
-        c.opacity = Math.max(0, c.opacity - delta * 1.5);
-        applyCreatureOpacity(c.opacity);
+        c.opacity = Math.max(0, c.opacity - delta * (c.kind === 'shadow' ? 2.6 : 1.6));
+        applyCreatureOpacity(c.opacity, c);
         c.timer -= delta;
-        if (c.opacity <= 0.02) hideCreature();
+        if (c.opacity <= 0.02) hideCreature(c);
+        return;
+    }
+}
+
+function updateDisfigured(c, delta, target, d) {
+    if (c.state === 'vanish') {
+        c.opacity = Math.max(0, c.opacity - delta * 1.8);
+        applyCreatureOpacity(c.opacity, c);
+        c.timer -= delta;
+        if (c.opacity <= 0.02) hideCreature(c);
         return;
     }
 
-    c.opacity = Math.min(1, c.opacity + delta * 1.6);
-    applyCreatureOpacity(c.opacity);
-
-    const target = creatureTarget();
-    const d = target
-        ? dist2D(target.pos.x, target.pos.z, c.group.position.x, c.group.position.z)
-        : Infinity;
-
-    if (target) {
-        c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
-        c.lastKnown.set(target.pos.x, 0, target.pos.z);
-        c.hasLastKnown = true;
-    }
-
-    // Investiga un ruido concreto y después busca en los alrededores.
-    if (c.state === 'investigate') {
+    if (c.state === 'apparition') {
         c.timer -= delta;
-        if (!target && c.hasLastKnown) {
-            c.group.lookAt(c.lastKnown.x, c.group.position.y, c.lastKnown.z);
-        }
-        if (c.hasLastKnown) {
-            const dk = dist2D(c.lastKnown.x, c.lastKnown.z, c.group.position.x, c.group.position.z);
-            if (dk > 1.6) {
-                moveCreatureToward(c.lastKnown, 1.9, delta);
-                creatureFootstep(c, delta);
-            } else {
-                // Rastrea el perímetro olfateando.
-                c.searchAngle += delta * 1.2;
-                c.group.rotation.y += Math.sin(clockTime * 0.9) * delta * 0.8;
-            }
-        }
-        if (c.growlTimer <= 0) {
-            audio.playCreatureGrowl(d, c.group.position);
-            c.growlTimer = rand(3.5, 6.5);
-        }
-        if (target && d < 11) { startCreatureChase(); return; }
-        if (c.timer <= 0) {
-            c.state = 'search';
-            c.timer = 7;
-            c.searchAngle = Math.random() * Math.PI * 2;
-        }
-        return;
-    }
-
-    // Busca alrededor de la última posición conocida al perder el rastro.
-    if (c.state === 'search') {
-        c.timer -= delta;
-        const center = c.hasLastKnown ? c.lastKnown : c.group.position;
-        c.searchAngle += delta * 1.15;
-        const radius = 7.5;
-        const tx = center.x + Math.cos(c.searchAngle) * radius;
-        const tz = center.z + Math.sin(c.searchAngle) * radius;
-        moveCreatureToward({ x: tx, z: tz }, 1.6, delta);
-        creatureFootstep(c, delta);
-        c.group.lookAt(tx, c.group.position.y, tz);
-        if (c.breathTimer <= 0) {
-            audio.playCreatureBreath(c.group.position);
-            c.breathTimer = rand(2.6, 4.5);
-        }
-        if (target && d < 8) { startCreatureChase(); return; }
-        if (c.timer <= 0) vanishCreature();
-        return;
-    }
-
-    if (c.state === 'observe') {
-        c.timer -= delta;
-        if (c.timer <= 0) { vanishCreature(); return; }
-        if (target && d < 10 && Math.random() < 0.008) startCreatureChase();
+        if (target) c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
+        if (c.timer <= 0) vanishCreature(c);
         return;
     }
 
     if (c.state === 'stalk') {
         c.timer -= delta;
-        const lit = isCreatureLit();
-
-        if (target && !lit) {
-            moveCreatureToward(target.pos, 1.45, delta);
+        if (target) {
+            c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
+            if (!isCreatureLit(c)) moveCreatureToward(c, target.pos, 1.9, delta);
             creatureFootstep(c, delta);
-        }
-
-        if (c.growlTimer <= 0) {
-            audio.playCreatureGrowl(d, c.group.position);
-            c.growlTimer = rand(4, 8);
-        }
-
-        if (target && d < 8) { startCreatureChase(); return; }
-        if (!target) {
-            c.loseTimer += delta;
-            if (c.loseTimer > 2.5) {
-                c.state = 'search';
-                c.timer = 7;
-                c.searchAngle = Math.random() * Math.PI * 2;
-                return;
+            if (d < 9) { startCreatureChase('disfigured'); return; }
+            if (d < 15 && scareCooldown <= 0 && Math.random() < 0.012) {
+                if (triggerCreatureScare('disfigured', c)) { vanishCreature(c); return; }
             }
-        } else {
-            c.loseTimer = 0;
         }
-        if (c.timer <= 0) vanishCreature();
+        if (c.growlTimer <= 0) {
+            audio.playDisfiguredGrowl(c.group.position, d);
+            c.growlTimer = rand(2.4, 4.6);
+        }
+        if (c.timer <= 0) vanishCreature(c);
         return;
     }
 
     if (c.state === 'chase') {
         c.chaseTimer += delta;
-
-        if (c.growlTimer <= 0) {
-            audio.playCreatureGrowl(d, c.group.position);
-            c.growlTimer = rand(1.4, 2.8);
-        }
-        if (c.breathTimer <= 0) {
-            audio.playCreatureBreath(c.group.position);
-            c.breathTimer = rand(2.2, 4.2);
-        }
-
         if (target) {
-            moveCreatureToward(target.pos, 5.0, delta);
+            c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
+            moveCreatureToward(c, target.pos, 5.2, delta);
             creatureFootstep(c, delta);
             c.loseTimer = 0;
-            if (d < 1.9) {
-                triggerDeath('La criatura del bosque alcanzó al equipo. El bosque volvió a quedarse en silencio.');
+            if (d < 2.1) {
+                runJumpscare('disfigured', true, 'El Desfigurado te alcanzó. El bosque volvió a quedarse en silencio.');
                 return;
             }
         } else {
-            // Todos escondidos: pierde la vista y busca alrededor del último rastro.
-            c.state = 'search';
-            c.timer = 8;
-            c.searchAngle = Math.random() * Math.PI * 2;
+            c.state = 'stalk';
+            c.timer = 9;
             c.loseTimer = 0;
-            audio.playCreatureGrowl(24, c.group.position);
+            audio.playDisfiguredGrowl(c.group.position, 22);
+            return;
+        }
+        if (c.growlTimer <= 0) {
+            audio.playDisfiguredGrowl(c.group.position, d);
+            c.growlTimer = rand(1.2, 2.4);
+        }
+        if (c.breathTimer <= 0) {
+            audio.playCreatureBreath(c.group.position);
+            c.breathTimer = rand(1.8, 3.4);
+        }
+        if (c.chaseTimer > 30) vanishCreature(c);
+    }
+}
+
+function updateShadow(c, delta, target, d) {
+    if (c.state === 'vanish') {
+        c.opacity = Math.max(0, c.opacity - delta * 3.2);
+        applyCreatureOpacity(c.opacity, c);
+        c.timer -= delta;
+        if (c.opacity <= 0.02) hideCreature(c);
+        return;
+    }
+
+    c.teleportTimer = (c.teleportTimer || 0) + delta;
+    c.glitchTimer = Math.max(0, (c.glitchTimer || 0) - delta);
+
+    if (c.state === 'haunt') {
+        c.timer -= delta;
+        if (target) c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
+
+        // Juega con la linterna y la radio.
+        if (Math.random() < delta * 0.55) {
+            flashlightFlicker = Math.max(flashlightFlicker, 0.6);
+        }
+        if (c.glitchTimer <= 0 && Math.random() < delta * 0.18) {
+            audio.playShadowGlitch(c.group.position);
+            scareGlitch = Math.max(scareGlitch, 0.4);
+            c.glitchTimer = rand(3, 6);
+        }
+
+        if (isCreatureLit(c)) {
+            // La luz la desestabiliza: se desvanece entre interferencias.
+            audio.playShadowGlitch(c.group.position);
+            scareGlitch = Math.max(scareGlitch, 0.7);
+            vanishCreature(c);
             return;
         }
 
-        if (c.chaseTimer > 32) vanishCreature();
+        if (target && d < 14) {
+            // Se desliza alrededor del jugador sin tocarle.
+            const ang = Math.atan2(c.group.position.z - target.pos.z, c.group.position.x - target.pos.x) + delta * 0.7;
+            const nx = target.pos.x + Math.cos(ang) * Math.max(10, d);
+            const nz = target.pos.z + Math.sin(ang) * Math.max(10, d);
+            if (!isBlocked(nx, nz, 0.5)) {
+                c.group.position.x = nx;
+                c.group.position.z = nz;
+            }
+        }
+
+        if (c.timer <= 0) {
+            if (d < 26 && scareCooldown <= 0) {
+                if (triggerCreatureScare('shadow', c)) { vanishCreature(c); return; }
+            }
+            vanishCreature(c);
+        }
+        return;
+    }
+
+    if (c.state === 'chase') {
+        c.chaseTimer += delta;
+        if (target) {
+            c.group.lookAt(target.pos.x, c.group.position.y, target.pos.z);
+            moveCreatureToward(c, target.pos, 3.4, delta);
+            if (Math.random() < delta * 1.2) flashlightFlicker = Math.max(flashlightFlicker, 0.4);
+            if (d < 2.4) {
+                runJumpscare('shadow', true, 'La Sombra apagó la última luz. Nadie volvió a oír la señal.');
+                return;
+            }
+        }
+        if (c.chaseTimer > 24) vanishCreature(c);
+    }
+}
+
+function updateCreature(delta) {
+    if (!gameStarted) return;
+    if (!isWorldAuthority()) return;
+    if (!activePlayers().some(p => !p.isDead && !p.hasEscaped)) return;
+
+    scareCooldown = Math.max(0, scareCooldown - delta);
+    scareGlitch = Math.max(0, scareGlitch - delta);
+    jumpscareShake = Math.max(0, jumpscareShake - delta * 2.2);
+
+    // Susto guionizado: el jugador cree que está a salvo tras encender el generador.
+    if (pendingSafeScare > 0) {
+        pendingSafeScare -= delta;
+        if (pendingSafeScare <= 0) {
+            scareCooldown = 0;
+            const pos = chooseCreatureSpawn(13, 18, true);
+            const c = spawnCreatureAt('disfigured', pos.x, pos.z, 'apparition', 3.2);
+            if (c) {
+                audio.playDisfiguredCharge(c.group.position);
+                scareGlitch = Math.max(scareGlitch, 0.8);
+                setTimeout(() => {
+                    if (c && c.group.visible && c.state !== 'hidden') {
+                        triggerCreatureScare('disfigured', c);
+                        vanishCreature(c);
+                    }
+                }, 780);
+            }
+        }
+    }
+
+    // Programador de encuentros: nunca más de 1-2 criaturas a la vez.
+    const phase = story.phase;
+    const spawnAllowed = phase !== 'intro' && phase !== 'blackout' && phase !== 'ending' && phase !== 'done';
+    const active = visibleCreatures();
+    const maxActive = phase === 'search' ? 1 : 2;
+
+    creatureSpawnTimer -= delta;
+    if (spawnAllowed && active.length < maxActive && creatureSpawnTimer <= 0) {
+        const kind = chooseCreatureKind();
+        const mode = chooseAppearanceMode();
+        if (mode === 'chase' && kind === 'disfigured') {
+            startCreatureChase('disfigured');
+        } else if (kind === 'watcher') {
+            const pos = chooseCreatureSpawn(28, 46, Math.random() < 0.65);
+            spawnCreatureAt('watcher', pos.x, pos.z, 'observe', rand(6, 12));
+            audio.playWatcherBreath(creatureByKind('watcher').group.position);
+        } else if (kind === 'shadow') {
+            const pos = chooseCreatureSpawn(18, 32, false);
+            const c = spawnCreatureAt('shadow', pos.x, pos.z, 'haunt', rand(8, 15));
+            audio.playShadowWhisper(c.group.position);
+            scareGlitch = Math.max(scareGlitch, 0.5);
+        } else {
+            const pos = chooseCreatureSpawn(20, 34, false);
+            spawnCreatureAt('disfigured', pos.x, pos.z, 'stalk', rand(14, 24));
+            audio.playDisfiguredGrowl(creatureByKind('disfigured').group.position, 30);
+        }
+        creatureSpawnTimer = rand(20, 40);
+    }
+
+    for (const c of creatures) {
+        if (!c.group.visible && c.state !== 'hidden') c.state = 'hidden';
+        if (c.state === 'hidden') {
+            c.spawnCooldown -= delta;
+            continue;
+        }
+
+        if (c.state !== 'vanish') {
+            c.opacity = Math.min(1, c.opacity + delta * 1.7);
+            applyCreatureOpacity(c.opacity, c);
+        }
+
+        const target = creatureTarget(c);
+        const d = target
+            ? dist2D(target.pos.x, target.pos.z, c.group.position.x, c.group.position.z)
+            : Infinity;
+
+        if (target && c.state !== 'apparition') {
+            c.lastKnown.set(target.pos.x, 0, target.pos.z);
+            c.hasLastKnown = true;
+        }
+
+        if (c.kind === 'watcher') {
+            updateWatcher(c, delta, target, d);
+        } else if (c.kind === 'disfigured') {
+            updateDisfigured(c, delta, target, d);
+        } else {
+            updateShadow(c, delta, target, d);
+        }
+
+        if (c.group.visible && c.state !== 'vanish') {
+            const moving = c.state === 'chase' || c.state === 'stalk' || c.state === 'observe';
+            animateCreature(c, delta, moving);
+        }
+    }
+
+    if (!creature || !creature.group.visible) {
+        const vis = visibleCreatures();
+        if (vis.length) creature = vis[0];
     }
 }
 
 function chooseAppearanceMode() {
     if (story.phase === 'search') {
-        return Math.random() < 0.6 ? 'observe' : 'stalk';
+        return Math.random() < 0.65 ? 'observe' : 'stalk';
     }
     if (story.phase === 'afterGenerator' || story.phase === 'return') {
         const r = Math.random();
-        if (r < 0.4) return 'observe';
-        if (r < 0.85) return 'stalk';
+        if (r < 0.35) return 'observe';
+        if (r < 0.82) return 'stalk';
         return 'chase';
     }
     return null;
@@ -7648,7 +8738,8 @@ function triggerBlackout() {
     showToast('La electricidad se ha cortado', 'bad');
     setObjective('Encuentra el generador auxiliar y restablece la electricidad.', PLACES.generator);
 
-    if (creature) creature.spawnCooldown = 20;
+    resetCreatures();
+    creatureSpawnTimer = rand(26, 38);
     randomEventTimer = 8;
 }
 
@@ -7692,7 +8783,11 @@ function activateGenerator(item) {
         radioSay('Unidad 7, no reconozco esa señal. Ve a comprobarla.', 'voice');
     }, 5000);
 
-    if (creature) creature.spawnCooldown = 7;
+    // El jugador cree que está a salvo: el susto llega unos segundos después.
+    resetCreatures();
+    pendingSafeScare = 8;
+    scareCooldown = 0;
+    creatureSpawnTimer = rand(30, 44);
     randomEventTimer = 4;
 }
 
@@ -7718,7 +8813,7 @@ function triggerHouseScene() {
 
     if (houseState.door) houseState.door.pivot.rotation.y = 0;
 
-    spawnCreatureAt(PLACES.house.x + 4.5, PLACES.house.z + 2.6, 'observe', 3.4);
+    spawnCreatureAt('disfigured', PLACES.house.x + 4.5, PLACES.house.z + 2.6, 'apparition', 3.4);
 
     setObjective('Encuentra la grabación de la casa.', PLACES.house);
     showToast('La televisión se ha encendido sola', 'bad');
@@ -7753,6 +8848,8 @@ function playRecording() {
 
     setTimeout(() => {
         audio.playCreatureScreech();
+        const sc = spawnCreatureAt('shadow', PLACES.house.x - 6.5, PLACES.house.z - 4.5, 'haunt', 7);
+        if (sc) audio.playShadowWhisper(sc.group.position);
     }, 5600);
 
     setObjective('Regresa a la torre eléctrica.', PLACES.tower);
@@ -7840,112 +8937,319 @@ function updateHouseEffects(delta) {
 // ============================================================
 // MUERTE / JUMPSCARE
 // ============================================================
-function triggerDeath(reason) {
+// ============================================================
+// JUMPSCARES CINEMATOGRÁFICOS
+// ============================================================
+let jumpscareActive = false;
+let jumpscareFatal = false;
+let jumpscareToken = 0;
+
+function triggerDeath(reason, kind, fromNet) {
     if (!document.getElementById('gameover-overlay').classList.contains('hidden')) return;
 
     activePlayers().forEach(p => { p.isDead = true; });
-    if (netRole === 'host') sendNet({ t: 'death', reason });
+    if (!fromNet && netRole === 'host') sendNet({ t: 'death', reason, kind });
 
-    showDeathSequence(reason);
+    runJumpscare(kind || lastScareKind || 'disfigured', true, reason);
 }
 
-function showDeathSequence(reason) {
-    document.exitPointerLock();
-    audio.playJumpscare();
+function runJumpscare(kind, fatal, reason) {
+    kind = kind || 'disfigured';
+    if (jumpscareActive && (jumpscareFatal || !fatal)) return;
 
-    if (creature) hideCreature();
+    jumpscareToken++;
+    const token = jumpscareToken;
+    jumpscareActive = true;
+    jumpscareFatal = !!fatal;
+
+    const flash = document.getElementById('scare-flash');
+    if (flash) {
+        flash.classList.remove('on');
+        void flash.offsetWidth;
+        flash.classList.add('on');
+    }
+    const fx = document.getElementById('horror-fx');
+    if (fx) fx.classList.add('glitch');
+    document.body.classList.add('jumpscare-active');
+    jumpscareShake = fatal ? 1.7 : 0.95;
+    scareGlitch = 1.2;
 
     jumpscareCanvas.style.display = 'block';
     jumpscareCanvas.width = window.innerWidth;
     jumpscareCanvas.height = window.innerHeight;
 
+    audio.playJumpscareFor(kind);
+
+    if (fatal) {
+        document.exitPointerLock();
+        creatures.forEach(c => {
+            if (c.group.visible) hideCreature(c);
+        });
+    }
+
+    const duration = fatal ? 2150 : 980;
     const start = performance.now();
 
-    function renderFrame(now) {
-        const elapsed = now - start;
-        if (elapsed > 1900) {
-            jumpscareCanvas.style.display = 'none';
-            document.getElementById('death-reason').innerText = reason;
+    function finish() {
+        if (token !== jumpscareToken) return;
+        jumpscareActive = false;
+        jumpscareFatal = false;
+        jumpscareCanvas.style.display = 'none';
+        document.body.classList.remove('jumpscare-active');
+        if (fx) fx.classList.remove('glitch');
+        if (fatal) {
+            document.getElementById('death-reason').innerText = reason || 'El bosque se quedó en silencio.';
             document.getElementById('gameover-overlay').classList.remove('hidden');
             document.getElementById('hud').classList.add('hidden');
+        }
+    }
+
+    function renderFrame(now) {
+        if (token !== jumpscareToken) return;
+        const elapsed = now - start;
+        if (elapsed > duration) {
+            finish();
             return;
         }
-
-        const w = jumpscareCanvas.width;
-        const h = jumpscareCanvas.height;
-
-        jumpscareCtx.fillStyle = '#000';
-        jumpscareCtx.fillRect(0, 0, w, h);
-
-        const shakeX = (Math.random() - 0.5) * 40;
-        const shakeY = (Math.random() - 0.5) * 40;
-
-        jumpscareCtx.save();
-        jumpscareCtx.translate(w / 2 + shakeX, h / 2 + shakeY);
-        const scale = 1 + (elapsed / 1900) * 2.6;
-        jumpscareCtx.scale(scale, scale);
-
-        // Cabeza pálida alargada
-        jumpscareCtx.fillStyle = '#b9b4a8';
-        jumpscareCtx.beginPath();
-        jumpscareCtx.ellipse(0, -10, 120, 190, 0, 0, Math.PI * 2);
-        jumpscareCtx.fill();
-
-        // Cuencas
-        jumpscareCtx.fillStyle = '#050505';
-        jumpscareCtx.beginPath();
-        jumpscareCtx.ellipse(-52, -60, 34, 46, 0.2, 0, Math.PI * 2);
-        jumpscareCtx.ellipse(52, -60, 34, 46, -0.2, 0, Math.PI * 2);
-        jumpscareCtx.fill();
-
-        // Pupilas rojas
-        jumpscareCtx.fillStyle = '#ef4444';
-        jumpscareCtx.shadowColor = '#ff0000';
-        jumpscareCtx.shadowBlur = 28;
-        jumpscareCtx.beginPath();
-        jumpscareCtx.arc(-52, -58, 11, 0, Math.PI * 2);
-        jumpscareCtx.arc(52, -58, 11, 0, Math.PI * 2);
-        jumpscareCtx.fill();
-        jumpscareCtx.shadowBlur = 0;
-
-        // Boca
-        jumpscareCtx.fillStyle = '#170303';
-        jumpscareCtx.beginPath();
-        jumpscareCtx.ellipse(0, 90, 70, 95, 0, 0, Math.PI * 2);
-        jumpscareCtx.fill();
-
-        // Dientes
-        jumpscareCtx.fillStyle = '#ded6c0';
-        for (let i = 0; i < 10; i++) {
-            const tx = -62 + i * 13;
-            jumpscareCtx.beginPath();
-            jumpscareCtx.moveTo(tx, 20);
-            jumpscareCtx.lineTo(tx + 6, 46 + Math.random() * 14);
-            jumpscareCtx.lineTo(tx + 12, 20);
-            jumpscareCtx.fill();
-
-            jumpscareCtx.beginPath();
-            jumpscareCtx.moveTo(tx, 158);
-            jumpscareCtx.lineTo(tx + 6, 130 - Math.random() * 14);
-            jumpscareCtx.lineTo(tx + 12, 158);
-            jumpscareCtx.fill();
-        }
-
-        // Sangre
-        jumpscareCtx.fillStyle = '#7f1d1d';
-        for (let i = 0; i < 10; i++) {
-            const bx = (Math.random() - 0.5) * 220;
-            const by = (Math.random() - 0.5) * 300;
-            jumpscareCtx.beginPath();
-            jumpscareCtx.arc(bx, by, 3 + Math.random() * 12, 0, Math.PI * 2);
-            jumpscareCtx.fill();
-        }
-
-        jumpscareCtx.restore();
+        drawJumpscareFrame(kind, elapsed, duration, fatal);
         requestAnimationFrame(renderFrame);
     }
 
     requestAnimationFrame(renderFrame);
+}
+
+function drawJumpscareFrame(kind, elapsed, duration, fatal) {
+    const w = jumpscareCanvas.width;
+    const h = jumpscareCanvas.height;
+    const p = clamp(elapsed / duration, 0, 1);
+    const ctx = jumpscareCtx;
+    const shakeAmt = (fatal ? 46 : 22) * (1 - p * 0.55);
+    const sx = (Math.random() - 0.5) * shakeAmt;
+    const sy = (Math.random() - 0.5) * shakeAmt;
+
+    // Fondo rojo-negro con destellos
+    const bg = ctx.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, Math.max(w, h) * 0.75);
+    bg.addColorStop(0, fatal ? '#3a0000' : '#1a0000');
+    bg.addColorStop(0.5, '#080000');
+    bg.addColorStop(1, '#000');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    const scale = fatal ? 0.55 + p * 3.4 : 0.62 + p * 1.5;
+    const unit = Math.min(w, h) / 700;
+
+    ctx.save();
+    ctx.translate(w / 2 + sx, h / 2 + sy);
+    ctx.scale(scale * unit, scale * unit);
+
+    if (kind === 'watcher') drawWatcherScare(ctx, p, fatal);
+    else if (kind === 'shadow') drawShadowScare(ctx, p, fatal, w, h);
+    else drawDisfiguredScare(ctx, p, fatal);
+
+    ctx.restore();
+
+    // Distorsión por bandas
+    const bands = 5 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < bands; i++) {
+        const by = Math.random() * h;
+        const bh = 3 + Math.random() * 26;
+        const off = (Math.random() - 0.5) * (fatal ? 90 : 45);
+        try {
+            ctx.drawImage(jumpscareCanvas, 0, by, w, bh, off, by, w, bh);
+        } catch (e) {}
+    }
+
+    // Ruido / interferencias
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    for (let i = 0; i < 60; i++) {
+        ctx.fillRect(Math.random() * w, Math.random() * h, Math.random() * 26, 1 + Math.random() * 3);
+    }
+
+    // Líneas de escaneo
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    for (let y = 0; y < h; y += 4) ctx.fillRect(0, y, w, 2);
+
+    // Viñeta roja
+    const vig = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.18, w / 2, h / 2, Math.max(w, h) * 0.7);
+    vig.addColorStop(0, 'rgba(120,0,0,0)');
+    vig.addColorStop(0.62, 'rgba(140,0,0,0.35)');
+    vig.addColorStop(1, 'rgba(255,0,0,0.75)');
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+
+    // Flash blanco inicial
+    if (p < 0.09) {
+        ctx.fillStyle = `rgba(255,240,240,${0.85 * (1 - p / 0.09)})`;
+        ctx.fillRect(0, 0, w, h);
+    }
+}
+
+function drawWatcherScare(ctx, p, fatal) {
+    const stretch = 1 + Math.sin(p * 12) * 0.05;
+    ctx.save();
+    ctx.scale(0.92, stretch);
+
+    // Cabeza alargada y pálida
+    const g = ctx.createRadialGradient(0, -30, 20, 0, -30, 260);
+    g.addColorStop(0, '#cfc8b8');
+    g.addColorStop(0.55, '#8b8477');
+    g.addColorStop(1, '#242321');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(0, -20, 155, 255, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cuencas oscuras
+    ctx.fillStyle = '#050505';
+    ctx.beginPath();
+    ctx.ellipse(-62, -90, 44, 62, 0.22, 0, Math.PI * 2);
+    ctx.ellipse(62, -90, 44, 62, -0.22, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ojos ámbar brillantes (varios)
+    ctx.shadowColor = '#ffcf6b';
+    ctx.shadowBlur = 34;
+    ctx.fillStyle = '#ffd27a';
+    for (const [ex, ey, r] of [
+        [-62, -86, 15], [62, -86, 15],
+        [-92, -130, 7], [92, -130, 7],
+        [-30, -150, 6], [30, -150, 6]
+    ]) {
+        ctx.beginPath();
+        ctx.arc(ex, ey, r * (1 + Math.sin(p * 20) * 0.06), 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+
+    // Boca fina y vertical
+    ctx.fillStyle = '#120707';
+    ctx.beginPath();
+    ctx.ellipse(0, 120, 26 + p * 18, 92 + p * 45, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#6b6252';
+    ctx.lineWidth = 5;
+    for (let i = 0; i < 7; i++) {
+        const yy = 55 + i * 20;
+        ctx.beginPath();
+        ctx.moveTo(-22, yy);
+        ctx.lineTo(22, yy + 4);
+        ctx.stroke();
+    }
+
+    // Astas
+    ctx.strokeStyle = '#7a7160';
+    ctx.lineWidth = 12;
+    for (const side of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(side * 80, -200);
+        ctx.lineTo(side * 165, -330);
+        ctx.moveTo(side * 130, -265);
+        ctx.lineTo(side * 215, -300);
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
+function drawDisfiguredScare(ctx, p, fatal) {
+    const open = 0.5 + p * 0.9;
+
+    // Cabeza enorme
+    const g = ctx.createRadialGradient(0, -60, 30, 0, -40, 300);
+    g.addColorStop(0, '#4a2024');
+    g.addColorStop(0.6, '#241014');
+    g.addColorStop(1, '#080304');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(0, -40, 220, 210, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ojos rojos
+    ctx.shadowColor = '#ff0000';
+    ctx.shadowBlur = 40;
+    ctx.fillStyle = '#ff1f1f';
+    ctx.beginPath();
+    ctx.ellipse(-88, -108, 30, 22, 0.2, 0, Math.PI * 2);
+    ctx.ellipse(92, -116, 24, 18, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Boca descomunal
+    ctx.fillStyle = '#1a0000';
+    ctx.beginPath();
+    ctx.ellipse(0, 92, 150, 110 * open, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Dientes
+    ctx.fillStyle = '#d8cdb2';
+    for (let i = 0; i < 14; i++) {
+        const tx = -132 + i * 20;
+        const tall = 28 + Math.abs(Math.sin(i * 2.1 + p * 8)) * 34;
+        ctx.beginPath();
+        ctx.moveTo(tx, 30);
+        ctx.lineTo(tx + 9, 30 + tall);
+        ctx.lineTo(tx + 18, 30);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(tx, 155);
+        ctx.lineTo(tx + 9, 155 - tall * 0.9);
+        ctx.lineTo(tx + 18, 155);
+        ctx.fill();
+    }
+
+    // Mandíbula inferior animada
+    ctx.fillStyle = '#2a1216';
+    ctx.beginPath();
+    ctx.ellipse(0, 150 + p * 40, 150, 70, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Venas
+    ctx.strokeStyle = 'rgba(120,10,10,0.5)';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 8; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-180 + i * 45, -160);
+        ctx.quadraticCurveTo(-140 + i * 40, -40, -170 + i * 44, 40);
+        ctx.stroke();
+    }
+}
+
+function drawShadowScare(ctx, p, fatal, w, h) {
+    // Silueta negra
+    ctx.fillStyle = '#010103';
+    ctx.beginPath();
+    ctx.moveTo(0, -330);
+    ctx.quadraticCurveTo(-230, -170, -190, 120);
+    ctx.quadraticCurveTo(-120, 300, 0, 360);
+    ctx.quadraticCurveTo(120, 300, 190, 120);
+    ctx.quadraticCurveTo(230, -170, 0, -330);
+    ctx.fill();
+
+    // Ojos rojos intensos
+    ctx.shadowColor = '#ff0000';
+    ctx.shadowBlur = 55;
+    ctx.fillStyle = '#ff0000';
+    ctx.beginPath();
+    ctx.ellipse(-58, -110, 20 + Math.sin(p * 30) * 4, 12, 0.16, 0, Math.PI * 2);
+    ctx.ellipse(58, -110, 20 + Math.cos(p * 30) * 4, 12, -0.16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Jirones
+    ctx.strokeStyle = 'rgba(0,0,0,0.95)';
+    ctx.lineWidth = 16;
+    for (let i = 0; i < 8; i++) {
+        const side = i % 2 === 0 ? -1 : 1;
+        ctx.beginPath();
+        ctx.moveTo(side * (40 + i * 12), 40);
+        ctx.quadraticCurveTo(side * (180 + i * 22), 180 + Math.sin(p * 10 + i) * 40, side * (120 + i * 14), 330);
+        ctx.stroke();
+    }
+
+    // Bloques de glitch
+    ctx.fillStyle = 'rgba(255,0,0,0.35)';
+    for (let i = 0; i < 18; i++) {
+        ctx.fillRect((Math.random() - 0.5) * 420, (Math.random() - 0.5) * 520, Math.random() * 70, 2 + Math.random() * 8);
+    }
 }
 
 function requestRetry() {
@@ -8000,10 +9304,17 @@ function retryFromCheckpoint() {
         if (cross) cross.classList.remove('active');
     });
 
-    if (creature) {
-        hideCreature();
-        creature.spawnCooldown = 18;
-    }
+    resetCreatures();
+    creatureSpawnTimer = rand(14, 26);
+    pendingSafeScare = 0;
+    scareCooldown = rand(16, 26);
+    scareGlitch = 0;
+    jumpscareShake = 0;
+    jumpscareToken++;
+    jumpscareActive = false;
+    document.body.classList.remove('jumpscare-active');
+    const jc = document.getElementById('jumpscare-canvas');
+    if (jc) jc.style.display = 'none';
 
     if (story.phase === 'search') {
         setObjective('Encuentra el generador auxiliar y restablece la electricidad.', PLACES.generator);
@@ -8358,7 +9669,7 @@ function handleNetData(data, conn) {
             case 'fx': applyFx(data); break;
             case 'door': applyDoorState(data.id, data.open); break;
             case 'hide': applyRemoteHide(data); break;
-            case 'death': triggerDeath(data.reason || 'La criatura os alcanzó.'); break;
+            case 'death': triggerDeath(data.reason || 'La criatura os alcanzó.', data.kind, true); break;
             case 'ending':
                 if (story.phase !== 'ending') {
                     story.phase = 'ending';
@@ -8514,19 +9825,33 @@ function applyPlayerSnapshot(p, d) {
 }
 
 function applyCreatureSnapshot(cr) {
-    if (!creature) return;
-    if (cr && cr.vis) {
-        creature.group.visible = true;
-        creature.group.position.set(cr.x, 0, cr.z);
-        creature.state = cr.st || 'observe';
-        creature.opacity = typeof cr.op === 'number' ? cr.op : 1;
-        applyCreatureOpacity(creature.opacity);
-    } else {
-        creature.group.visible = false;
-        creature.state = 'hidden';
-        creature.opacity = 0;
-        applyCreatureOpacity(0);
-    }
+    applyCreaturesSnapshot(cr ? [cr] : []);
+}
+
+function applyCreaturesSnapshot(list) {
+    const seen = new Set();
+    (list || []).forEach(cr => {
+        if (!cr || !cr.vis) return;
+        const c = creatureByKind(cr.k) || creature;
+        if (!c) return;
+        seen.add(c.kind);
+        c.group.visible = true;
+        c.group.position.set(cr.x, 0, cr.z);
+        c.state = cr.st || 'observe';
+        c.opacity = typeof cr.op === 'number' ? cr.op : 1;
+        applyCreatureOpacity(c.opacity, c);
+        if (typeof cr.ry === 'number') c.group.rotation.y = cr.ry;
+    });
+    creatures.forEach(c => {
+        if (!seen.has(c.kind) && c.state !== 'hidden') {
+            c.group.visible = false;
+            c.state = 'hidden';
+            c.opacity = 0;
+            applyCreatureOpacity(0, c);
+        }
+    });
+    const vis = visibleCreatures();
+    creature = vis[0] || creatures[0] || null;
 }
 
 function applyWorldSnapshot(d) {
@@ -8563,7 +9888,7 @@ function applyWorldSnapshot(d) {
             }
         });
     }
-    applyCreatureSnapshot(d.cr);
+    applyCreaturesSnapshot(Array.isArray(d.crs) ? d.crs : (d.cr ? [d.cr] : []));
 
     if (d.obj && d.obj !== lastObjectiveText) {
         lastObjectiveText = d.obj;
@@ -8588,9 +9913,14 @@ function applyWorldSnapshot(d) {
 function applyFx(d) {
     switch (d.k) {
         case 'chase':
-            audio.playCreatureScreech();
+            if (d.kind === 'disfigured') audio.playDisfiguredCharge();
+            else if (d.kind === 'shadow') audio.playShadowGlitch();
+            else audio.playWatcherWhisper();
             showToast('¡ALGO OS ESTÁ PERSIGUIENDO!', 'bad');
             radioSay('¡Unidad 7, corred! ¡No miréis atrás!', 'err');
+            break;
+        case 'scare':
+            runJumpscare(d.kind || 'disfigured', false, '');
             break;
         case 'growl':
             audio.playCreatureGrowl(28);
@@ -8663,6 +9993,15 @@ function sendWorld() {
         ps,
         doors,
         gone: interactables.filter(i => i.hiddenByEvent).map(i => i.id),
+        crs: visibleCreatures().map(c => ({
+            k: c.kind,
+            vis: true,
+            st: c.state,
+            x: c.group.position.x,
+            z: c.group.position.z,
+            op: c.opacity,
+            ry: c.group.rotation.y
+        })),
         cr: creature ? {
             vis: creature.group.visible,
             st: creature.state,
@@ -8723,26 +10062,32 @@ function updateAnimated(delta, now) {
         dustGroup.rotation.y += delta * 0.004;
     }
 
-    // Animación orgánica de la criatura: respiración, marcha y ojos.
-    if (creature && creature.group.visible) {
-        const c = creature;
+    // Animación orgánica de las criaturas: respiración, marcha y ojos.
+    visibleCreatures().forEach((c, idx) => {
         const moving = c.state === 'chase' || c.state === 'stalk' ||
-            c.state === 'investigate' || c.state === 'search';
+            c.state === 'observe' || c.state === 'haunt' || c.state === 'search';
         const rate = c.state === 'chase' ? 9.5 : (moving ? 3.6 : 1.3);
         c.animTime = (c.animTime || 0) + delta * rate;
-        const amp = c.state === 'chase' ? 0.12 : (moving ? 0.07 : 0.035);
-        c.group.position.y = Math.abs(Math.sin(c.animTime)) * amp;
-        const rollAmp = c.state === 'chase' ? 0.055 : 0.03;
-        c.group.rotation.z = Math.sin(c.animTime * 0.5) * rollAmp;
+        if (idx === 0) {
+            const amp = c.state === 'chase' ? 0.12 : (moving ? 0.07 : 0.035);
+            c.group.position.y = Math.abs(Math.sin(c.animTime)) * amp;
+            const rollAmp = c.state === 'chase' ? 0.055 : 0.03;
+            c.group.rotation.z = Math.sin(c.animTime * 0.5) * rollAmp;
+        }
         if (c.eyeGlow) {
-            c.eyeGlow.intensity = 0.65 + Math.sin(t * 3.1 + c.phase) * 0.25 +
-                (c.state === 'chase' ? 0.7 : 0);
+            c.eyeGlow.intensity = (c.opacity || 0) * (
+                0.65 + Math.sin(t * 3.1 + c.phase) * 0.25 +
+                (c.state === 'chase' ? 0.7 : 0)
+            );
         }
         if (c.mouthGlow) {
-            c.mouthGlow.intensity = 0.22 + Math.abs(Math.sin(t * 1.7 + c.phase)) * 0.4;
+            c.mouthGlow.intensity = (c.opacity || 0) *
+                (0.22 + Math.abs(Math.sin(t * 1.7 + c.phase)) * 0.4);
         }
-        if (c.eyeMat) c.eyeMat.opacity = clamp(c.opacity * (0.85 + Math.sin(t * 6) * 0.15), 0, 1);
-    }
+        if (c.eyeMat) {
+            c.eyeMat.opacity = clamp((c.opacity || 0) * (0.85 + Math.sin(t * 6) * 0.15), 0, 1);
+        }
+    });
 }
 
 // ============================================================
@@ -8846,6 +10191,7 @@ function animate(now) {
 
         updateLocalPlayers(delta);
         updateHUD();
+        updateHorrorFX(delta);
 
         if (netConnected) {
             netStateTimer += delta;
@@ -8869,6 +10215,958 @@ function animate(now) {
     renderViews();
 }
 
+// ============================================================
+// INTRO CINEMATOGRÁFICA · ~2 MINUTOS
+// ============================================================
+const INTRO_DURATION = 118;
+
+const introState = {
+    active: false,
+    time: 0,
+    last: 0,
+    raf: 0,
+    cueIndex: 0,
+    audioIndex: 0,
+    subUntil: 0,
+    pendingMode: MODE.SOLO,
+    flash: 0,
+    shake: 0
+};
+
+const INTRO_SUBTITLES = [
+    { a: 1.0,  d: 6.0, who: 'NARRADOR', text: 'Vallmorta, 02:47. La última patrulla cruza el bosque.' },
+    { a: 7.5,  d: 5.0, who: 'RADIO',    text: 'Unidad 7, ¿me recibes? Hay algo en la carretera.' },
+    { a: 13.2, d: 4.2, who: 'NARRADOR', text: 'El bosque de Vallmorta no aparece en los mapas.' },
+    { a: 18.0, d: 2.6, who: 'CONDUCTOR',text: '¿Qué es eso?' },
+    { a: 21.0, d: 5.0, who: 'NARRADOR', text: 'El coche nunca llegó a la torre.' },
+    { a: 27.0, d: 5.0, who: 'NARRADOR', text: 'Pero la radio siguió encendida.' },
+    { a: 32.5, d: 4.0, who: '???',      text: '--- ... ---' },
+    { a: 38.5, d: 5.0, who: 'RADIO',    text: '--- ¿Hay alguien? --- ¿Me oís? ---' },
+    { a: 45.0, d: 4.5, who: '???',      text: '--- no debiste --- venir ---' },
+    { a: 50.0, d: 6.0, who: '???',      text: 'NO DEBISTE VENIR' },
+    { a: 58.0, d: 5.5, who: 'NARRADOR', text: 'Algo aprendió a moverse entre los árboles.' },
+    { a: 64.5, d: 4.5, who: 'NARRADOR', text: 'Y a esperar a que bajes la guardia.' },
+    { a: 72.0, d: 4.0, who: '???',      text: 'NO DEBISTE VENIR' },
+    { a: 82.5, d: 5.0, who: 'RADIO',    text: 'La torre está sin energía. Repito: sin energía.' },
+    { a: 90.0, d: 5.5, who: 'NARRADOR', text: 'La última señal fue la suya.' },
+    { a: 97.0, d: 4.5, who: 'NARRADOR', text: 'Y todavía sigue llamando.' }
+];
+
+const INTRO_AUDIO_CUES = [
+    { a: 6.0,   fx: 'engine' },
+    { a: 19.7,  fx: 'crash' },
+    { a: 21.2,  fx: 'stinger' },
+    { a: 38.5,  fx: 'radio' },
+    { a: 58.6,  fx: 'watcher' },
+    { a: 63.2,  fx: 'disfigured' },
+    { a: 66.0,  fx: 'scare' },
+    { a: 72.5,  fx: 'shadow' },
+    { a: 84.0,  fx: 'powerdown' },
+    { a: 91.0,  fx: 'radio' },
+    { a: 102.0, fx: 'stinger' }
+];
+
+function introRand(seed) {
+    const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+    return x - Math.floor(x);
+}
+
+function introResize() {
+    const cv = document.getElementById('intro-canvas');
+    if (!cv) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    cv.width = Math.max(320, Math.floor(window.innerWidth * dpr));
+    cv.height = Math.max(200, Math.floor(window.innerHeight * dpr));
+}
+
+function introRoundRect(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.lineTo(x + w - rr, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+    ctx.lineTo(x + w, y + h - rr);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+    ctx.lineTo(x + rr, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+    ctx.lineTo(x, y + rr);
+    ctx.quadraticCurveTo(x, y, x + rr, y);
+    ctx.closePath();
+}
+
+function introShowSubtitle(who, text, duration) {
+    if (settings.subtitles === false) return;
+    const el = document.getElementById('intro-subtitle');
+    if (!el) return;
+    const cls = who === 'RADIO' ? 'radio' : (who === '???' ? 'unknown' : '');
+    el.innerHTML = '<span class="who ' + cls + '">' + who + '</span>' + text;
+    el.classList.add('show');
+    introState.subUntil = introState.time + (duration || 4);
+}
+
+function introAudioFx(name) {
+    try {
+        if (name === 'engine') audio.playIntroEngine();
+        else if (name === 'crash') { audio.playThud(); audio.playCreatureScreech(); }
+        else if (name === 'stinger') audio.playIntroStinger();
+        else if (name === 'radio') audio.playRadioStatic(1.6, 0.06);
+        else if (name === 'watcher') audio.playWatcherWhisper();
+        else if (name === 'disfigured') audio.playDisfiguredGrowl(null, 12);
+        else if (name === 'shadow') audio.playShadowGlitch();
+        else if (name === 'powerdown') audio.playPowerDown();
+        else if (name === 'scare') {
+            introState.flash = 1;
+            introState.shake = 1.7;
+            audio.playJumpscareFor('disfigured');
+        }
+    } catch (e) {}
+}
+
+function startIntro(mode) {
+    const overlay = document.getElementById('intro-overlay');
+    if (!overlay || introState.active) return;
+
+    introState.active = true;
+    introState.time = 0;
+    introState.last = 0;
+    introState.cueIndex = 0;
+    introState.audioIndex = 0;
+    introState.subUntil = 0;
+    introState.flash = 0;
+    introState.shake = 0;
+    introState.pendingMode = mode || MODE.SOLO;
+
+    overlay.classList.remove('hidden');
+    const gate = document.getElementById('intro-gate');
+    const end = document.getElementById('intro-end');
+    const skip = document.getElementById('intro-skip');
+    const sub = document.getElementById('intro-subtitle');
+    if (gate) gate.classList.add('hidden');
+    if (end) end.classList.add('hidden');
+    if (skip) skip.classList.remove('hidden');
+    if (sub) { sub.classList.remove('show'); sub.innerHTML = ''; }
+
+    introResize();
+    try { audio.init(); } catch (e) {}
+    try { audio.startIntroAmbience(); } catch (e) {}
+
+    if (introState.raf) cancelAnimationFrame(introState.raf);
+    introState.last = performance.now();
+    introState.raf = requestAnimationFrame(introTick);
+}
+
+function introTick(now) {
+    if (!introState.active) return;
+    if (!introState.last) introState.last = now;
+    const delta = Math.min((now - introState.last) / 1000, 0.05);
+    introState.last = now;
+    introState.time += delta;
+
+    introState.flash = Math.max(0, introState.flash - delta * 1.9);
+    introState.shake = Math.max(0, introState.shake - delta * 2.3);
+
+    while (introState.cueIndex < INTRO_SUBTITLES.length &&
+           INTRO_SUBTITLES[introState.cueIndex].a <= introState.time) {
+        const c = INTRO_SUBTITLES[introState.cueIndex++];
+        introShowSubtitle(c.who, c.text, c.d);
+    }
+    while (introState.audioIndex < INTRO_AUDIO_CUES.length &&
+           INTRO_AUDIO_CUES[introState.audioIndex].a <= introState.time) {
+        introAudioFx(INTRO_AUDIO_CUES[introState.audioIndex++].fx);
+    }
+
+    if (introState.subUntil && introState.time > introState.subUntil) {
+        introState.subUntil = 0;
+        const sub = document.getElementById('intro-subtitle');
+        if (sub) sub.classList.remove('show');
+    }
+
+    drawIntroFrame(introState.time);
+
+    if (introState.time >= INTRO_DURATION) {
+        finishIntro();
+        return;
+    }
+    introState.raf = requestAnimationFrame(introTick);
+}
+
+function skipIntro() {
+    finishIntro();
+}
+
+function finishIntro() {
+    introState.active = false;
+    if (introState.raf) cancelAnimationFrame(introState.raf);
+    introState.raf = 0;
+    try { audio.stopIntroAmbience(); } catch (e) {}
+
+    const sub = document.getElementById('intro-subtitle');
+    if (sub) sub.classList.remove('show');
+    const skip = document.getElementById('intro-skip');
+    if (skip) skip.classList.add('hidden');
+    const gate = document.getElementById('intro-gate');
+    if (gate) gate.classList.add('hidden');
+    const end = document.getElementById('intro-end');
+    if (end) end.classList.remove('hidden');
+
+    settings.introSeen = true;
+    saveSettings();
+}
+
+function closeIntro(launch) {
+    introState.active = false;
+    if (introState.raf) cancelAnimationFrame(introState.raf);
+    introState.raf = 0;
+    try { audio.stopIntroAmbience(); } catch (e) {}
+
+    const overlay = document.getElementById('intro-overlay');
+    const gate = document.getElementById('intro-gate');
+    const end = document.getElementById('intro-end');
+    if (overlay) overlay.classList.add('hidden');
+    if (gate) gate.classList.add('hidden');
+    if (end) end.classList.add('hidden');
+
+    settings.introSeen = true;
+    saveSettings();
+
+    if (launch) {
+        launchGame(introState.pendingMode || MODE.SOLO);
+    } else {
+        const menu = document.getElementById('menu-overlay');
+        if (menu) menu.classList.remove('hidden');
+        showMenuSub('menu-main');
+    }
+}
+
+function setupIntroUI() {
+    const on = (id, fn) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', fn);
+    };
+
+    on('intro-start-btn', () => startIntro(introState.pendingMode));
+    on('intro-gate-skip', () => closeIntro(true));
+    on('intro-play-btn', () => closeIntro(true));
+    on('intro-replay-btn2', () => startIntro(introState.pendingMode));
+    on('intro-back-btn', () => closeIntro(false));
+    on('intro-skip', () => skipIntro());
+
+    window.addEventListener('resize', () => {
+        if (introState.active) introResize();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (!introState.active) return;
+        if (e.key === 'Escape') skipIntro();
+    });
+
+    const overlay = document.getElementById('intro-overlay');
+    if (overlay && !settings.introSeen) {
+        overlay.classList.remove('hidden');
+        const gate = document.getElementById('intro-gate');
+        const end = document.getElementById('intro-end');
+        if (gate) gate.classList.remove('hidden');
+        if (end) end.classList.add('hidden');
+        introResize();
+    }
+}
+
+// ------------------------------------------------------------
+// DIBUJO DE LA INTRO
+// ------------------------------------------------------------
+function drawIntroFrame(t) {
+    const cv = document.getElementById('intro-canvas');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const w = cv.width;
+    const h = cv.height;
+    const shake = introState.shake;
+    const ox = (Math.random() - 0.5) * shake * w * 0.03;
+    const oy = (Math.random() - 0.5) * shake * h * 0.03;
+
+    ctx.save();
+    ctx.translate(ox, oy);
+
+    if (t < 20) drawIntroForestRoad(ctx, w, h, t);
+    else if (t < 38) drawIntroCrash(ctx, w, h, t);
+    else if (t < 58) drawIntroRadio(ctx, w, h, t);
+    else if (t < 82) drawIntroCreatures(ctx, w, h, t);
+    else if (t < 102) drawIntroTower(ctx, w, h, t);
+    else drawIntroTitle(ctx, w, h, t);
+
+    ctx.restore();
+
+    if (introState.flash > 0.01) {
+        const alpha = introState.flash * (settings.reduceFlash ? 0.22 : 0.55);
+        ctx.fillStyle = 'rgba(255, 24, 16, ' + alpha.toFixed(3) + ')';
+        ctx.fillRect(0, 0, w, h);
+        if (!settings.reduceFlash) {
+            ctx.fillStyle = 'rgba(255,255,255,' + (introState.flash * 0.22).toFixed(3) + ')';
+            ctx.fillRect(0, 0, w, h);
+        }
+    }
+
+    introPost(ctx, w, h, t);
+}
+
+function introPost(ctx, w, h, t) {
+    // Grano de película
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    for (let i = 0; i < 64; i++) {
+        ctx.fillRect(Math.random() * w, Math.random() * h, Math.random() * w * 0.018, 1 + Math.random() * 2);
+    }
+    // Líneas de escaneo
+    ctx.fillStyle = 'rgba(0,0,0,0.16)';
+    for (let y = 0; y < h; y += 4) ctx.fillRect(0, y, w, 1.5);
+    // Viñeta
+    const v = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.26, w / 2, h / 2, Math.max(w, h) * 0.74);
+    v.addColorStop(0, 'rgba(0,0,0,0)');
+    v.addColorStop(0.68, 'rgba(0,0,0,0.32)');
+    v.addColorStop(1, 'rgba(0,0,0,0.92)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, w, h);
+}
+
+function introRain(ctx, w, h, t, alpha) {
+    ctx.strokeStyle = 'rgba(150, 178, 198, ' + (alpha || 0.32) + ')';
+    ctx.lineWidth = Math.max(1, w / 1500);
+    for (let i = 0; i < 130; i++) {
+        const s = i * 17.3;
+        const speed = 0.55 + introRand(s + 1) * 0.9;
+        const x = (introRand(s) * w + t * 240 * speed) % w;
+        const y = (introRand(s + 2) * h + t * 620 * speed) % h;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - w * 0.006, y + h * 0.026);
+        ctx.stroke();
+    }
+}
+
+function introTree(ctx, x, baseY, height, width, alpha, tone) {
+    ctx.fillStyle = 'rgba(' + tone + ',' + (tone + 2) + ',' + (tone + 5) + ',' + alpha + ')';
+    ctx.beginPath();
+    ctx.moveTo(x - width * 0.6, baseY);
+    ctx.lineTo(x - width * 0.14, baseY - height);
+    ctx.lineTo(x + width * 0.14, baseY - height);
+    ctx.lineTo(x + width * 0.6, baseY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Ramas
+    for (let i = 0; i < 5; i++) {
+        const by = baseY - height * (0.34 + i * 0.13);
+        const side = i % 2 === 0 ? -1 : 1;
+        const len = width * (5.5 - i * 0.55);
+        ctx.lineWidth = Math.max(1, width * 0.24);
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.beginPath();
+        ctx.moveTo(x, by);
+        ctx.lineTo(x + side * len, by - height * 0.07);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + side * len * 0.55, by - height * 0.03);
+        ctx.lineTo(x + side * len * 0.9, by - height * 0.11);
+        ctx.stroke();
+    }
+}
+
+function drawIntroForestRoad(ctx, w, h, t) {
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#05070c');
+    g.addColorStop(0.46, '#0a1014');
+    g.addColorStop(1, '#02050a');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // Luna
+    const moonX = w * 0.72, moonY = h * 0.17;
+    const mg = ctx.createRadialGradient(moonX, moonY, 4, moonX, moonY, h * 0.38);
+    mg.addColorStop(0, 'rgba(190,210,225,0.30)');
+    mg.addColorStop(0.16, 'rgba(150,175,195,0.12)');
+    mg.addColorStop(1, 'rgba(150,175,195,0)');
+    ctx.fillStyle = mg;
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(205,220,235,0.45)';
+    ctx.beginPath();
+    ctx.arc(moonX, moonY, h * 0.026, 0, Math.PI * 2);
+    ctx.fill();
+
+    const hz = h * 0.55;
+
+    // Niebla del horizonte
+    const fg = ctx.createLinearGradient(0, hz - h * 0.16, 0, hz + h * 0.2);
+    fg.addColorStop(0, 'rgba(40,58,62,0)');
+    fg.addColorStop(0.5, 'rgba(40,58,62,0.26)');
+    fg.addColorStop(1, 'rgba(40,58,62,0)');
+    ctx.fillStyle = fg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Carretera
+    ctx.fillStyle = '#070a0b';
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5 - w * 0.036, hz);
+    ctx.lineTo(w * 0.5 + w * 0.036, hz);
+    ctx.lineTo(w * 1.08, h);
+    ctx.lineTo(-w * 0.08, h);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(150,140,105,0.14)';
+    ctx.lineWidth = Math.max(1, w * 0.0024);
+    ctx.setLineDash([h * 0.028, h * 0.045]);
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5, hz + h * 0.02);
+    ctx.lineTo(w * 0.5, h);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Árboles en dos capas
+    for (let layer = 0; layer < 2; layer++) {
+        const count = layer === 0 ? 16 : 12;
+        for (let i = 0; i < count; i++) {
+            const s = i * 13.7 + layer * 101;
+            const side = i % 2 === 0 ? -1 : 1;
+            const spread = 0.19 + introRand(s) * 0.38 + layer * 0.05;
+            const x = w * 0.5 + side * spread * w;
+            const baseY = hz + (layer === 0 ? h * 0.012 : h * 0.14) + introRand(s + 1) * h * 0.06;
+            const th = h * (layer === 0 ? 0.30 : 0.44) * (0.8 + introRand(s + 2) * 0.6);
+            introTree(ctx, x, baseY, th, w * (layer === 0 ? 0.009 : 0.015), layer === 0 ? 0.72 : 0.95, layer === 0 ? 12 : 5);
+        }
+    }
+
+    // Haces de los faros
+    const beam = ctx.createLinearGradient(0, h, 0, hz);
+    beam.addColorStop(0, 'rgba(255,244,210,0.26)');
+    beam.addColorStop(1, 'rgba(255,244,210,0)');
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.16, h);
+    ctx.lineTo(w * 0.44, hz);
+    ctx.lineTo(w * 0.56, hz);
+    ctx.lineTo(w * 0.84, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Silueta en la carretera
+    if (t > 13.4) {
+        const q = clamp((t - 13.4) / 5.4, 0, 1);
+        const fh = h * (0.05 + q * 0.18);
+        const fx = w * 0.5;
+        const fy = hz + h * 0.012;
+        ctx.fillStyle = 'rgba(2,3,4,' + (0.55 + q * 0.45) + ')';
+        ctx.beginPath();
+        ctx.ellipse(fx, fy - fh * 0.56, fh * 0.14, fh * 0.56, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(fx, fy - fh * 1.14, fh * 0.11, 0, Math.PI * 2);
+        ctx.fill();
+        // Brazos demasiado largos
+        ctx.strokeStyle = 'rgba(2,3,4,' + (0.6 + q * 0.4) + ')';
+        ctx.lineWidth = Math.max(2, fh * 0.035);
+        for (const side of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(fx + side * fh * 0.11, fy - fh * 0.95);
+            ctx.lineTo(fx + side * fh * 0.28, fy - fh * 0.28);
+            ctx.stroke();
+        }
+        if (t > 17.2) {
+            ctx.fillStyle = 'rgba(255, 32, 32,' + (0.55 + q * 0.45) + ')';
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = Math.max(8, fh * 0.18);
+            for (const side of [-1, 1]) {
+                ctx.beginPath();
+                ctx.arc(fx + side * fh * 0.035, fy - fh * 1.16, Math.max(1.4, fh * 0.014), 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    introRain(ctx, w, h, t, 0.34);
+}
+
+function drawIntroCrash(ctx, w, h, t) {
+    const lt = t - 20;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#1b0606');
+    g.addColorStop(0.55, '#0a0404');
+    g.addColorStop(1, '#000');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // Horizonte inclinado
+    ctx.save();
+    ctx.translate(w / 2, h / 2);
+    ctx.rotate(-0.13);
+    ctx.fillStyle = 'rgba(90,22,18,0.20)';
+    ctx.fillRect(-w, -h * 0.012, w * 2, h * 0.024);
+    ctx.fillStyle = 'rgba(4,5,6,0.9)';
+    ctx.fillRect(-w, h * 0.012, w * 2, h);
+    ctx.restore();
+
+    // Grietas del parabrisas
+    const cx = w * 0.5, cy = h * 0.44;
+    ctx.strokeStyle = 'rgba(220,230,235,0.16)';
+    ctx.lineWidth = Math.max(1, w * 0.0014);
+    for (let i = 0; i < 22; i++) {
+        const a = (i / 22) * Math.PI * 2 + introRand(i) * 0.4;
+        const r = h * (0.16 + introRand(i + 5) * 0.42);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+        ctx.stroke();
+    }
+    for (let ring = 1; ring <= 3; ring++) {
+        ctx.beginPath();
+        for (let i = 0; i <= 24; i++) {
+            const a = (i / 24) * Math.PI * 2;
+            const r = h * 0.06 * ring + Math.sin(i * 3.7) * h * 0.012;
+            const x = cx + Math.cos(a) * r;
+            const y = cy + Math.sin(a) * r * 0.9;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    // Humo
+    for (let i = 0; i < 9; i++) {
+        const s = i * 7.3;
+        const x = w * (0.2 + introRand(s) * 0.6) + Math.sin(lt * 0.7 + i) * w * 0.02;
+        const y = h * (0.55 + introRand(s + 1) * 0.3) - lt * h * 0.012;
+        const r = h * (0.04 + introRand(s + 2) * 0.09);
+        const sg = ctx.createRadialGradient(x, y, 1, x, y, r);
+        sg.addColorStop(0, 'rgba(90,88,84,0.16)');
+        sg.addColorStop(1, 'rgba(90,88,84,0)');
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Luz roja intermitente
+    const pulse = 0.5 + Math.sin(lt * 5.5) * 0.5;
+    const rg = ctx.createRadialGradient(w * 0.5, h * 0.72, 4, w * 0.5, h * 0.72, h * 0.55);
+    rg.addColorStop(0, 'rgba(255,30,20,' + (0.18 + pulse * 0.12) + ')');
+    rg.addColorStop(1, 'rgba(255,30,20,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(0, 0, w, h);
+
+    introRain(ctx, w, h, t, 0.28);
+}
+
+function drawIntroRadio(ctx, w, h, t) {
+    const lt = t - 38;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#050706');
+    g.addColorStop(1, '#010202');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // Bosque apenas visible
+    for (let i = 0; i < 10; i++) {
+        const x = w * (0.05 + i * 0.1);
+        introTree(ctx, x, h * 0.86, h * 0.42, w * 0.012, 0.35, 8);
+    }
+
+    const rw = Math.min(w * 0.66, h * 1.0);
+    const rh = rw * 0.4;
+    const rx = w / 2 - rw / 2;
+    const ry = h * 0.5 - rh / 2;
+
+    ctx.fillStyle = 'rgba(8,10,9,0.94)';
+    introRoundRect(ctx, rx, ry, rw, rh, rh * 0.06);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(120,160,140,0.22)';
+    ctx.lineWidth = Math.max(1, w * 0.0018);
+    ctx.stroke();
+
+    // Pantalla
+    const dx = rx + rw * 0.06, dy = ry + rh * 0.1, dw = rw * 0.88, dh = rh * 0.44;
+    ctx.fillStyle = '#06120b';
+    introRoundRect(ctx, dx, dy, dw, dh, dh * 0.08);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(74,222,128,0.18)';
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(134,239,172,0.85)';
+    ctx.font = 'bold ' + Math.max(9, h * 0.018) + 'px "Share Tech Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('FRECUENCIA 104.7', dx + dw * 0.04, dy + dh * 0.2);
+    ctx.fillStyle = 'rgba(74,222,128,0.5)';
+    ctx.fillText(lt < 8 ? 'BUSCANDO SEÑAL...' : 'SEÑAL DESCONOCIDA', dx + dw * 0.04, dy + dh * 0.4);
+
+    // Onda
+    const bars = 42;
+    const baseY = dy + dh * 0.72;
+    for (let i = 0; i < bars; i++) {
+        const s = i * 3.1;
+        const amp = (Math.sin(lt * 7 + i * 0.7) * 0.5 + 0.5) * (0.4 + introRand(s) * 0.6);
+        const bh = dh * 0.22 * amp;
+        const bx = dx + dw * 0.04 + (i / bars) * dw * 0.92;
+        ctx.fillStyle = 'rgba(134,239,172,' + (0.35 + amp * 0.5) + ')';
+        ctx.fillRect(bx, baseY - bh / 2, Math.max(1, dw / bars * 0.45), Math.max(1, bh));
+    }
+
+    // Mandos
+    for (let i = 0; i < 3; i++) {
+        const kx = rx + rw * (0.2 + i * 0.3);
+        const ky = ry + rh * 0.76;
+        ctx.fillStyle = '#0d1210';
+        ctx.beginPath();
+        ctx.arc(kx, ky, rh * 0.07, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(148,163,184,0.25)';
+        ctx.lineWidth = Math.max(1, w * 0.0012);
+        ctx.stroke();
+        const a = introRand(i * 4.7) * Math.PI * 2 + lt * 0.1;
+        ctx.beginPath();
+        ctx.moveTo(kx, ky);
+        ctx.lineTo(kx + Math.cos(a) * rh * 0.05, ky + Math.sin(a) * rh * 0.05);
+        ctx.stroke();
+    }
+
+    // Texto imposible
+    if (lt > 11.5) {
+        const q = clamp((lt - 11.5) / 2.5, 0, 1);
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = 'bold ' + Math.max(20, h * 0.075) + 'px "Share Tech Mono", monospace';
+        ctx.fillStyle = 'rgba(255,40,30,' + (q * (0.55 + Math.sin(lt * 18) * 0.25)) + ')';
+        ctx.shadowColor = '#ff0000';
+        ctx.shadowBlur = 28;
+        const jx = (Math.random() - 0.5) * w * 0.01 * q;
+        ctx.fillText('NO DEBISTE VENIR', w / 2 + jx, h * 0.2);
+        ctx.shadowBlur = 0;
+        ctx.restore();
+    }
+
+    // Interferencia
+    if (Math.sin(lt * 13) > 0.7) {
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        for (let i = 0; i < 14; i++) {
+            ctx.fillRect(Math.random() * w, Math.random() * h, Math.random() * w * 0.2, 1 + Math.random() * 3);
+        }
+    }
+}
+
+function drawIntroCreatures(ctx, w, h, t) {
+    const lt = t - 58;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#04070a');
+    g.addColorStop(0.6, '#060b0d');
+    g.addColorStop(1, '#010203');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // Niebla
+    const fg = ctx.createLinearGradient(0, h * 0.35, 0, h);
+    fg.addColorStop(0, 'rgba(40,58,62,0)');
+    fg.addColorStop(0.55, 'rgba(40,58,62,0.18)');
+    fg.addColorStop(1, 'rgba(40,58,62,0)');
+    ctx.fillStyle = fg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Árboles
+    for (let i = 0; i < 14; i++) {
+        const s = i * 11.9;
+        const x = w * (0.03 + i * 0.072) + (introRand(s) - 0.5) * w * 0.04;
+        introTree(ctx, x, h * 0.94, h * (0.4 + introRand(s + 1) * 0.3), w * 0.014, 0.85, 4);
+    }
+
+    // El Vigilante (izquierda)
+    const watcherAlpha = clamp(lt / 2.5, 0, 1) * (1 - clamp((lt - 9) / 3, 0, 1));
+    if (watcherAlpha > 0.01) {
+        const wx = w * 0.25;
+        const wh = h * 0.56;
+        const wy = h * 0.86;
+        ctx.fillStyle = 'rgba(6,7,8,' + (watcherAlpha * 0.95) + ')';
+        ctx.beginPath();
+        ctx.ellipse(wx, wy - wh * 0.5, wh * 0.055, wh * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(wx, wy - wh * 1.05, wh * 0.06, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(6,7,8,' + (watcherAlpha * 0.95) + ')';
+        ctx.lineWidth = Math.max(2, wh * 0.018);
+        for (const side of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(wx + side * wh * 0.045, wy - wh * 0.9);
+            ctx.lineTo(wx + side * wh * 0.13, wy - wh * 0.2);
+            ctx.stroke();
+            // Astas
+            ctx.beginPath();
+            ctx.moveTo(wx + side * wh * 0.03, wy - wh * 1.09);
+            ctx.lineTo(wx + side * wh * 0.11, wy - wh * 1.22);
+            ctx.stroke();
+        }
+        // Ojos ámbar
+        ctx.fillStyle = 'rgba(255,207,107,' + watcherAlpha + ')';
+        ctx.shadowColor = '#ffcf6b';
+        ctx.shadowBlur = 22;
+        for (const side of [-1, 1]) {
+            ctx.beginPath();
+            ctx.arc(wx + side * wh * 0.022, wy - wh * 1.06, Math.max(1.6, wh * 0.008), 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+    }
+
+    // La Sombra (derecha)
+    const shadowAlpha = clamp((lt - 8) / 2.5, 0, 1) * (1 - clamp((lt - 17) / 3, 0, 1));
+    if (shadowAlpha > 0.01) {
+        const sx = w * 0.77;
+        const sh = h * 0.52;
+        const sy = h * 0.9;
+        ctx.fillStyle = 'rgba(1,1,3,' + (shadowAlpha * 0.96) + ')';
+        ctx.beginPath();
+        ctx.moveTo(sx, sy - sh);
+        ctx.quadraticCurveTo(sx - sh * 0.24, sy - sh * 0.5, sx - sh * 0.18, sy);
+        ctx.lineTo(sx + sh * 0.18, sy);
+        ctx.quadraticCurveTo(sx + sh * 0.24, sy - sh * 0.5, sx, sy - sh);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,0,0,' + shadowAlpha + ')';
+        ctx.shadowColor = '#ff0000';
+        ctx.shadowBlur = 26;
+        for (const side of [-1, 1]) {
+            ctx.beginPath();
+            ctx.ellipse(sx + side * sh * 0.055, sy - sh * 0.83, Math.max(2, sh * 0.014), Math.max(1, sh * 0.008), 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+        // Glitch
+        if (Math.random() < 0.35) {
+            ctx.fillStyle = 'rgba(255,0,0,0.16)';
+            for (let i = 0; i < 5; i++) {
+                ctx.fillRect(sx - sh * 0.3 + Math.random() * sh * 0.6, sy - sh + Math.random() * sh, sh * (0.1 + Math.random() * 0.3), 2 + Math.random() * 6);
+            }
+        }
+    }
+
+    // El Desfigurado: primer plano repentino
+    const face = clamp((lt - 6.5) / 4.2, 0, 1);
+    if (face > 0.001) {
+        const fade = face < 0.15 ? face / 0.15 : 1;
+        const scale = 0.3 + face * 2.2;
+        const jx = (Math.random() - 0.5) * w * 0.02 * face;
+        const jy = (Math.random() - 0.5) * h * 0.02 * face;
+        ctx.save();
+        ctx.translate(w / 2 + jx, h * 0.54 + jy);
+        ctx.scale(scale, scale);
+        const hg = ctx.createRadialGradient(0, -40, 20, 0, -20, 300);
+        hg.addColorStop(0, 'rgba(74,32,36,' + fade + ')');
+        hg.addColorStop(0.6, 'rgba(36,16,20,' + fade + ')');
+        hg.addColorStop(1, 'rgba(8,3,4,0)');
+        ctx.fillStyle = hg;
+        ctx.beginPath();
+        ctx.ellipse(0, -30, 215, 205, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ojos
+        ctx.fillStyle = 'rgba(255,31,31,' + fade + ')';
+        ctx.shadowColor = '#ff0000';
+        ctx.shadowBlur = 40;
+        ctx.beginPath();
+        ctx.ellipse(-86, -98, 30, 22, 0.2, 0, Math.PI * 2);
+        ctx.ellipse(90, -106, 24, 18, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Boca
+        const open = 0.45 + face * 1.0;
+        ctx.fillStyle = 'rgba(18,0,0,' + fade + ')';
+        ctx.beginPath();
+        ctx.ellipse(0, 92, 150, 105 * open, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(216,205,178,' + fade + ')';
+        for (let i = 0; i < 14; i++) {
+            const tx = -132 + i * 20;
+            const tall = 26 + Math.abs(Math.sin(i * 2.1 + face * 8)) * 34;
+            ctx.beginPath();
+            ctx.moveTo(tx, 28);
+            ctx.lineTo(tx + 9, 28 + tall);
+            ctx.lineTo(tx + 18, 28);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(tx, 158);
+            ctx.lineTo(tx + 9, 158 - tall * 0.9);
+            ctx.lineTo(tx + 18, 158);
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    // Viñeta roja creciente antes del susto
+    if (lt > 5 && lt < 12) {
+        const q = clamp((lt - 5) / 5, 0, 1);
+        const rg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.15, w / 2, h / 2, Math.max(w, h) * 0.68);
+        rg.addColorStop(0, 'rgba(120,0,0,0)');
+        rg.addColorStop(0.6, 'rgba(140,0,0,' + (q * 0.28) + ')');
+        rg.addColorStop(1, 'rgba(255,0,0,' + (q * 0.62) + ')');
+        ctx.fillStyle = rg;
+        ctx.fillRect(0, 0, w, h);
+    }
+
+    introRain(ctx, w, h, t, 0.24);
+}
+
+function drawIntroTower(ctx, w, h, t) {
+    const lt = t - 82;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#03050a');
+    g.addColorStop(0.62, '#070b0d');
+    g.addColorStop(1, '#010202');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // Colina
+    ctx.fillStyle = '#030604';
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(0, h * 0.74);
+    ctx.quadraticCurveTo(w * 0.3, h * 0.66, w * 0.52, h * 0.72);
+    ctx.quadraticCurveTo(w * 0.76, h * 0.78, w, h * 0.7);
+    ctx.lineTo(w, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Torre de celosía
+    const tx = w * 0.52;
+    const baseY = h * 0.74;
+    const topY = h * 0.16;
+    const halfBase = w * 0.075;
+    const halfTop = w * 0.018;
+    ctx.strokeStyle = 'rgba(120,140,130,0.35)';
+    ctx.lineWidth = Math.max(1.5, w * 0.0022);
+    for (const side of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(tx + side * halfBase, baseY);
+        ctx.lineTo(tx + side * halfTop, topY);
+        ctx.stroke();
+    }
+    const segments = 12;
+    for (let i = 0; i < segments; i++) {
+        const y1 = baseY + (topY - baseY) * (i / segments);
+        const y2 = baseY + (topY - baseY) * ((i + 1) / segments);
+        const h1 = halfBase + (halfTop - halfBase) * (i / segments);
+        const h2 = halfBase + (halfTop - halfBase) * ((i + 1) / segments);
+        ctx.beginPath();
+        ctx.moveTo(tx - h1, y1);
+        ctx.lineTo(tx + h2, y2);
+        ctx.moveTo(tx + h1, y1);
+        ctx.lineTo(tx - h2, y2);
+        ctx.moveTo(tx - h2, y2);
+        ctx.lineTo(tx + h2, y2);
+        ctx.stroke();
+    }
+
+    // Antena
+    ctx.beginPath();
+    ctx.moveTo(tx, topY);
+    ctx.lineTo(tx, h * 0.08);
+    ctx.stroke();
+
+    // Baliza roja
+    const power = lt < 9.5;
+    const blink = (Math.sin(lt * 6.2) > 0.2) ? 1 : 0.15;
+    if (power) {
+        const rg = ctx.createRadialGradient(tx, h * 0.08, 1, tx, h * 0.08, h * 0.22);
+        rg.addColorStop(0, 'rgba(255,30,20,' + (0.55 * blink) + ')');
+        rg.addColorStop(1, 'rgba(255,30,20,0)');
+        ctx.fillStyle = rg;
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = 'rgba(255,60,45,' + blink + ')';
+        ctx.beginPath();
+        ctx.arc(tx, h * 0.08, Math.max(2, w * 0.005), 0, Math.PI * 2);
+        ctx.fill();
+    } else {
+        // Apagón total
+        const q = clamp((lt - 9.5) / 3, 0, 1);
+        ctx.fillStyle = 'rgba(0,0,0,' + (q * 0.86) + ')';
+        ctx.fillRect(0, 0, w, h);
+        if (lt > 12) {
+            ctx.fillStyle = 'rgba(255,0,0,0.10)';
+            ctx.fillRect(0, 0, w, h);
+        }
+    }
+
+    // Cables
+    ctx.strokeStyle = 'rgba(90,105,100,0.2)';
+    ctx.lineWidth = Math.max(1, w * 0.0012);
+    ctx.beginPath();
+    ctx.moveTo(tx - halfBase * 0.4, h * 0.58);
+    ctx.quadraticCurveTo(w * 0.2, h * 0.64, 0, h * 0.6);
+    ctx.moveTo(tx + halfBase * 0.4, h * 0.58);
+    ctx.quadraticCurveTo(w * 0.82, h * 0.64, w, h * 0.6);
+    ctx.stroke();
+
+    // Letrero
+    ctx.fillStyle = 'rgba(120,140,130,0.4)';
+    ctx.font = 'bold ' + Math.max(9, h * 0.02) + 'px "Share Tech Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('SECTOR 04', tx, h * 0.84);
+
+    introRain(ctx, w, h, t, 0.3);
+}
+
+function drawIntroTitle(ctx, w, h, t) {
+    const lt = t - 102;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, w, h);
+
+    const rg = ctx.createRadialGradient(w / 2, h * 0.55, 10, w / 2, h * 0.55, Math.max(w, h) * 0.62);
+    rg.addColorStop(0, 'rgba(110,0,0,0.35)');
+    rg.addColorStop(0.5, 'rgba(45,0,0,0.16)');
+    rg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(0, 0, w, h);
+
+    const q = clamp(lt / 2.2, 0, 1);
+    ctx.save();
+    ctx.globalAlpha = q;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillStyle = '#f3e9e0';
+    ctx.shadowColor = 'rgba(239,68,68,0.55)';
+    ctx.shadowBlur = Math.max(18, h * 0.04);
+    ctx.font = 'bold ' + Math.max(30, h * 0.115) + 'px "Creepster", "Times New Roman", serif';
+    ctx.fillText('LA ÚLTIMA SEÑAL', w / 2, h * 0.43);
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = 'rgba(239,68,68,0.92)';
+    ctx.font = 'bold ' + Math.max(11, h * 0.028) + 'px "Share Tech Mono", monospace';
+    const spacing = 'E L   B O S Q U E   N O   E S T Á   V A C Í O';
+    ctx.fillText(spacing, w / 2, h * 0.55);
+
+    ctx.fillStyle = 'rgba(148,163,184,0.55)';
+    ctx.font = Math.max(8, h * 0.016) + 'px "Share Tech Mono", monospace';
+    ctx.fillText('LA SEÑAL SIGUE ACTIVA', w / 2, h * 0.68);
+    ctx.restore();
+
+    // Estática final
+    if (lt > 10) {
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        for (let i = 0; i < 30; i++) {
+            ctx.fillRect(Math.random() * w, Math.random() * h, Math.random() * w * 0.04, 1 + Math.random() * 2);
+        }
+    }
+}
+
+// Compatibilidad con el test y depuración
+window.__introDebug = {
+    startIntro,
+    introTick,
+    finishIntro,
+    skipIntro,
+    closeIntro,
+    drawIntroFrame,
+    introState,
+    INTRO_DURATION
+};
+
 window.onload = () => {
     if (typeof THREE === 'undefined') {
         if (window.showFatalError) {
@@ -8880,6 +11178,7 @@ window.onload = () => {
     try {
         initEngine();
         setupMenuUI();
+        setupIntroUI();
         setupTouchControls();
         updateCameraAspects();
         updateAllInventoryHUD();
